@@ -1,5 +1,6 @@
+--This watermark is used to delete the file if its cached, remove it to make the file persist after commits.
 if shared.VapeExecuted then
-	local VERSION = "4.10"..(shared.VapePrivate and " PRIVATE" or "").." "..readfile("vape/commithash.txt"):sub(1, 6)
+	local VERSION = "4.10"..(shared.VapePrivate and " PRIVATE" or "")
 	local baseDirectory = (shared.VapePrivate and "vapeprivate/" or "vape/")
 	local vapeAssetTable = {
 		["vape/assets/AddItem.png"] = "rbxassetid://13350763121",
@@ -132,19 +133,22 @@ if shared.VapeExecuted then
 		return x, y, x/xm, y/ym, x2/xm
 	end
 
+	local gethui = function() 
+		return game.Players.LocalPlayer.PlayerGui
+	end
 	local gui = Instance.new("ScreenGui")
 	gui.Name = randomString()
 	gui.DisplayOrder = 999
 	gui.ZIndexBehavior = Enum.ZIndexBehavior.Global
 	gui.OnTopOfCoreBlur = true
 	gui.ResetOnSpawn = false
-	gui.Parent = game:GetService("Players").LocalPlayer.PlayerGui
+	gui.Parent = gethui()
 	GuiLibrary["MainGui"] = gui
 
 	local vapeCachedAssets = {}
 	local function vapeGithubRequest(scripturl)
 		if not isfile("vape/"..scripturl) then
-			local suc, res = pcall(function() return game:HttpGet("https://raw.githubusercontent.com/7GrandDadPGN/VapeV4ForRoblox/"..readfile("vape/commithash.txt").."/"..scripturl, true) end)
+			local suc, res = pcall(function() return game:HttpGet("https://raw.githubusercontent.com/7GrandDadPGN/VapeV4ForRoblox/"..scripturl, true) end)
 			assert(suc, res)
 			assert(res ~= "404: Not Found", res)
 			if scripturl:find(".lua") then res = "--This watermark is used to delete the file if its cached, remove it to make the file persist after commits.\n"..res end
@@ -852,6 +856,8 @@ if shared.VapeExecuted then
 		end
 		GuiLibrary.ObjectsThatCanBeSaved[objname] = nil
 	end
+
+	GuiLibrary.removebutton = GuiLibrary.RemoveObject
 
 	GuiLibrary["CreateMainWindow"] = function()
 		local windowapi = {}
@@ -3949,7 +3955,9 @@ if shared.VapeExecuted then
 					bindtext.TextColor3 = Color3.fromRGB(88, 88, 88)
 					bindimg.ImageColor3 = Color3.fromRGB(88, 88, 88)
 				end
-				argstablemain["Function"](buttonapi["Enabled"])
+				task.spawn(pcall, function()
+					argstablemain["Function"](buttonapi["Enabled"])
+				end)
 				GuiLibrary["UpdateHudEvent"]:Fire()
 			end
 
@@ -4570,6 +4578,9 @@ if shared.VapeExecuted then
 
 				return buttonreturned
 			end
+
+			buttonapi.CreateButton = buttonapi.CreateOptionsButton	
+			buttonapi.createbutton = buttonapi.CreateOptionsButton	
 
 			buttonapi["CreateCircleWindow"] = function(argstablemain3)
 				local buttonapi = {}
@@ -6807,7 +6818,7 @@ if shared.VapeExecuted then
 		frame.Size = UDim2.new(0, size, 0, 75)
 		frame.Position = UDim2.new(1, 0, 1, -(150 + 80 * offset))
 		frame.BackgroundTransparency = 1
-		frame.BackgroundColor3 = Color3.new(0, 0,0)
+		frame.BackgroundColor3 = Color3.new(255, 0,0)
 		frame.BorderSizePixel = 0
 		frame.Parent = notificationwindow
 		frame.Visible = GuiLibrary["Notifications"]
@@ -6874,12 +6885,12 @@ if shared.VapeExecuted then
 		textlabel2.Parent = frame
 		task.spawn(function()
 			pcall(function()
-				bettertween2(frame, UDim2.new(1, -(size - 4), 1, -(150 + 80 * offset)), Enum.EasingDirection.In, Enum.EasingStyle.Sine, 0.15, true)
-				task.wait(0.15)
-				frame2:TweenSize(UDim2.new(0, 0, 0, 2), Enum.EasingDirection.In, Enum.EasingStyle.Linear, duration, true)
+				bettertween2(frame, UDim2.new(1, -(size - 4), 1, -(150 + 80 * offset)), Enum.EasingDirection.InOut, Enum.EasingStyle.Quart, 0.187, true)
+				task.wait(0.22)
+				frame2:TweenSize(UDim2.new(0, 0, 0, 2), Enum.EasingDirection.InOut, Enum.EasingStyle.Quad, duration, true)
 				task.wait(duration)
-				bettertween2(frame, UDim2.new(1, 0, 1, frame.Position.Y.Offset), Enum.EasingDirection.In, Enum.EasingStyle.Sine, 0.15, true)
-				task.wait(0.15)
+				bettertween2(frame, UDim2.new(1, 0, 1, frame.Position.Y.Offset), Enum.EasingDirection.InOut, Enum.EasingStyle.Quart, 0.186, true)
+				task.wait(0.22)
 				frame:Remove()
 			end)
 		end)
@@ -6889,7 +6900,7 @@ if shared.VapeExecuted then
 	GuiLibrary["LoadedAnimation"] = function(enabled)
 		if enabled then
 			--no cache but its ran 1 time so idc
-			GuiLibrary.CreateNotification("Finished Loading", inputService.TouchEnabled and GuiLibrary["GUIKeybind"] == "RightShift" and "Press the button in the top right to open GUI" or "Press "..string.upper(GuiLibrary["GUIKeybind"]).." to open GUI", 5)
+			GuiLibrary.CreateNotification("Finished Loading", inputService.TouchEnabled and GuiLibrary["GUIKeybind"] == "RightShift" and "Press the button in the top right to open GUI" or "Press "..string.upper(GuiLibrary["GUIKeybind"]).." to open GUI", 7)
 		end
 	end
 
@@ -6961,7 +6972,7 @@ if shared.VapeExecuted then
 					if input1.KeyCode == Enum.KeyCode[aGuiLibrary["Api"]["Keybind"]] and aGuiLibrary["Api"]["Keybind"] ~= GuiLibrary["GUIKeybind"] then
 						aGuiLibrary["Api"]["ToggleButton"](false)
 						if GuiLibrary["ToggleNotifications"] then
-							GuiLibrary["CreateNotification"]("Module Toggled", aGuiLibrary["Api"]["Name"]..' <font color="#FFFFFF">has been</font> <font color="'..(aGuiLibrary["Api"]["Enabled"] and '#32CD32' or '#FF6464')..'">'..(aGuiLibrary["Api"]["Enabled"] and "Enabled" or "Disabled")..'</font><font color="#FFFFFF">!</font>', 1)
+							GuiLibrary["CreateNotification"]("Module Toggled", aGuiLibrary["Api"]["Name"]..' <font color="#FFFFFF">has been</font> <font color="'..(aGuiLibrary["Api"]["Enabled"] and '#32CD32' or '#FF6464')..'">'..(aGuiLibrary["Api"]["Enabled"] and "Enabled" or "Disabled")..'</font><font color="#FFFFFF">!</font>', 1.5)
 						end
 					end
 				end
@@ -7062,6 +7073,6 @@ if shared.VapeExecuted then
 			if v:IsA("Frame") then v.BackgroundTransparency = legitgui.Visible and 0.8 or 1 end
 		end
 	end)
-
+	pcall(print, 'guilib loaded')
 	return GuiLibrary
 end

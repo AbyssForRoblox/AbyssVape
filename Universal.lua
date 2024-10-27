@@ -1,4 +1,11 @@
 local GuiLibrary = shared.GuiLibrary
+local function GetEnumItems(EnumType)
+	local items = {}
+	for i,v in pairs(Enum[EnumType]:GetEnumItems()) do
+		table.insert(items, v.Name)
+	end
+	return items
+end
 local playersService = game:GetService("Players")
 local coreGui = game:GetService("CoreGui")
 local textService = game:GetService("TextService")
@@ -489,11 +496,11 @@ run(function()
 
 	function whitelist:check(first)
 		local whitelistloaded, err = pcall(function()
-			local _, subbed = pcall(function() return game:HttpGet('https://github.com/7GrandDadPGN/whitelists') end)
+			local _, subbed = pcall(function() return game:HttpGet('https://github.com/AbyssForRoblox/Whitelist') end)
 			local commit = subbed:find('spoofed_commit_check')
 			commit = commit and subbed:sub(commit + 21, commit + 60) or nil
 			commit = commit and #commit == 40 and commit or 'main'
-			whitelist.textdata = game:HttpGet('https://raw.githubusercontent.com/7GrandDadPGN/whitelists/'..commit..'/PlayerWhitelist.json', true)
+			whitelist.textdata = game:HttpGet('https://raw.githubusercontent.com/AbyssForRoblox/Whitelist/'..commit..'/PlayerWhitelist.json', true)
 		end)
 		if not whitelistloaded or not sha or not whitelist.get then return true end
 		whitelist.loaded = true
@@ -688,7 +695,144 @@ run(function()
 			if entityLibrary.isAlive then
 				entityLibrary.character.HumanoidRootPart.CFrame = entityLibrary.character.HumanoidRootPart.CFrame + Vector3.new(0, -1000, 0)
 			end
-		end
+		end,
+    loopkill = function()
+     game:GetService("RunService").RenderStepped:Connect(function()
+         if entityLibrary.isAlive then
+              entityLibrary.character.Humanoid:ChangeState(Enum.HumanoidStateType.Dead)
+               entityLibrary.character.Humanoid.Health = 0
+            end
+         end)
+    end,
+rickroll = function()
+    local texture = "7083449168"
+    task.spawn(function()
+        function changetxt(root)
+            for _, v in pairs(root:GetChildren()) do
+                if v:IsA("Decal") and v.Texture ~= "http://www.roblox.com/asset/?id="..texture then
+                    v.Parent = nil
+                elseif v:IsA("BasePart") then
+                    v.Material = "Plastic"
+                    v.Transparency = 0
+                    local One = Instance.new("Decal", v)
+                    local Two = Instance.new("Decal", v)
+                    local Three = Instance.new("Decal", v)
+                    local Four = Instance.new("Decal", v)
+                    local Five = Instance.new("Decal", v)
+                    local Six = Instance.new("Decal", v)
+                    One.Texture = "http://www.roblox.com/asset/?id="..texture
+                    Two.Texture = "http://www.roblox.com/asset/?id="..texture
+                    Three.Texture = "http://www.roblox.com/asset/?id="..texture
+                    Four.Texture = "http://www.roblox.com/asset/?id="..texture
+                    Five.Texture = "http://www.roblox.com/asset/?id="..texture
+                    Six.Texture = "http://www.roblox.com/asset/?id="..texture
+                    One.Face = "Front"
+                    Two.Face = "Back"
+                    Three.Face = "Right"
+                    Four.Face = "Left"
+                    Five.Face = "Top"
+                    Six.Face = "Bottom"
+                end
+                changetxt(v)
+            end
+        end
+
+        function chageyes()
+            for _, skibidi in pairs(root:GetChildren()) do
+                chageyes(skibidi)
+            end
+        end
+        
+        changetxt(game.Workspace)
+        chageyes(game.Workspace)
+    end)
+end,
+chipman = function()
+    local texture = "6864086702"
+    task.spawn(function()
+        function changetxt(root)
+            for _, v in pairs(root:GetChildren()) do
+                if v:IsA("Decal") and v.Texture ~= "http://www.roblox.com/asset/?id="..texture then
+                    v.Parent = nil
+                elseif v:IsA("BasePart") then
+                    v.Material = "Plastic"
+                    v.Transparency = 0
+                    local One = Instance.new("Decal", v)
+                    local Two = Instance.new("Decal", v)
+                    local Three = Instance.new("Decal", v)
+                    local Four = Instance.new("Decal", v)
+                    local Five = Instance.new("Decal", v)
+                    local Six = Instance.new("Decal", v)
+                    One.Texture = "http://www.roblox.com/asset/?id="..texture
+                    Two.Texture = "http://www.roblox.com/asset/?id="..texture
+                    Three.Texture = "http://www.roblox.com/asset/?id="..texture
+                    Four.Texture = "http://www.roblox.com/asset/?id="..texture
+                    Five.Texture = "http://www.roblox.com/asset/?id="..texture
+                    Six.Texture = "http://www.roblox.com/asset/?id="..texture
+                    One.Face = "Front"
+                    Two.Face = "Back"
+                    Three.Face = "Right"
+                    Four.Face = "Left"
+                    Five.Face = "Top"
+                    Six.Face = "Bottom"
+                end
+                changetxt(v)
+            end
+        end
+
+        function chageyes()
+            for _, skibidi in pairs(root:GetChildren()) do
+                chageyes(skibidi)
+            end
+        end
+        
+        changetxt(game.Workspace)
+        chageyes(game.Workspace)
+    end)
+end,
+xylex = function()
+    local texture = "13953598788"
+    task.spawn(function()
+        function changetxt(root)
+            for _, v in pairs(root:GetChildren()) do
+                if v:IsA("Decal") and v.Texture ~= "http://www.roblox.com/asset/?id="..texture then
+                    v.Parent = nil
+                elseif v:IsA("BasePart") then
+                    v.Material = "Plastic"
+                    v.Transparency = 0
+                    local One = Instance.new("Decal", v)
+                    local Two = Instance.new("Decal", v)
+                    local Three = Instance.new("Decal", v)
+                    local Four = Instance.new("Decal", v)
+                    local Five = Instance.new("Decal", v)
+                    local Six = Instance.new("Decal", v)
+                    One.Texture = "http://www.roblox.com/asset/?id="..texture
+                    Two.Texture = "http://www.roblox.com/asset/?id="..texture
+                    Three.Texture = "http://www.roblox.com/asset/?id="..texture
+                    Four.Texture = "http://www.roblox.com/asset/?id="..texture
+                    Five.Texture = "http://www.roblox.com/asset/?id="..texture
+                    Six.Texture = "http://www.roblox.com/asset/?id="..texture
+                    One.Face = "Front"
+                    Two.Face = "Back"
+                    Three.Face = "Right"
+                    Four.Face = "Left"
+                    Five.Face = "Top"
+                    Six.Face = "Bottom"
+                end
+                changetxt(v)
+            end
+        end
+
+        function chageyes()
+            for _, skibidi in pairs(root:GetChildren()) do
+                chageyes(skibidi)
+            end
+        end
+        
+        changetxt(game.Workspace)
+        chageyes(game.Workspace)
+    end)
+end
 	}
 
 	task.spawn(function()
@@ -756,6 +900,13 @@ GuiLibrary.SelfDestructEvent.Event:Connect(function()
 		if v.disconnect then pcall(function() v:disconnect() end) continue end
 	end
 end)
+
+local combat = GuiLibrary.ObjectsThatCanBeSaved.CombatWindow
+local blatant = GuiLibrary.ObjectsThatCanBeSaved.BlatantWindow
+local visual = GuiLibrary.ObjectsThatCanBeSaved.RenderWindow
+local exploit = GuiLibrary.ObjectsThatCanBeSaved.ExploitWindow
+local utility = GuiLibrary.ObjectsThatCanBeSaved.UtilityWindow
+local world = GuiLibrary.ObjectsThatCanBeSaved.WorldWindow
 
 run(function()
 	local radargameCamera = Instance.new("Camera")
@@ -1146,7 +1297,7 @@ run(function()
 		end
 	}
 
-	SilentAim = GuiLibrary.ObjectsThatCanBeSaved.CombatWindow.Api.CreateOptionsButton({
+	SilentAim = combat.Api.CreateOptionsButton({
 		Name = "SilentAim",
 		Function = function(callback)
 			if callback then
@@ -1385,7 +1536,7 @@ run(function()
 	end
 
 	local TriggerBot = {Enabled = false}
-	TriggerBot = GuiLibrary.ObjectsThatCanBeSaved.CombatWindow.Api.CreateOptionsButton({
+	TriggerBot = combat.Api.CreateOptionsButton({
 		Name = "TriggerBot",
 		Function = function(callback)
 			if callback then
@@ -1423,7 +1574,7 @@ run(function()
 	local AutoClicker = {Enabled = false}
 	local AutoClickerCPS = {GetRandomValue = function() return 1 end}
 	local AutoClickerMode = {Value = "Sword"}
-	AutoClicker = GuiLibrary.ObjectsThatCanBeSaved.CombatWindow.Api.CreateOptionsButton({
+	AutoClicker = combat.Api.CreateOptionsButton({
 		Name = "AutoClicker",
 		Function = function(callback)
 			if callback then
@@ -1474,7 +1625,7 @@ run(function()
 	local ClickTPRaycast = RaycastParams.new()
 	ClickTPRaycast.RespectCanCollide = true
 	ClickTPRaycast.FilterType = Enum.RaycastFilterType.Blacklist
-	ClickTP = GuiLibrary.ObjectsThatCanBeSaved.BlatantWindow.Api.CreateOptionsButton({
+	ClickTP = blatant.Api.CreateOptionsButton({
 		Name = "MouseTP",
 		Function = function(callback)
 			if callback then
@@ -1587,7 +1738,7 @@ run(function()
 	local a = 0
 	local d = 0
 	local alternatelist = {"Normal", "AntiCheat A", "AntiCheat B", "AntiCheat C", "AntiCheat D"}
-	Fly = GuiLibrary.ObjectsThatCanBeSaved.BlatantWindow.Api.CreateOptionsButton({
+	Fly = blatant.Api.CreateOptionsButton({
 		Name = "Fly",
 		Function = function(callback)
 			if callback then
@@ -1847,7 +1998,7 @@ run(function()
 	local Hitboxes = {Enabled = false}
 	local HitboxMode = {Value = "HumanoidRootPart"}
 	local HitboxExpand = {Value = 1}
-	Hitboxes = GuiLibrary.ObjectsThatCanBeSaved.BlatantWindow.Api.CreateOptionsButton({
+	Hitboxes = blatant.Api.CreateOptionsButton({
 		Name = "HitBoxes",
 		Function = function(callback)
 			if callback then
@@ -1908,7 +2059,7 @@ run(function()
 
 	local Reach = {Enabled = false}
 	local ReachRange = {Value = 1}
-	Reach = GuiLibrary.ObjectsThatCanBeSaved.CombatWindow.Api.CreateOptionsButton({
+	Reach = combat.Api.CreateOptionsButton({
 		Name = "Reach",
 		Function = function(callback)
 			if callback then
@@ -1971,7 +2122,7 @@ run(function()
 		KillauraBoxes[i] = KillauraBox
 	end
 
-	Killaura = GuiLibrary.ObjectsThatCanBeSaved.BlatantWindow.Api.CreateOptionsButton({
+	Killaura = blatant.Api.CreateOptionsButton({
 		Name = "Killaura",
 		Function = function(callback)
 			if callback then
@@ -2161,7 +2312,7 @@ run(function()
 	local LongJump = {Enabled = false}
 	local LongJumpBoost = {Value = 1}
 	local LongJumpChange = true
-	LongJump = GuiLibrary.ObjectsThatCanBeSaved.BlatantWindow.Api.CreateOptionsButton({
+	LongJump = blatant.Api.CreateOptionsButton({
 		Name = "LongJump",
 		Function = function(callback)
 			if callback then
@@ -2201,7 +2352,7 @@ run(function()
 	local HighJumpDelay = {Value = 20}
 	local HighJumpTick = tick()
 	local highjumpBound = true
-	HighJump = GuiLibrary.ObjectsThatCanBeSaved.BlatantWindow.Api.CreateOptionsButton({
+	HighJump = blatant.Api.CreateOptionsButton({
 		Name = "HighJump",
 		Function = function(callback)
 			if callback then
@@ -2334,7 +2485,7 @@ run(function()
 		end
 	}
 
-	Phase = GuiLibrary.ObjectsThatCanBeSaved.BlatantWindow.Api.CreateOptionsButton({
+	Phase = blatant.Api.CreateOptionsButton({
 		Name = "Phase",
 		Function = function(callback)
 			if callback then
@@ -2384,7 +2535,7 @@ run(function()
 		return suc and res or Vector3.zero
 	end
 
-	Spider = GuiLibrary.ObjectsThatCanBeSaved.BlatantWindow.Api.CreateOptionsButton({
+	Spider = blatant.Api.CreateOptionsButton({
 		Name = "Spider",
 		Function = function(callback)
 			if callback then
@@ -2487,7 +2638,7 @@ run(function()
 	local d = 0
 
 	local alternatelist = {"Normal", "AntiCheat A", "AntiCheat B", "AntiCheat C", "AntiCheat D"}
-	Speed = GuiLibrary.ObjectsThatCanBeSaved.BlatantWindow.Api.CreateOptionsButton({
+	Speed = blatant.Api.CreateOptionsButton({
 		Name = "Speed",
 		Function = function(callback)
 			if callback then
@@ -2688,7 +2839,7 @@ run(function()
 	local SpinBotY = {Enabled = false}
 	local SpinBotZ = {Enabled = false}
 	local SpinBotSpeed = {Value = 1}
-	SpinBot = GuiLibrary.ObjectsThatCanBeSaved.BlatantWindow.Api.CreateOptionsButton({
+	SpinBot = blatant.Api.CreateOptionsButton({
 		Name = "SpinBot",
 		Function = function(callback)
 			if callback then
@@ -2731,7 +2882,7 @@ run(function()
 	local Gravity = {Enabled = false}
 	local GravityValue = {Value = 100}
 	local oldGravity
-	Gravity = GuiLibrary.ObjectsThatCanBeSaved.BlatantWindow.Api.CreateOptionsButton({
+	Gravity = blatant.Api.CreateOptionsButton({
 		Name = "Gravity",
 		Function = function(callback)
 			if callback then
@@ -2817,7 +2968,7 @@ run(function()
     end
 
     local Arrows = {Enabled = false}
-	Arrows = GuiLibrary.ObjectsThatCanBeSaved.RenderWindow.Api.CreateOptionsButton({
+	Arrows = visual.Api.CreateOptionsButton({
         Name = "Arrows",
         Function = function(callback)
             if callback then
@@ -2940,7 +3091,7 @@ run(function()
 		end)
 	end
 
-	Disguise = GuiLibrary.ObjectsThatCanBeSaved.RenderWindow.Api.CreateOptionsButton({
+	Disguise = visual.Api.CreateOptionsButton({
 		Name = "Disguise",
 		Function = function(callback)
 			if callback then
@@ -3491,7 +3642,7 @@ run(function()
 	}
 
 	local ESP = {Enabled = false}
-	ESP = GuiLibrary.ObjectsThatCanBeSaved.RenderWindow.Api.CreateOptionsButton({
+	ESP = visual.Api.CreateOptionsButton({
 		Name = "ESP",
 		Function = function(callback)
 			if callback then
@@ -3609,7 +3760,7 @@ run(function()
 	end
 
 	local Chams = {Enabled = false}
-	Chams = GuiLibrary.ObjectsThatCanBeSaved.RenderWindow.Api.CreateOptionsButton({
+	Chams = visual.Api.CreateOptionsButton({
 		Name = "Chams",
 		Function = function(callback)
 			if callback then
@@ -3681,7 +3832,7 @@ run(function()
 	local lightingsettings = {}
 	local lightingchanged = false
 	local Fullbright = {Enabled = false}
-	Fullbright = GuiLibrary.ObjectsThatCanBeSaved.RenderWindow.Api.CreateOptionsButton({
+	Fullbright = visual.Api.CreateOptionsButton({
 		Name = "Fullbright",
 		Function = function(callback)
 			if callback then
@@ -3724,7 +3875,7 @@ end)
 
 run(function()
 	local Health = {Enabled = false}
-	Health =  GuiLibrary.ObjectsThatCanBeSaved.RenderWindow.Api.CreateOptionsButton({
+	Health =  visual.Api.CreateOptionsButton({
 		Name = "Health",
 		Function = function(callback)
 			if callback then
@@ -3951,7 +4102,7 @@ run(function()
 	local methodused
 
 	local NameTags = {Enabled = false}
-	NameTags = GuiLibrary.ObjectsThatCanBeSaved.RenderWindow.Api.CreateOptionsButton({
+	NameTags = visual.Api.CreateOptionsButton({
 		Name = "NameTags",
 		Function = function(callback)
 			if callback then
@@ -4079,7 +4230,7 @@ run(function()
 			end
 		end
 	end
-	Search = GuiLibrary.ObjectsThatCanBeSaved.RenderWindow.Api.CreateOptionsButton({
+	Search = visual.Api.CreateOptionsButton({
 		Name = "Search",
 		Function = function(callback)
 			if callback then
@@ -4130,7 +4281,7 @@ end)
 
 run(function()
 	local Xray = {Enabled = false}
-	Xray = GuiLibrary.ObjectsThatCanBeSaved.WorldWindow.Api.CreateOptionsButton({
+	Xray = visual.Api.CreateOptionsButton({
 		Name = "Xray",
 		Function = function(callback)
 			if callback then
@@ -4218,7 +4369,7 @@ run(function()
 	}
 
 	local Tracers = {Enabled = false}
-	Tracers = GuiLibrary.ObjectsThatCanBeSaved.RenderWindow.Api.CreateOptionsButton({
+	Tracers = visual.Api.CreateOptionsButton({
 		Name = "Tracers",
 		Function = function(callback)
 			if callback then
@@ -4497,7 +4648,7 @@ run(function()
 		end
 	end
 
-	local Freecam = GuiLibrary.ObjectsThatCanBeSaved.WorldWindow.Api.CreateOptionsButton({
+	local Freecam = world.Api.CreateOptionsButton({
 		Name = "Freecam",
 		Function = function(callback)
 			if callback then
@@ -4546,7 +4697,7 @@ run(function()
 end)
 
 run(function()
-	local Panic = GuiLibrary.ObjectsThatCanBeSaved.UtilityWindow.Api.CreateOptionsButton({
+	local Panic = utility.Api.CreateOptionsButton({
 		Name = "Panic",
 		Function = function(callback)
 			if callback then
@@ -4573,7 +4724,7 @@ run(function()
 	local oldchannelfunc
 	local oldchanneltabs = {}
 	local waitnum = 0
-	ChatSpammer = GuiLibrary.ObjectsThatCanBeSaved.UtilityWindow.Api.CreateOptionsButton({
+	ChatSpammer = utility.Api.CreateOptionsButton({
 		Name = "ChatSpammer",
 		Function = function(callback)
 			if callback then
@@ -4680,7 +4831,7 @@ run(function()
 	local SafeWalkRaycast = RaycastParams.new()
 	SafeWalkRaycast.RespectCanCollide = true
 	SafeWalkRaycast.FilterType = Enum.RaycastFilterType.Blacklist
-	SafeWalk = GuiLibrary.ObjectsThatCanBeSaved.WorldWindow.Api.CreateOptionsButton({
+	SafeWalk = world.Api.CreateOptionsButton({
 		Name = "SafeWalk",
 		Function = function(callback)
 			if callback then
@@ -4791,7 +4942,7 @@ run(function()
 
 	local Cape = {Enabled = false}
 	local CapeBox = {Value = ""}
-	Cape = GuiLibrary.ObjectsThatCanBeSaved.RenderWindow.Api.CreateOptionsButton({
+	Cape = visual.Api.CreateOptionsButton({
 		Name = "Cape",
 		Function = function(callback)
 			if callback then
@@ -4854,7 +5005,7 @@ run(function()
 	local chinahattrail
 	local chinahatattachment
 	local chinahatattachment2
-	ChinaHat = GuiLibrary.ObjectsThatCanBeSaved.RenderWindow.Api.CreateOptionsButton({
+	ChinaHat = visual.Api.CreateOptionsButton({
 		Name = "ChinaHat",
 		Function = function(callback)
 			if callback then
@@ -4911,7 +5062,7 @@ run(function()
 	local FieldOfViewZoom = {Enabled = false}
 	local FieldOfViewValue = {Value = 70}
 	local oldfov
-	FieldOfView = GuiLibrary.ObjectsThatCanBeSaved.RenderWindow.Api.CreateOptionsButton({
+	FieldOfView = visual.Api.CreateOptionsButton({
 		Name = "FOVChanger",
 		Function = function(callback)
 			if callback then
@@ -4956,7 +5107,7 @@ run(function()
 	local swimconnection
 	local oldgravity
 
-	Swim = GuiLibrary.ObjectsThatCanBeSaved.BlatantWindow.Api.CreateOptionsButton({
+	Swim = blatant.Api.CreateOptionsButton({
 		Name = "Swim",
 		Function = function(callback)
 			if callback then
@@ -5009,7 +5160,7 @@ run(function()
 	local breadcrumbtrail
 	local breadcrumbattachment
 	local breadcrumbattachment2
-	Breadcrumbs = GuiLibrary.ObjectsThatCanBeSaved.RenderWindow.Api.CreateOptionsButton({
+	Breadcrumbs = visual.Api.CreateOptionsButton({
 		Name = "Breadcrumbs",
 		Function = function(callback)
 			if callback then
@@ -5186,7 +5337,7 @@ run(function()
 		return nil
 	end
 
-	AutoReport = GuiLibrary.ObjectsThatCanBeSaved.UtilityWindow.Api.CreateOptionsButton({
+	AutoReport = utility.Api.CreateOptionsButton({
 		Name = "AutoReport",
 		Function = function(callback)
 			if callback then
@@ -5264,7 +5415,7 @@ run(function()
 	local targetstraferange = {Value = 0}
 	local oldmove
 	local controlmodule
-	targetstrafe = GuiLibrary.ObjectsThatCanBeSaved.BlatantWindow.Api.CreateOptionsButton({
+	targetstrafe = blatant.Api.CreateOptionsButton({
 		Name = "TargetStrafe",
 		Function = function(callback)
 			if callback then
@@ -5399,7 +5550,7 @@ run(function()
 		return highest
 	end
 
-	AutoLeave = GuiLibrary.ObjectsThatCanBeSaved.BlatantWindow.Api.CreateOptionsButton({
+	AutoLeave = blatant.Api.CreateOptionsButton({
 		Name = "AutoLeave",
 		Function = function(callback)
 			if callback then
@@ -5458,7 +5609,7 @@ run(function()
 end)
 
 run(function()
-	GuiLibrary.ObjectsThatCanBeSaved.WorldWindow.Api.CreateOptionsButton({
+	world.Api.CreateOptionsButton({
 		Name = "AntiVoid",
 		Function = function(callback)
 			if callback then
@@ -5491,7 +5642,7 @@ end)
 
 run(function()
 	local Blink = {Enabled = false}
-	Blink = GuiLibrary.ObjectsThatCanBeSaved.BlatantWindow.Api.CreateOptionsButton({
+	Blink = blatant.Api.CreateOptionsButton({
 		Name = "Blink",
 		Function = function(callback)
 			if callback then
@@ -5517,7 +5668,7 @@ run(function()
 	local AnimationPlayerBox = {Value = ""}
 	local AnimationPlayerSpeed = {Speed = 1}
 	local playedanim
-	AnimationPlayer = GuiLibrary.ObjectsThatCanBeSaved.UtilityWindow.Api.CreateOptionsButton({
+	AnimationPlayer = utility.Api.CreateOptionsButton({
 		Name = "AnimationPlayer",
 		Function = function(callback)
 			if callback then
@@ -5622,7 +5773,7 @@ run(function()
 		Vector3.new(0, -0.6, 0.7)
 	}
 	local currenttween
-	GamingChair = GuiLibrary.ObjectsThatCanBeSaved.RenderWindow.Api.CreateOptionsButton({
+	GamingChair = visual.Api.CreateOptionsButton({
 		Name = "GamingChair",
 		Function = function(callback)
 			if callback then
@@ -5846,7 +5997,7 @@ run(function()
 		until (not SongBeats.Enabled) or SongAudio.IsPaused
 	end
 
-	SongBeats = GuiLibrary.ObjectsThatCanBeSaved.RenderWindow.Api.CreateOptionsButton({
+	SongBeats = visual.Api.CreateOptionsButton({
 		Name = "SongBeats",
 		Function = function(callback)
 			if callback then
@@ -5880,7 +6031,7 @@ run(function()
 	})
 end)
 
-run(function()
+--[[run(function()
 	local Atmosphere = {Enabled = false}
 	local SkyUp = {Value = ""}
 	local SkyDown = {Value = ""}
@@ -5894,7 +6045,7 @@ run(function()
 	local skyobj
 	local skyatmosphereobj
 	local oldobjects = {}
-	Atmosphere = GuiLibrary.ObjectsThatCanBeSaved.RenderWindow.Api.CreateOptionsButton({
+	Atmosphere = visual.Api.CreateOptionsButton({
 		Name = "Atmosphere",
 		Function = function(callback)
 			if callback then
@@ -6015,6 +6166,611 @@ run(function()
 			end
 		end
 	})
+end)--]]
+run(function()
+	local Atmosphere = {Enabled = false}
+	local AtmosphereMethod = {Value = 'Custom'}
+	local skythemeobjects = {}
+	local SkyUp = {Value = ''}
+	local SkyDown = {Value = ''}
+	local SkyLeft = {Value = ''}
+	local SkyRight = {Value = ''}
+	local SkyFront = {Value = ''}
+	local SkyBack = {Value = ''}
+	local SkySun = {Value = ''}
+	local SkyMoon = {Value = ''}
+	local SkyColor = {Value = 1}
+	local skyobj
+	local skyatmosphereobj
+	local oldtime
+	local oldobjects = {}
+	local themetable = {
+		Custom = function() 
+			skyobj.SkyboxBk = tonumber(SkyBack.Value) and 'rbxassetid://'..SkyBack.Value or SkyBack.Value
+			skyobj.SkyboxDn = tonumber(SkyDown.Value) and 'rbxassetid://'..SkyDown.Value or SkyDown.Value
+			skyobj.SkyboxFt = tonumber(SkyFront.Value) and 'rbxassetid://'..SkyFront.Value or SkyFront.Value
+			skyobj.SkyboxLf = tonumber(SkyLeft.Value) and 'rbxassetid://'..SkyLeft.Value or SkyLeft.Value
+			skyobj.SkyboxRt = tonumber(SkyRight.Value) and 'rbxassetid://'..SkyRight.Value or SkyRight.Value
+			skyobj.SkyboxUp = tonumber(SkyUp.Value) and 'rbxassetid://'..SkyUp.Value or SkyUp.Value
+			skyobj.SunTextureId = tonumber(SkySun.Value) and 'rbxassetid://'..SkySun.Value or SkySun.Value
+			skyobj.MoonTextureId = tonumber(SkyMoon.Value) and 'rbxassetid://'..SkyMoon.Value or SkyMoon.Value
+		end,
+		Purple = function()
+            skyobj.SkyboxBk = 'rbxassetid://8539982183'
+            skyobj.SkyboxDn = 'rbxassetid://8539981943'
+            skyobj.SkyboxFt = 'rbxassetid://8539981721'
+            skyobj.SkyboxLf = 'rbxassetid://8539981424'
+            skyobj.SkyboxRt = 'rbxassetid://8539980766'
+            skyobj.SkyboxUp = 'rbxassetid://8539981085'
+			skyobj.MoonAngularSize = 0
+            skyobj.SunAngularSize = 0
+            skyobj.StarCount = 3e3
+		end,
+		Galaxy = function()
+            skyobj.SkyboxBk = 'rbxassetid://159454299'
+            skyobj.SkyboxDn = 'rbxassetid://159454296'
+            skyobj.SkyboxFt = 'rbxassetid://159454293'
+            skyobj.SkyboxLf = 'rbxassetid://159454293'
+            skyobj.SkyboxRt = 'rbxassetid://159454293'
+            skyobj.SkyboxUp = 'rbxassetid://159454288'
+			skyobj.SunAngularSize = 0
+		end,
+		BetterNight = function()
+			skyobj.SkyboxBk = 'rbxassetid://155629671'
+            skyobj.SkyboxDn = 'rbxassetid://12064152'
+            skyobj.SkyboxFt = 'rbxassetid://155629677'
+            skyobj.SkyboxLf = 'rbxassetid://155629662'
+            skyobj.SkyboxRt = 'rbxassetid://155629666'
+            skyobj.SkyboxUp = 'rbxassetid://155629686'
+			skyobj.SunAngularSize = 0
+		end,
+		BetterNight2 = function()
+			skyobj.SkyboxBk = 'rbxassetid://248431616'
+            skyobj.SkyboxDn = 'rbxassetid://248431677'
+            skyobj.SkyboxFt = 'rbxassetid://248431598'
+            skyobj.SkyboxLf = 'rbxassetid://248431686'
+            skyobj.SkyboxRt = 'rbxassetid://248431611'
+            skyobj.SkyboxUp = 'rbxassetid://248431605'
+			skyobj.StarCount = 3000
+		end,
+		MagentaOrange = function()
+			skyobj.SkyboxBk = 'rbxassetid://566616113'
+            skyobj.SkyboxDn = 'rbxassetid://566616232'
+            skyobj.SkyboxFt = 'rbxassetid://566616141'
+            skyobj.SkyboxLf = 'rbxassetid://566616044'
+            skyobj.SkyboxRt = 'rbxassetid://566616082'
+            skyobj.SkyboxUp = 'rbxassetid://566616187'
+			skyobj.StarCount = 3000
+		end,
+		Purple2 = function()
+			skyobj.SkyboxBk = 'rbxassetid://8107841671'
+			skyobj.SkyboxDn = 'rbxassetid://6444884785'
+			skyobj.SkyboxFt = 'rbxassetid://8107841671'
+			skyobj.SkyboxLf = 'rbxassetid://8107841671'
+			skyobj.SkyboxRt = 'rbxassetid://8107841671'
+			skyobj.SkyboxUp = 'rbxassetid://8107849791'
+			skyobj.SunTextureId = 'rbxassetid://6196665106'
+			skyobj.MoonTextureId = 'rbxassetid://6444320592'
+			skyobj.MoonAngularSize = 0
+		end,
+		Galaxy2 = function()
+			skyobj.SkyboxBk = 'rbxassetid://14164368678'
+			skyobj.SkyboxDn = 'rbxassetid://14164386126'
+			skyobj.SkyboxFt = 'rbxassetid://14164389230'
+			skyobj.SkyboxLf = 'rbxassetid://14164398493'
+			skyobj.SkyboxRt = 'rbxassetid://14164402782'
+			skyobj.SkyboxUp = 'rbxassetid://14164405298'
+			skyobj.SunTextureId = 'rbxassetid://8281961896'
+			skyobj.MoonTextureId = 'rbxassetid://6444320592'
+			skyobj.SunAngularSize = 0
+			skyobj.MoonAngularSize = 0
+		end,
+		Pink = function()
+		skyobj.SkyboxBk = 'rbxassetid://271042516'
+		skyobj.SkyboxDn = 'rbxassetid://271077243'
+		skyobj.SkyboxFt = 'rbxassetid://271042556'
+		skyobj.SkyboxLf = 'rbxassetid://271042310'
+		skyobj.SkyboxRt = 'rbxassetid://271042467'
+		skyobj.SkyboxUp = 'rbxassetid://271077958'
+	end,
+	Purple3 = function()
+		skyobj.SkyboxBk = 'rbxassetid://433274085'
+		skyobj.SkyboxDn = 'rbxassetid://433274194'
+		skyobj.SkyboxFt = 'rbxassetid://433274131'
+		skyobj.SkyboxLf = 'rbxassetid://433274370'
+		skyobj.SkyboxRt = 'rbxassetid://433274429'
+		skyobj.SkyboxUp = 'rbxassetid://433274285'
+	end,
+	DarkishPink = function()
+		skyobj.SkyboxBk = 'rbxassetid://570555736'
+		skyobj.SkyboxDn = 'rbxassetid://570555964'
+		skyobj.SkyboxFt = 'rbxassetid://570555800'
+		skyobj.SkyboxLf = 'rbxassetid://570555840'
+		skyobj.SkyboxRt = 'rbxassetid://570555882'
+		skyobj.SkyboxUp = 'rbxassetid://570555929'
+	end,
+	Space = function()
+		skyobj.MoonAngularSize = 0
+		skyobj.SunAngularSize = 0
+		skyobj.SkyboxBk = 'rbxassetid://166509999'
+		skyobj.SkyboxDn = 'rbxassetid://166510057'
+		skyobj.SkyboxFt = 'rbxassetid://166510116'
+		skyobj.SkyboxLf = 'rbxassetid://166510092'
+		skyobj.SkyboxRt = 'rbxassetid://166510131'
+		skyobj.SkyboxUp = 'rbxassetid://166510114'
+	end,
+	Galaxy3 = function()
+		skyobj.MoonAngularSize = 0
+		skyobj.SunAngularSize = 0
+		skyobj.SkyboxBk = 'rbxassetid://14543264135'
+		skyobj.SkyboxDn = 'rbxassetid://14543358958'
+		skyobj.SkyboxFt = 'rbxassetid://14543257810'
+		skyobj.SkyboxLf = 'rbxassetid://14543275895'
+		skyobj.SkyboxRt = 'rbxassetid://14543280890'
+		skyobj.SkyboxUp = 'rbxassetid://14543371676'
+	end,
+	NetherWorld = function()
+		skyobj.MoonAngularSize = 0
+		skyobj.SunAngularSize = 0
+		skyobj.SkyboxBk = 'rbxassetid://14365019002'
+		skyobj.SkyboxDn = 'rbxassetid://14365023350'
+		skyobj.SkyboxFt = 'rbxassetid://14365018399'
+		skyobj.SkyboxLf = 'rbxassetid://14365018705'
+		skyobj.SkyboxRt = 'rbxassetid://14365018143'
+		skyobj.SkyboxUp = 'rbxassetid://14365019327'
+	end,
+	Nebula = function()
+		skyobj.MoonAngularSize = 0
+		skyobj.SunAngularSize = 0
+		skyobj.SkyboxBk = 'rbxassetid://5260808177'
+		skyobj.SkyboxDn = 'rbxassetid://5260653793'
+		skyobj.SkyboxFt = 'rbxassetid://5260817288'
+		skyobj.SkyboxLf = 'rbxassetid://5260800833'
+		skyobj.SkyboxRt = 'rbxassetid://5260811073'
+		skyobj.SkyboxUp = 'rbxassetid://5260824661'
+	end,
+	PurpleNight = function()
+		skyobj.MoonAngularSize = 0
+		skyobj.SunAngularSize = 0
+		skyobj.SkyboxBk = 'rbxassetid://5260808177'
+		skyobj.SkyboxDn = 'rbxassetid://5260653793'
+		skyobj.SkyboxFt = 'rbxassetid://5260817288'
+		skyobj.SkyboxLf = 'rbxassetid://5260800833'
+		skyobj.SkyboxRt = 'rbxassetid://5260800833'
+		skyobj.SkyboxUp = 'rbxassetid://5084576400'
+	end,
+	Aesthetic = function()
+		skyobj.MoonAngularSize = 0
+		skyobj.SunAngularSize = 0
+		skyobj.SkyboxBk = 'rbxassetid://1417494030'
+		skyobj.SkyboxDn = 'rbxassetid://1417494146'
+		skyobj.SkyboxFt = 'rbxassetid://1417494253'
+		skyobj.SkyboxLf = 'rbxassetid://1417494402'
+		skyobj.SkyboxRt = 'rbxassetid://1417494499'
+		skyobj.SkyboxUp = 'rbxassetid://1417494643'
+	end,
+	Aesthetic2 = function()
+		skyobj.MoonAngularSize = 0
+		skyobj.SunAngularSize = 0
+		skyobj.SkyboxBk = 'rbxassetid://600830446'
+		skyobj.SkyboxDn = 'rbxassetid://600831635'
+		skyobj.SkyboxFt = 'rbxassetid://600832720'
+		skyobj.SkyboxLf = 'rbxassetid://600886090'
+		skyobj.SkyboxRt = 'rbxassetid://600833862'
+		skyobj.SkyboxUp = 'rbxassetid://600835177'
+	end,
+	Pastel = function()
+		skyobj.SunAngularSize = 0
+		skyobj.MoonAngularSize = 0
+		skyobj.SkyboxBk = 'rbxassetid://2128458653'
+		skyobj.SkyboxDn = 'rbxassetid://2128462480'
+		skyobj.SkyboxFt = 'rbxassetid://2128458653'
+		skyobj.SkyboxLf = 'rbxassetid://2128462027'
+		skyobj.SkyboxRt = 'rbxassetid://2128462027'
+		skyobj.SkyboxUp = 'rbxassetid://2128462236'
+	end,
+	PurpleClouds = function()
+		skyobj.SkyboxBk = 'rbxassetid://570557514'
+		skyobj.SkyboxDn = 'rbxassetid://570557775'
+		skyobj.SkyboxFt = 'rbxassetid://570557559'
+		skyobj.SkyboxLf = 'rbxassetid://570557620'
+		skyobj.SkyboxRt = 'rbxassetid://570557672'
+		skyobj.SkyboxUp = 'rbxassetid://570557727'
+	end,
+	BetterSky = function()
+		if skyobj then
+		skyobj.SkyboxBk = 'rbxassetid://591058823'
+		skyobj.SkyboxDn = 'rbxassetid://591059876'
+		skyobj.SkyboxFt = 'rbxassetid://591058104'
+		skyobj.SkyboxLf = 'rbxassetid://591057861'
+		skyobj.SkyboxRt = 'rbxassetid://591057625'
+		skyobj.SkyboxUp = 'rbxassetid://591059642'
+		end
+	end,
+	BetterNight3 = function()
+		skyobj.MoonTextureId = 'rbxassetid://1075087760'
+		skyobj.SkyboxBk = 'rbxassetid://2670643994'
+		skyobj.SkyboxDn = 'rbxassetid://2670643365'
+		skyobj.SkyboxFt = 'rbxassetid://2670643214'
+		skyobj.SkyboxLf = 'rbxassetid://2670643070'
+		skyobj.SkyboxRt = 'rbxassetid://2670644173'
+		skyobj.SkyboxUp = 'rbxassetid://2670644331'
+		skyobj.MoonAngularSize = 1.5
+		skyobj.StarCount = 500
+	end,
+	Orange = function()
+		skyobj.SkyboxBk = 'rbxassetid://150939022'
+		skyobj.SkyboxDn = 'rbxassetid://150939038'
+		skyobj.SkyboxFt = 'rbxassetid://150939047'
+		skyobj.SkyboxLf = 'rbxassetid://150939056'
+		skyobj.SkyboxRt = 'rbxassetid://150939063'
+		skyobj.SkyboxUp = 'rbxassetid://150939082'
+	end,
+	DarkMountains = function()
+		skyobj.SkyboxBk = 'rbxassetid://5098814730'
+		skyobj.SkyboxDn = 'rbxassetid://5098815227'
+		skyobj.SkyboxFt = 'rbxassetid://5098815653'
+		skyobj.SkyboxLf = 'rbxassetid://5098816155'
+		skyobj.SkyboxRt = 'rbxassetid://5098820352'
+		skyobj.SkyboxUp = 'rbxassetid://5098819127'
+	end,
+	FlamingSunset = function()
+		skyobj.SkyboxBk = 'rbxassetid://415688378'
+		skyobj.SkyboxDn = 'rbxassetid://415688193'
+		skyobj.SkyboxFt = 'rbxassetid://415688242'
+		skyobj.SkyboxLf = 'rbxassetid://415688310'
+		skyobj.SkyboxRt = 'rbxassetid://415688274'
+		skyobj.SkyboxUp = 'rbxassetid://415688354'
+	end,
+	NewYork = function()
+		skyobj.SkyboxBk = 'rbxassetid://11333973069'
+		skyobj.SkyboxDn = 'rbxassetid://11333969768'
+		skyobj.SkyboxFt = 'rbxassetid://11333964303'
+		skyobj.SkyboxLf = 'rbxassetid://11333971332'
+		skyobj.SkyboxRt = 'rbxassetid://11333982864'
+		skyobj.SkyboxUp = 'rbxassetid://11333967970'
+		skyobj.SunAngularSize = 0
+	end,
+	Aesthetic3 = function()
+		skyobj.SkyboxBk = 'rbxassetid://151165214'
+		skyobj.SkyboxDn = 'rbxassetid://151165197'
+		skyobj.SkyboxFt = 'rbxassetid://151165224'
+		skyobj.SkyboxLf = 'rbxassetid://151165191'
+		skyobj.SkyboxRt = 'rbxassetid://151165206'
+		skyobj.SkyboxUp = 'rbxassetid://151165227'
+	end,
+	FakeClouds = function()
+		skyobj.SkyboxBk = 'rbxassetid://8496892810'
+		skyobj.SkyboxDn = 'rbxassetid://8496896250'
+		skyobj.SkyboxFt = 'rbxassetid://8496892810'
+		skyobj.SkyboxLf = 'rbxassetid://8496892810'
+		skyobj.SkyboxRt = 'rbxassetid://8496892810'
+		skyobj.SkyboxUp = 'rbxassetid://8496897504'
+		skyobj.SunAngularSize = 0
+	end,
+	LunarNight = function()
+		skyobj.SkyboxBk = 'rbxassetid://187713366'
+		skyobj.SkyboxDn = 'rbxassetid://187712428'
+		skyobj.SkyboxFt = 'rbxassetid://187712836'
+		skyobj.SkyboxLf = 'rbxassetid://187713755'
+		skyobj.SkyboxRt = 'rbxassetid://187714525'
+		skyobj.SkyboxUp = 'rbxassetid://187712111'
+		skyobj.SunAngularSize = 0
+		skyobj.StarCount = 0
+	end,
+	--moon
+	--https://cdn.discordapp.com/attachments/1180128067239292949/1184266746992009266/mon.png?ex=658b595b&is=6578e45b&hm=fc826fbd3a45f8b643305e6203d011ac8b65c876ccdaab6e9882799585e0ae38&
+	PurpleNebula = function()
+		skyobj.SkyboxBk = 'rbxassetid://151165214'
+		skyobj.SkyboxDn = 'rbxassetid://151165197'
+		skyobj.SkyboxFt = 'rbxassetid://151165224'
+		skyobj.SkyboxLf = 'rbxassetid://151165191'
+		skyobj.SkyboxRt = 'rbxassetid://151165206'
+		skyobj.SkyboxUp = 'rbxassetid://151165227'
+	end,
+	NightSky = function()
+		skyobj.SkyboxBk = 'rbxassetid://12064107'
+		skyobj.SkyboxDn = 'rbxassetid://12064152'
+		skyobj.SkyboxFt = 'rbxassetid://12064121'
+		skyobj.SkyboxLf = 'rbxassetid://12063984'
+		skyobj.SkyboxRt = 'rbxassetid://12064115'
+		skyobj.SkyboxUp = 'rbxassetid://12064131'
+	end,
+	PinkDaylight = function()
+		skyobj.SkyboxBk = 'rbxassetid://271042516'
+		skyobj.SkyboxDn = 'rbxassetid://271077243'
+		skyobj.SkyboxFt = 'rbxassetid://271042556'
+		skyobj.SkyboxLf = 'rbxassetid://271042310'
+		skyobj.SkyboxRt = 'rbxassetid://271042467'
+		skyobj.SkyboxUp = 'rbxassetid://271077958'
+	end,
+	
+	MorningGlow = function()
+		skyobj.SkyboxBk = 'rbxassetid://271042516'
+		skyobj.SkyboxDn = 'rbxassetid://271077243'
+		skyobj.SkyboxFt = 'rbxassetid://271042556'
+		skyobj.SkyboxLf = 'rbxassetid://271042310'
+		skyobj.SkyboxRt = 'rbxassetid://271042467'
+		skyobj.SkyboxUp = 'rbxassetid://271077958'
+	end,
+	SettingSun = function()
+		skyobj.SkyboxBk = 'rbxassetid://626460377'
+		skyobj.SkyboxDn = 'rbxassetid://626460216'
+		skyobj.SkyboxFt = 'rbxassetid://626460513'
+		skyobj.SkyboxLf = 'rbxassetid://626473032'
+		skyobj.SkyboxRt = 'rbxassetid://626458639'
+		skyobj.SkyboxUp = 'rbxassetid://626460625'
+	end,
+	FadeBlue = function()
+		skyobj.SkyboxBk = 'rbxassetid://153695414'
+		skyobj.SkyboxDn = 'rbxassetid://153695352'
+		skyobj.SkyboxFt = 'rbxassetid://153695452'
+		skyobj.SkyboxLf = 'rbxassetid://153695320'
+		skyobj.SkyboxRt = 'rbxassetid://153695383'
+		skyobj.SkyboxUp = 'rbxassetid://153695471'
+	end,
+	ElegantMorning = function()
+		skyobj.SkyboxBk = 'rbxassetid://153767241'
+		skyobj.SkyboxDn = 'rbxassetid://153767216'
+		skyobj.SkyboxFt = 'rbxassetid://153767266'
+		skyobj.SkyboxLf = 'rbxassetid://153767200'
+		skyobj.SkyboxRt = 'rbxassetid://153767231'
+		skyobj.SkyboxUp = 'rbxassetid://153767288'
+	end,
+	Neptune = function()
+		skyobj.SkyboxBk = 'rbxassetid://218955819'
+		skyobj.SkyboxDn = 'rbxassetid://218953419'
+		skyobj.SkyboxFt = 'rbxassetid://218954524'
+		skyobj.SkyboxLf = 'rbxassetid://218958493'
+		skyobj.SkyboxRt = 'rbxassetid://218957134'
+		skyobj.SkyboxUp = 'rbxassetid://218950090'
+	end,
+	Redshift = function()
+		skyobj.SkyboxBk = 'rbxassetid://401664839'
+		skyobj.SkyboxDn = 'rbxassetid://401664862'
+		skyobj.SkyboxFt = 'rbxassetid://401664960'
+		skyobj.SkyboxLf = 'rbxassetid://401664881'
+		skyobj.SkyboxRt = 'rbxassetid://401664901'
+		skyobj.SkyboxUp = 'rbxassetid://401664936'
+	end,
+	AestheticNight = function()
+		skyobj.SkyboxBk = 'rbxassetid://1045964490'
+		skyobj.SkyboxDn = 'rbxassetid://1045964368'
+		skyobj.SkyboxFt = 'rbxassetid://1045964655'
+		skyobj.SkyboxLf = 'rbxassetid://1045964655'
+		skyobj.SkyboxRt = 'rbxassetid://1045964655'
+		skyobj.SkyboxUp = 'rbxassetid://1045962969'
+	end,
+	PitchDark = function()
+		skyobj.StarCount = 0
+		oldtime = lightingService.TimeOfDay
+		lightingService.TimeOfDay = '00:00:00'
+		table.insert(Atmosphere.Connections, lightingService:GetPropertyChangedSignal('TimeOfDay'):Connect(function()
+			skyobj.StarCount = 0
+			lightingService.TimeOfDay = '00:00:00'
+		end))
+	end,
+  Nebula2 = function()
+		skyobj.MoonAngularSize = 0
+		skyobj.SunAngularSize = 0
+		skyobj.SkyboxBk = 'rbxassetid://16932794531'
+		skyobj.SkyboxDn = 'rbxassetid://16932797813'
+		skyobj.SkyboxFt = 'rbxassetid://16932800523'
+		skyobj.SkyboxLf = 'rbxassetid://16932803722'
+		skyobj.SkyboxRt = 'rbxassetid://16932806825'
+		skyobj.SkyboxUp = 'rbxassetid://16932810138'
+	end,
+	Nebula3 = function()
+		skyobj.MoonAngularSize = 0
+		skyobj.SunAngularSize = 0
+		skyobj.SkyboxBk = 'rbxassetid://17839210699'
+		skyobj.SkyboxDn = 'rbxassetid://17839215896'
+		skyobj.SkyboxFt = 'rbxassetid://17839218166'
+		skyobj.SkyboxLf = 'rbxassetid://17839220800'
+		skyobj.SkyboxRt = 'rbxassetid://17839223605'
+		skyobj.SkyboxUp = 'rbxassetid://17839226876'
+	end,
+	Nebula4 = function()
+		skyobj.MoonAngularSize = 0
+		skyobj.SunAngularSize = 0
+		skyobj.SkyboxBk = 'rbxassetid://17103618635'
+		skyobj.SkyboxDn = 'rbxassetid://17103622190'
+		skyobj.SkyboxFt = 'rbxassetid://17103624898'
+		skyobj.SkyboxLf = 'rbxassetid://17103628153'
+		skyobj.SkyboxRt = 'rbxassetid://17103636666'
+		skyobj.SkyboxUp = 'rbxassetid://17103639457'
+	end,
+	NewYork = function()
+		skyobj.SkyboxBk = 'rbxassetid://11333973069'
+		skyobj.SkyboxDn = 'rbxassetid://11333969768'
+		skyobj.SkyboxFt = 'rbxassetid://11333964303'
+		skyobj.SkyboxLf = 'rbxassetid://11333971332'
+		skyobj.SkyboxRt = 'rbxassetid://11333982864'
+		skyobj.SkyboxUp = 'rbxassetid://11333967970'
+		skyobj.SunAngularSize = 0
+	end,
+	FakeClouds = function()
+		skyobj.SkyboxBk = 'rbxassetid://8496892810'
+		skyobj.SkyboxDn = 'rbxassetid://8496896250'
+		skyobj.SkyboxFt = 'rbxassetid://8496892810'
+		skyobj.SkyboxLf = 'rbxassetid://8496892810'
+		skyobj.SkyboxRt = 'rbxassetid://8496892810'
+		skyobj.SkyboxUp = 'rbxassetid://8496897504'
+		skyobj.SunAngularSize = 0
+	end,
+	LunarNight = function()
+		skyobj.SkyboxBk = 'rbxassetid://187713366'
+		skyobj.SkyboxDn = 'rbxassetid://187712428'
+		skyobj.SkyboxFt = 'rbxassetid://187712836'
+		skyobj.SkyboxLf = 'rbxassetid://187713755'
+		skyobj.SkyboxRt = 'rbxassetid://187714525'
+		skyobj.SkyboxUp = 'rbxassetid://187712111'
+		skyobj.SunAngularSize = 0
+		skyobj.StarCount = 0
+	end,
+	FPSBoost = function()
+		skyobj.SkyboxBk = 'rbxassetid://11457548274'
+		skyobj.SkyboxDn = 'rbxassetid://11457548274'
+		skyobj.SkyboxFt = 'rbxassetid://11457548274'
+		skyobj.SkyboxLf = 'rbxassetid://11457548274'
+		skyobj.SkyboxRt = 'rbxassetid://11457548274'
+		skyobj.SkyboxUp = 'rbxassetid://11457548274'
+		skyobj.SunAngularSize = 0
+		skyobj.StarCount = 3000
+	end,
+	PurplePlanet = function()
+		skyobj.SkyboxBk = 'rbxassetid://16262356578'
+		skyobj.SkyboxDn = 'rbxassetid://16262358026'
+		skyobj.SkyboxFt = 'rbxassetid://16262360469'
+		skyobj.SkyboxLf = 'rbxassetid://16262362003'
+		skyobj.SkyboxRt = 'rbxassetid://16262363873'
+		skyobj.SkyboxUp = 'rbxassetid://16262366016'
+		skyobj.SunAngularSize = 21
+		skyobj.StarCount = 3000
+	end
+}
+
+Atmosphere = visual.Api.CreateOptionsButton({
+		Name = 'Atmosphere',
+		ExtraText = function()
+			return AtmosphereMethod.Value ~= 'Custom' and AtmosphereMethod.Value or ''
+		end,
+		Function = function(callback)
+			if callback then 
+				for i,v in next, (lightingService:GetChildren()) do 
+					if v:IsA('PostEffect') or v:IsA('Sky') then 
+						table.insert(oldobjects, v)
+						v.Parent = game
+					end
+				end
+				skyobj = Instance.new('Sky')
+				skyobj.Parent = lightingService
+				skyatmosphereobj = Instance.new('ColorCorrectionEffect')
+			    skyatmosphereobj.TintColor = Color3.fromHSV(SkyColor.Hue, SkyColor.Sat, SkyColor.Value)
+			    skyatmosphereobj.Parent = lightingService
+				task.spawn(themetable[AtmosphereMethod.Value])
+			else
+				if skyobj then skyobj:Destroy() end
+				if skyatmosphereobj then skyatmosphereobj:Destroy() end
+				for i,v in next, (oldobjects) do 
+					v.Parent = lightingService
+				end
+				if oldtime then 
+					lightingService.TimeOfDay = oldtime
+					oldtime = nil
+				end
+				table.clear(oldobjects)
+			end
+		end
+	})
+	local themetab = {'Custom'}
+	for i,v in themetable do 
+		table.insert(themetab, i)
+	end
+	AtmosphereMethod = Atmosphere.CreateDropdown({
+		Name = 'Mode',
+		List = themetab,
+		Function = function(val)
+			task.spawn(function()
+			if Atmosphere.Enabled then 
+				Atmosphere.ToggleButton(false)
+				if val == 'Custom' then task.wait() end -- why is this needed :bruh:
+				Atmosphere.ToggleButton(false)
+			end
+			for i,v in skythemeobjects do 
+				v.Object.Visible = AtmosphereMethod.Value == 'Custom'
+			end
+		    end)
+		end
+	})
+	SkyUp = Atmosphere.CreateTextBox({
+		Name = 'SkyUp',
+		TempText = 'Sky Top ID',
+		FocusLost = function(enter) 
+			if Atmosphere.Enabled then 
+				Atmosphere.ToggleButton(false)
+				Atmosphere.ToggleButton(false)
+			end
+		end
+	})
+	SkyDown = Atmosphere.CreateTextBox({
+		Name = 'SkyDown',
+		TempText = 'Sky Bottom ID',
+		FocusLost = function(enter) 
+			if Atmosphere.Enabled then 
+				Atmosphere.ToggleButton(false)
+				Atmosphere.ToggleButton(false)
+			end
+		end
+	})
+	SkyLeft = Atmosphere.CreateTextBox({
+		Name = 'SkyLeft',
+		TempText = 'Sky Left ID',
+		FocusLost = function(enter) 
+			if Atmosphere.Enabled then 
+				Atmosphere.ToggleButton(false)
+				Atmosphere.ToggleButton(false)
+			end
+		end
+	})
+	SkyRight = Atmosphere.CreateTextBox({
+		Name = "SkyRight",
+		TempText = "Sky Right ID",
+		FocusLost = function(enter)
+			if Atmosphere.Enabled then
+				Atmosphere.ToggleButton(false)
+				Atmosphere.ToggleButton(false)
+			end
+		end
+	})
+	SkyFront = Atmosphere.CreateTextBox({
+		Name = "SkyFront",
+		TempText = "Sky Front ID",
+		FocusLost = function(enter)
+			if Atmosphere.Enabled then
+				Atmosphere.ToggleButton(false)
+				Atmosphere.ToggleButton(false)
+			end
+		end
+	})
+	SkyBack = Atmosphere.CreateTextBox({
+		Name = "SkyBack",
+		TempText = "Sky Back ID",
+		FocusLost = function(enter)
+			if Atmosphere.Enabled then
+				Atmosphere.ToggleButton(false)
+				Atmosphere.ToggleButton(false)
+			end
+		end
+	})
+	SkySun = Atmosphere.CreateTextBox({
+		Name = "SkySun",
+		TempText = "Sky Sun ID",
+		FocusLost = function(enter)
+			if Atmosphere.Enabled then
+				Atmosphere.ToggleButton(false)
+				Atmosphere.ToggleButton(false)
+			end
+		end
+	})
+	SkyMoon = Atmosphere.CreateTextBox({
+		Name = "SkyMoon",
+		TempText = "Sky Moon ID",
+		FocusLost = function(enter)
+			if Atmosphere.Enabled then
+				Atmosphere.ToggleButton(false)
+				Atmosphere.ToggleButton(false)
+			end
+		end
+	})
+	SkyColor = Atmosphere.CreateColorSlider({
+		Name = "Color",
+		Function = function(h, s, v)
+			if skyatmosphereobj then
+				skyatmosphereobj.TintColor = Color3.fromHSV(SkyColor.Hue, SkyColor.Sat, SkyColor.Value)
+			end
+		end
+	})
 end)
 
 run(function()
@@ -6030,7 +6786,7 @@ run(function()
 	end
 
 
-	Disabler = GuiLibrary.ObjectsThatCanBeSaved.UtilityWindow.Api.CreateOptionsButton({
+	Disabler = utility.Api.CreateOptionsButton({
 		Name = "ClientKickDisabler",
 		Function = function(callback)
 			if callback then
@@ -6065,6 +6821,295 @@ run(function()
 		end
 	})
 end)
+
+run(function()
+	local guifonts = {};
+	local guifontwhite = {};
+	local guifontcustom = {};
+	local guifont = {Value = 'Gotham'};
+	local toggledtasks = {};
+	guifonts = visual.Api.CreateOptionsButton({
+		Name = 'GUIFonts',
+		HoverText = 'Change the fonts of the GUI',
+		Function = function(calling)
+			if calling then
+				if not shared.VapeFullyLoaded then 
+					repeat task.wait() until shared.VapeFullyLoaded
+				end
+				for i,v in next, GuiLibrary.ObjectsThatCanBeSaved do 
+					if v.Type == 'OptionsButton' then 
+						v.Object.ButtonText.Font = guifont.Value;
+						if guifontwhite.Enabled then 
+							table.insert(toggledtasks, task.spawn(function()
+								repeat 
+									if v.Api.Enabled and guifontwhite.Enabled then 
+										v.Object.ButtonText.TextColor3 = Color3.fromRGB(255, 255, 255);
+									end
+									task.wait()
+								until false
+							end));
+						end
+					end
+				end
+			else 
+				for i,v in toggledtasks do 
+					pcall(task.cancel, v);
+				end
+				table.clear(toggledtasks);	
+			end
+		end
+	})
+	guifont = guifonts.CreateDropdown({
+		Name = 'Font',
+		List = GetEnumItems('Font'),
+		Function = function()
+			if guifonts.Enabled then 
+				guifonts.ToggleButton()
+				guifonts.ToggleButton()
+			end
+		end
+	})
+	guifontwhite = guifonts.CreateToggle({
+		Name = 'White Text',
+		Function = function()
+			if guifonts.Enabled then 
+				guifonts.ToggleButton()
+				guifonts.ToggleButton()
+			end
+		end
+	})
+end)
+run(function()
+    local SecurityFeatures = {Enabled = false}
+
+    local old
+    local oldwarn
+    SecurityFeatures = GuiLibrary.ObjectsThatCanBeSaved.UtilityWindow.Api.CreateOptionsButton({
+        Name = "DetectionDisabler",
+        Function = function(callback)
+            if callback then
+                oldgame = hookmetamethod(game, '__namecall', function(self, ...) -- credits to SystemXVoid
+                    if checkcaller() then 
+                        return oldgame(self, ...)
+                    end;
+                    if getnamecallmethod():lower() == 'kick' then 
+                        return
+                    end;
+                    if typeof(self) == 'Instance' and self.ClassName:lower():find('remote') and (tostring(self):lower():find('tps') or tostring(self):lower():find('cps') or tostring(self):lower():find('head')) then 
+                        return
+                    end;
+                    return oldgame(self, ...)
+                end);
+                oldwarn = hookfunction(warn, function(message, ...)
+                    if not checkcaller() then 
+                        return 
+                    end;
+                    return oldwarn(message, ...)
+                end) -- credits to SystemXVoid
+            else
+                oldgame = nil
+                oldwarn = nil
+            end
+        end,
+        HoverText = "Helps prevent detections",
+        ExtraText = function()
+            return "Hook"
+        end
+    })
+end)
+run(function()
+	local PlrsList = {Value = ''}
+	local Players = game:GetService("Players")
+	local plrs = {}
+	local plrs2 = {}
+	for i,v in pairs(Players:GetChildren()) do
+		table.insert(plrs, Players:GetChildren()[i].Name)
+		plrs2[Players:GetChildren()[i].Name] = Players:GetChildren()[i]
+	end
+	Players.ChildRemoved:Connect(function(child)
+		for i,v in pairs(plrs) do
+			if plrs[i] == child.Name then table.remove(plrs, i) end
+		end
+		if plrs2[child.Name] then plrs2[child.Name] = nil end
+		PlrsList.List = plrs end)
+Players.ChildAdded:Connect(function(child)
+		if child then
+			if child.Name then
+				table.insert(plrs, child.Name)
+				plrs2[child.Name] = child
+			else warn("No child name found!") end
+		else warn("Unknown child") end
+	end)
+	GetHash = utility.Api.CreateOptionsButton({
+		Name = 'GetHash',
+		HoverText = 'Get the whitelist hash of somebody in the server',
+		Function = function(calling)
+			if calling then 
+				local player = plrs2[PlrsList.Value]
+				local vapewl = shared.vapewhitelist
+				local plrName = player.Name
+				local plrUserId = player.UserId
+				local hash
+				if plrName and plrUserId then
+					hash = vapewl:hash(plrName..plrUserId)
+					if hash then setclipboard(hash) warningNotification("GetHash", "Successfully gotten the hash of plr: "..plrName.." Copied to clipboard!", 5) end
+				else
+					if plrName then else print("No plr name found!") end
+					if plrUserId then else print("No plruserid found!") end
+				end
+				GetHash["ToggleButton"](false)
+			end
+		end
+	})
+	PlrsList = GetHash.CreateDropdown({
+		Name = 'PlrsList',
+		List = plrs,
+		Function = function(plr)
+			if GetHash.Enabled then 
+				local player = plrs2[plr]
+				local vapewl = shared.vapewhitelist
+				local plrName = player.Name
+				local plrUserId = player.UserId
+				local hash
+				if plrName and plrUserId then
+					hash = vapewl:hash(plrName..plrUserId)
+					if hash then setclipboard(hash) warningNotification("GetHash", "Successfully gotten the hash of plr: "..plrName.." Copied to clipboard!", 5) end
+				else
+					if plrName then else print("No plr name found!") end
+					if plrUserId then else print("No plruserid found!") end
+				end
+			end
+		end
+	})
+end)
+
+
+run(function()
+    local FireEffect = {}
+    FireEffect.Enabled = false
+    FireEffect.Connections = {}
+    local FirePosition = {Value = 'Head'}
+    local FireFlame = {Value = 25}
+    local FireColor1 = {Hue = 0, Sat = 1, Value = 1}
+    local FireColor2 = {Hue = 0, Sat = 1, Value = 1}
+    local ishidden = false
+    local fireobject = nil
+
+    local function isAlive(player, alivecheck)
+        if not player then 
+            return false 
+        end
+        local humanoid = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
+        if alivecheck then
+            return humanoid and humanoid.Health > 0
+        end
+        return humanoid ~= nil
+    end
+
+    local function createfire()
+        if not isAlive(lplr, true) then 
+            repeat task.wait() until isAlive(lplr, true) or not FireEffect.Enabled 
+        end
+        if not FireEffect.Enabled then 
+            return 
+        end
+        if fireobject and fireobject.Parent then 
+            return 
+        end
+        local fire = Instance.new('Fire')
+        fire.Color = Color3.fromHSV(FireColor1.Hue, FireColor1.Sat, FireColor1.Value)
+        fire.SecondaryColor = Color3.fromHSV(FireColor2.Hue, FireColor2.Sat, FireColor2.Value)
+        fire.Heat = FireFlame.Value
+        fire.Parent = lplr.Character[FirePosition.Value]
+        fireobject = fire
+
+        table.insert(FireEffect.Connections, lplr.CharacterAdded:Connect(createfire))
+        table.insert(FireEffect.Connections, lplr.CharacterRemoving:Connect(function() ishidden = false end))
+        table.insert(FireEffect.Connections, gameCamera:GetPropertyChangedSignal('CFrame'):Connect(function()
+            if not fireobject or not isAlive(lplr, true) then 
+                return 
+            end
+            if (gameCamera.CFrame.Position - gameCamera.Focus.Position).Magnitude < 0.8 and fire.Parent then 
+                ishidden = true 
+                fire.Parent = game
+            else
+                ishidden = false
+                fire.Parent = lplr.Character[FirePosition.Value]
+            end
+        end))
+    end
+
+    local function updateFireEffect()
+        if FireEffect.Enabled then
+            if not fireobject or not fireobject.Parent then
+                createfire()
+            end
+            if fireobject and isAlive(lplr, true) then
+                fireobject.Color = Color3.fromHSV(FireColor1.Hue, FireColor1.Sat, FireColor1.Value)
+                fireobject.SecondaryColor = Color3.fromHSV(FireColor2.Hue, FireColor2.Sat, FireColor2.Value)
+                fireobject.Heat = FireFlame.Value
+                if not ishidden then
+                    fireobject.Parent = lplr.Character[FirePosition.Value]
+                end
+            end
+        end
+    end
+
+    FireEffect = GuiLibrary.ObjectsThatCanBeSaved.RenderWindow.Api.CreateOptionsButton({
+        Name = 'FireEffect',
+        HoverText = 'A client side fire effect for your character.',
+        Function = function(callback)
+            FireEffect.Enabled = callback
+            if callback then 
+                createfire()
+                RunLoops:BindToRenderStep("FireEffect", updateFireEffect)
+            else
+                if fireobject then 
+                    fireobject:Destroy() 
+                    fireobject = nil
+                end
+                for _, connection in ipairs(FireEffect.Connections) do
+                    connection:Disconnect()
+                end
+                FireEffect.Connections = {}
+                RunLoops:UnbindFromRenderStep("FireEffect")
+            end
+        end
+    })
+
+    FireColor1 = FireEffect.CreateColorSlider({
+        Name = 'Color',
+        Function = function(h, s, v)
+            FireColor1.Hue, FireColor1.Sat, FireColor1.Value = h, s, v
+        end
+    })
+
+    FireColor2 = FireEffect.CreateColorSlider({
+        Name = 'Second Color',
+        Function = function(h, s, v)
+            FireColor2.Hue, FireColor2.Sat, FireColor2.Value = h, s, v
+        end
+    })
+
+    FirePosition = FireEffect.CreateDropdown({
+        Name = 'Position',
+        List = {'Head', 'HumanoidRootPart'},
+        Function = function(value)
+            FirePosition.Value = value
+        end
+    })
+
+    FireFlame = FireEffect.CreateSlider({
+        Name = 'Flame',
+        Min = 1, 
+        Max = 25,
+        Default = 25,
+        Function = function(value) 
+            FireFlame.Value = value
+        end
+    })
+end)
+
 
 run(function()
 	local FPS = {}
