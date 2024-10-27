@@ -70,6 +70,7 @@ if shared.VapeExecuted then
 		["vape/assets/VapeLogo2.png"] = "rbxassetid://13350876307",
 		["vape/assets/VapeLogo4.png"] = "rbxassetid://13350877564"
 	}
+	if string.find(({identifyexecutor()})[1], 'Wave') or string.find(({identifyexecutor()})[1], 'macsploit is the best fucking exploit ever made.') or string.find(({identifyexecutor()})[1], 'Calibri') or string.find(({identifyexecutor()})[1], 'Delta') or string.find(({identifyexecutor()})[1], 'Fluxus') or string.find(({identifyexecutor()})[1], 'Hydrogen') or string.find(({identifyexecutor()})[1], 'Trigon') or string.find(({identifyexecutor()})[1], 'Arceus X')) then getcustomasset = function(location) return vapeAssetTable[location] or "" end end
 	local getcustomasset = getsynasset or getcustomasset or function(location) return vapeAssetTable[location] or "" end
 	local customassetcheck = (getsynasset or getcustomasset) and true
 	local requestfunc = syn and syn.request or http and http.request or http_request or fluxus and fluxus.request or request or function() end
