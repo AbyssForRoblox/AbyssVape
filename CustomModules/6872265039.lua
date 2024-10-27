@@ -1,9 +1,13 @@
+--This watermark is used to delete the file if its cached, remove it to make the file persist after commits.
 --[[
 	Credits
 	Infinite Yield - Blink
 	Please notify me if you need credits
 ]]
 local GuiLibrary = shared.GuiLibrary
+local abyssStore = {
+	LobbyTitles = {}
+}
 local players = game:GetService("Players")
 local textservice = game:GetService("TextService")
 local repstorage = game:GetService("ReplicatedStorage")
@@ -149,6 +153,14 @@ end
 local function runcode(func)
 	func()
 end
+local function run(func)
+	func()
+end
+local function runFunction(func)
+	func()
+end
+
+
 
 local function betterfind(tab, obj)
 	for i,v in pairs(tab) do
@@ -292,6 +304,13 @@ local function friendCheck(plr, recolor)
 	return nil
 end
 
+local combat = GuiLibrary.ObjectsThatCanBeSaved.CombatWindow
+local blatant = GuiLibrary.ObjectsThatCanBeSaved.BlatantWindow
+local visual = GuiLibrary.ObjectsThatCanBeSaved.RenderWindow
+local exploit = GuiLibrary.ObjectsThatCanBeSaved.ExploitWindow
+local utility = GuiLibrary.ObjectsThatCanBeSaved.UtilityWindow
+local world = GuiLibrary.ObjectsThatCanBeSaved.WorldWindow
+
 GuiLibrary["RemoveObject"]("SilentAimOptionsButton")
 GuiLibrary["RemoveObject"]("AutoClickerOptionsButton")
 GuiLibrary["RemoveObject"]("MouseTPOptionsButton")
@@ -315,7 +334,7 @@ teleportfunc = lplr.OnTeleport:Connect(function(State)
 end)
 
 local Sprint = {["Enabled"] = false}
-Sprint = GuiLibrary["ObjectsThatCanBeSaved"]["CombatWindow"]["Api"].CreateOptionsButton({
+Sprint = combat.Api.CreateOptionsButton({
 	["Name"] = "Sprint",
 	["Function"] = function(callback)
 		if callback then
@@ -354,7 +373,7 @@ runcode(function()
 
 	local flytog = false
 	local flytogtick = tick()
-	fly = GuiLibrary["ObjectsThatCanBeSaved"]["BlatantWindow"]["Api"].CreateOptionsButton({
+	fly = blatant.Api.CreateOptionsButton({
 		["Name"] = "Fly",
 		["Function"] = function(callback)
 			if callback then
@@ -439,7 +458,7 @@ local JoinQueue = {["Enabled"] = false}
 local JoinQueueTypes = {["Value"] = ""}
 local JoinQueueDelay = {["Value"] = 1}
 local firstqueue = true
-JoinQueue = GuiLibrary["ObjectsThatCanBeSaved"]["BlatantWindow"]["Api"].CreateOptionsButton({
+JoinQueue = blatant.Api.CreateOptionsButton({
 	["Name"] = "AutoQueue",
 	["Function"] = function(callback)
 		if callback then
@@ -535,7 +554,7 @@ runcode(function()
 		ownedkitsamount = ownedkitsamount + 1
 		ownedkits[bedwars["KitMeta"][v3.kitType].name:lower()] = v3.kitType
 	end
-	AutoKit = GuiLibrary["ObjectsThatCanBeSaved"]["UtilityWindow"]["Api"].CreateOptionsButton({
+	AutoKit = utility.Api.CreateOptionsButton({
 		["Name"] = "AutoKit",
 		["Function"] = function(callback)
 			if callback then
@@ -580,7 +599,7 @@ end)
 
 runcode(function()
 	local CameraFix = {["Enabled"] = false}
-	CameraFix = GuiLibrary["ObjectsThatCanBeSaved"]["RenderWindow"]["Api"].CreateOptionsButton({
+	CameraFix = visual.Api.CreateOptionsButton({
 		["Name"] = "CameraFix",
 		["Function"] = function(callback)
 			if callback then
@@ -612,7 +631,7 @@ runcode(function()
 	local speedtick = tick()
 	local bodyvelo
 	local raycastparameters = RaycastParams.new()
-	speed = GuiLibrary["ObjectsThatCanBeSaved"]["BlatantWindow"]["Api"].CreateOptionsButton({
+	speed = blatant.Api.CreateOptionsButton({
 		["Name"] = "Speed",
 		["Function"] = function(callback)
 			if callback then
@@ -1197,7 +1216,7 @@ runcode(function()
 		end
 	}
 
-	OldBedwars = GuiLibrary["ObjectsThatCanBeSaved"]["RenderWindow"]["Api"].CreateOptionsButton({
+	OldBedwars = visual.Api.CreateOptionsButton({
 		["Name"] = "GameTheme",
 		["Function"] = function(callback)
 			if callback then
@@ -1221,6 +1240,297 @@ runcode(function()
 		["List"] = {"Old", "Winter", "Halloween", "Valentines"}
 	})
 end)
+runcode(function()
+	local QueueCardMods = {}
+	local QueueCardGradientToggle = {}
+	local QueueCardGradient = {Hue = 0, Sat = 0, Value = 0}
+	local QueueCardGradient2 = {Hue = 0, Sat = 0, Value = 0}
+	local queuemodsgradients = {}
+	
+	local function patchQueueCard()
+		if lplr.PlayerGui:FindFirstChild('QueueApp') then 
+			if lplr.PlayerGui.QueueApp:WaitForChild('1'):IsA('Frame') then 
+				lplr.PlayerGui.QueueApp['1'].BackgroundColor3 = Color3.fromHSV(QueueCardGradient.Hue, QueueCardGradient.Sat, QueueCardGradient.Value)
+			end
+			if QueueCardGradientToggle.Enabled then 
+				lplr.PlayerGui.QueueApp['1'].BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+				local gradient = (lplr.PlayerGui.QueueApp['1']:FindFirstChildWhichIsA('UIGradient') or Instance.new('UIGradient', lplr.PlayerGui.QueueApp['1']))
+				gradient.Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.fromHSV(QueueCardGradient.Hue, QueueCardGradient.Sat, QueueCardGradient.Value)), ColorSequenceKeypoint.new(1, Color3.fromHSV(QueueCardGradient2.Hue, QueueCardGradient2.Sat, QueueCardGradient2.Value))})
+				table.insert(queuemodsgradients, gradient)
+			end
+		end
+	end
+	
+	QueueCardMods = visual.Api.CreateOptionsButton({
+		Name = 'QueueCardMods',
+		HoverText = 'Mods the QueueApp at the end of the game.',
+		Function = function(calling) 
+			if calling then 
+				patchQueueCard()
+				table.insert(QueueCardMods.Connections, lplr.PlayerGui.ChildAdded:Connect(patchQueueCard))
+			end
+		end
+	})
+	
+	QueueCardGradientToggle = QueueCardMods.CreateToggle({
+		Name = 'Gradient',
+		Function = function(calling)
+			pcall(function() QueueCardGradient2.Object.Visible = calling end) 
+		end
+	})
+	
+	QueueCardGradient = QueueCardMods.CreateColorSlider({
+		Name = 'Color',
+		Function = function()
+			pcall(patchQueueCard)
+		end
+	})
+	
+	QueueCardGradient2 = QueueCardMods.CreateColorSlider({
+		Name = 'Color 2',
+		Function = function()
+			pcall(patchQueueCard)
+		end
+	})
+end)
+run(function()
+	local AutoCrate = {Enabled = false}
+	local aut = 0
+	
+	AutoCrate = utility.Api.CreateOptionsButton({
+		Name = "AutoCrate",
+		HovorText = "Automatically open crates if you have any.",
+		Function = function(callback)
+			if callback then
+				RunLoops:BindToStepped("crate",1,function()
+					aut = aut + 1
+					if aut >= 45 then
+						local args = {
+							[1] = {
+								["crateType"] = "level_up_crate",
+								["altarId"] = 0
+							}
+						}
+						
+						game:GetService("ReplicatedStorage"):WaitForChild("rbxts_include"):WaitForChild("node_modules"):WaitForChild("@rbxts"):WaitForChild("net"):WaitForChild("out"):WaitForChild("_NetManaged"):WaitForChild("RewardCrate/SpawnRewardCrate"):FireServer(unpack(args))
+						
+						local args2 = {
+							[1] = {
+								["crateId"] = tostring(game.Workspace.CrateAltar_0:FindFirstChild("RewardCrate"):GetAttribute("crateId"))
+							}
+						}
+						
+						game:GetService("ReplicatedStorage"):WaitForChild("rbxts_include"):WaitForChild("node_modules"):WaitForChild("@rbxts"):WaitForChild("net"):WaitForChild("out"):WaitForChild("_NetManaged"):WaitForChild("RewardCrate/OpenRewardCrate"):FireServer(unpack(args2))
+						aut = 0
+					end
+				end)
+			else
+				RunLoops:UnbindFromStepped("crate")
+			end
+		end
+	})
+end)
+run(function()
+    local warp = utility.Api.CreateOptionsButton({
+        Name = "CrateTP",
+        Function = function(callback)
+            if callback then
+                local args = {
+                    [1] = "crate_altar"
+                }
+                game:GetService("ReplicatedStorage").rbxts_include.node_modules:FindFirstChild("@rbxts").net.out._NetManaged.LobbyRequestTeleportToLocation:FireServer(unpack(args))
+            end
+        end
+    })
+end)
+
+local function transformtitle(plr)
+	plr = plr or lplr
+	if abyssStore.LobbyTitles[plr] then
+		if abyssStore.LobbyTitles[plr].Connections then
+			for i,v in pairs(abyssStore.LobbyTitles[plr].Connections) do
+				pcall(function() v:Disconnect() end)
+			end
+			abyssStore.LobbyTitles[plr] = nil
+		end
+	end
+	abyssStore.LobbyTitles[plr] = abyssStore.LobbyTitles[plr] or {}
+	abyssStore.LobbyTitles[plr].Connections = abyssStore.LobbyTitles[plr].Connections or {}
+	local disconnectfunctions = function() end
+	if not isAlive(plr) then repeat task.wait() until isAlive(plr) end
+	local lobbytitle = plr.Character.Head:FindFirstChild("LobbyTitle")
+	if lobbytitle then
+		lobbytitle:Destroy()
+	end
+	local newtitlegui = Instance.new("BillboardGui")
+	newtitlegui.Name = "LobbyTitle"
+	newtitlegui.Size = UDim2.new(4, 0, 0.5, 0)
+	newtitlegui.StudsOffsetWorldSpace = Vector3.new(0, 2.5, 0)
+	newtitlegui.MaxDistance = 20
+	newtitlegui.Parent = plr.Character.Head
+	newtitlegui.DistanceUpperLimit = -1
+	newtitlegui.StudsOffset = Vector3.new(0, 0, 0)
+	newtitlegui.AlwaysOnTop = true
+	local newtitlelabel = Instance.new("TextLabel")
+	newtitlelabel.Name = "1"
+	newtitlelabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+	newtitlelabel.Text = "Abyss Sense"
+	newtitlelabel.TextScaled = true
+	newtitlelabel.Position = UDim2.new(0, 0, 0, 0)
+	newtitlelabel.Size = UDim2.new(1, 0, 1, 0)
+	newtitlelabel.BackgroundTransparency = 1
+	newtitlelabel.TextSize = 8
+	newtitlelabel.BorderSizePixel = 0
+	newtitlelabel.Font = Enum.Font.LuckiestGuy
+	newtitlelabel.Archivable = true
+	newtitlelabel.Parent = newtitlegui
+	table.insert(abyssStore.LobbyTitles[plr].Connections, plr.Character.Head.ChildAdded:Connect(function(v)
+		if v ~= newtitlegui and v.Name == "LobbyTitle" then
+			v:Destroy()
+		end
+	end))
+	table.insert(abyssStore.LobbyTitles[plr].Connections, plr.CharacterAdded:Connect(function()
+		for i,v in pairs(abyssStore.LobbyTitles[plr].Connections) do
+			pcall(function() v:Disconnect() end)
+		end
+		abyssStore.LobbyTitles[plr] = nil
+	end))
+	disconnectfunctions = function()
+		for i,v in pairs(abyssStore.LobbyTitles[plr].Connections) do
+			pcall(function() v:Disconnect() end)
+		end
+		abyssStore.LobbyTitles[plr] = nil
+		pcall(function() newtitlegui:Destroy() end)
+	end
+	return newtitlegui, disconnectfunctions
+end
+local isAlive = function() return false end
+isAlive = function(plr, nohealth) 
+	plr = plr or lplr
+	local alive = false
+	if plr.Character and plr.Character:FindFirstChildWhichIsA('Humanoid') and plr.Character.PrimaryPart and plr.Character:FindFirstChild('Head') then 
+		alive = true
+	end
+	local success, health = pcall(function() return plr.Character:FindFirstChildWhichIsA('Humanoid').Health end)
+	if success and health <= 0 and not nohealth then
+		alive = false
+	end
+	return alive
+end
+local function GetEnumItems(EnumType)
+	local items = {}
+	for i,v in pairs(Enum[EnumType]:GetEnumItems()) do
+		table.insert(items, v.Name)
+	end
+	return items
+end
+run(function()
+		local TitleCustomizer = {Enabled = false}
+		local TitleColorToggle = {Enabled = false}
+		local TextFontToggle = {Enabled = false}
+		local TitleStroke = {Enabled = false}
+		local TitleText = {Value = "AbyssSense"}
+		local TitleColor = {Hue = 0, Sat = 0, Value = 0}
+		local TitleFont = {Value = "LuckiestGuy"}
+		local titlemainframe, removefunction
+		local function setlobbytitle()
+			titlemainframe, removefunction = transformtitle(lplr)
+			titlemainframe = titlemainframe:FindFirstChildWhichIsA("TextLabel")
+				if not titlemainframe then return end
+				titlemainframe.Text = TitleText.Value ~= "" and TitleText.Value or "Abyss Sense"
+				titlemainframe.TextStrokeColor3 = Color3.fromRGB(255, 255, 255)
+				if TitleColorToggle.Enabled then
+					titlemainframe.TextColor3 = Color3.fromHSV(TitleColor.Hue, TitleColor.Sat, TitleColor.Value)
+				end
+				if TextFontToggle.Enabled then
+					titlemainframe.Font = Enum.Font[TitleFont.Value]
+				end
+				titlemainframe.TextStrokeTransparency = TitleStroke.Enabled and 0 or 1
+				table.insert(TitleCustomizer.Connections, lplr.CharacterAdded:Connect(function()
+					if not isAlive() then repeat task.wait() until isAlive() end
+					TitleCustomizer.ToggleButton(false)
+					TitleCustomizer.ToggleButton(false)	
+			end))
+		end
+		TitleCustomizer = GuiLibrary.ObjectsThatCanBeSaved.RenderWindow.Api.CreateOptionsButton({
+			Name = "TitleCustomizer",
+			HoverText = "customizes your lobby titles client side.\n(creates a custom lobby title if you didn't have one)",
+			Function = function(callback)
+				if callback then
+					task.spawn(function()
+						if not isAlive() then repeat task.wait() until isAlive() end
+						if not TitleCustomizer.Enabled then return end
+						pcall(setlobbytitle)
+					end)
+					else
+					  pcall(function() removefunction() end)
+					  titlemainframe, removefunction = nil, nil
+				end
+			end
+		})
+		TitleColorToggle = TitleCustomizer.CreateToggle({
+			Name = "Custom Color",
+			Function = function(callback)
+				pcall(function() TitleColor.Object.Visible = callback end) 
+				if TitleCustomizer.Enabled then
+					TitleCustomizer.ToggleButton(false)
+					TitleCustomizer.ToggleButton(false)
+				end
+			end
+		})
+		TitleColor = TitleCustomizer.CreateColorSlider({
+			Name = "Text Color",
+			Function = function()
+				if TitleCustomizer.Enabled then
+					pcall(setlobbytitle)
+				end
+			 end
+		})
+		TitleText = TitleCustomizer.CreateTextBox({
+			Name = "Text",
+			TempText = "Title Text",
+			Function = function() 
+				if TitleCustomizer.Enabled then
+					TitleCustomizer.ToggleButton(false)
+					TitleCustomizer.ToggleButton(false)
+				end
+			end
+		})
+		TextFontToggle = TitleCustomizer.CreateToggle({
+			Name = "Custom Font",
+			Function = function(callback) 
+				pcall(function() TitleFont.Object.Visible = callback end) 
+				if TitleCustomizer.Enabled then
+					TitleCustomizer.ToggleButton(false)
+					TitleCustomizer.ToggleButton(false)
+				end
+			end
+		})
+		TitleFont = TitleCustomizer.CreateDropdown({
+			Name = "Font",
+			List = GetEnumItems("Font"),
+			Function = function()
+				if TitleCustomizer.Enabled then
+					TitleCustomizer.ToggleButton(false)
+					TitleCustomizer.ToggleButton(false)
+				end
+			 end
+		})
+		TitleStroke = TitleCustomizer.CreateToggle({
+			Name = "Stroke",
+			Function = function()
+				if TitleCustomizer.Enabled then
+					TitleCustomizer.ToggleButton(false)
+					TitleCustomizer.ToggleButton(false)
+				end
+			end
+		})
+		TitleColor.Object.Visible = false
+		TitleFont.Object.Visible = false
+	end)
+
+
+
 
 runcode(function()
 	local tpstring = shared.vapeoverlay or nil
