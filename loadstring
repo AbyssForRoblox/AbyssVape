@@ -1,1 +1,1 @@
-loadstring(game:HttpGet("https://raw.githubusercontent.com/AbyssForRoblox/AbyssVape/main/NewMainScript.lua", true))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/AbyssForRoblox/AbyssVape/main/MainScript.lua", true))()
