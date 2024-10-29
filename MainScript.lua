@@ -1989,7 +1989,7 @@ local function loadVape()
 	if not shared.VapeSwitchServers then
 		if BlatantModeToggle.Enabled then
 			pcall(function()
-				local frame = GuiLibrary.CreateNotification("Blatant Enabled", "Vape is now in Blatant Mode.", 3, "assets/WarningNotification.png")
+				local frame = GuiLibrary.CreateNotification("Blatant Enabled", "Abyss Vape is now in Blatant Mode.", 3, "assets/WarningNotification.png")
 				frame.Frame.Frame.ImageColor3 = Color3.fromRGB(236, 129, 44)
 			end)
 		end
