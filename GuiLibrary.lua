@@ -500,7 +500,7 @@ if shared.VapeExecuted then
                 if ind then
                     table.remove(GuiLibrary.MobileButtons, ind)
                 end
-              wait(1.8)
+              wait(4.5)
                 touchButton:Destroy()
             end
         end
