@@ -6988,21 +6988,7 @@ Players.ChildAdded:Connect(function(child)
 	})
 end)
 
-run(function()
-    local yes = utility.Api.CreateOptionsButton({
-        Name = 'ProfilesSaver',
-        Function = function(calling)
-            if calling then
-                warningNotification('ProfilesSaver', 'Waiting 2 seconds to save profiles', '999')
-                task.wait(2)
-                GuiLibrary.SaveSettings()
-                --GuiLibrary.SelfDestruct()
-                loadfile("vape/MainScript.lua")()
-                --yes.ToggleButton(false)
-            end
-        end
-    })
-end)
+
 run(function()
     local FireEffect = {}
     FireEffect.Enabled = false
