@@ -466,59 +466,52 @@ if shared.VapeExecuted then
 		end)
 	end
 
-	local function createMobileButton(buttonapi, position)
-    local touchButton = Instance.new("TextButton")
-    touchButton.Size = UDim2.new(0, 40, 0, 40)
-    touchButton.BackgroundTransparency = 0.5
-    touchButton.BackgroundColor3 = buttonapi.Enabled and Color3.new(0, 0.7, 0) or Color3.new()
-    touchButton.TextColor3 = Color3.new(1, 1, 1)
-    touchButton.Text = buttonapi.Name
-    touchButton.Font = Enum.Font.Gotham
-    touchButton.TextScaled = true
-    touchButton.AnchorPoint = Vector2.new(0.5, 0.5)
-    touchButton.Position = UDim2.new(0, position.X, 0, position.Y)
-    touchButton.Parent = GuiLibrary.MainGui
+        local function createMobileButton(buttonapi, position)
+		local touchButton = Instance.new("TextButton")
+		touchButton.Size = UDim2.new(0, 40, 0, 40)
+		touchButton.BackgroundTransparency = 0.5
+		touchButton.BackgroundColor3 = buttonapi.Enabled and Color3.new(0, 0.7, 0) or Color3.new()
+		touchButton.TextColor3 = Color3.new(1, 1, 1)
+		touchButton.Text = buttonapi.Name
+		touchButton.Font = Enum.Font.Gotham
+		touchButton.TextScaled = true
+		touchButton.AnchorPoint = Vector2.new(0.5, 0.5)
+		touchButton.Position = UDim2.new(0, position.X, 0, position.Y)
+		touchButton.Parent = GuiLibrary.MainGui
+		touchButton.MouseButton1Click:Connect(function()
+			buttonapi.ToggleButton(true)
+			touchButton.BackgroundColor3 = buttonapi.Enabled and Color3.new(0, 0.7, 0) or Color3.new()
+		end)
+		local touchedButton = false
+		touchButton.MouseButton1Down:Connect(function()
+			touchedButton = true
+			local touchtick = tick()
+			local touchposition = inputService:GetMouseLocation()
+			repeat
+				task.wait()
+				if not touchedButton then break end
+				touchedButton = (inputService:GetMouseLocation() - touchposition).Magnitude < 6
+			until (tick() - touchtick) > 1 or not touchedButton
+			if touchedButton then
+				local ind = table.find(GuiLibrary.MobileButtons, touchButton)
+				if ind then table.remove(GuiLibrary.MobileButtons, ind) end
+				touchButton:Destroy()
+			end
+		end)
+		touchButton.MouseButton1Up:Connect(function()
+			touchedButton = false
+		end)
+		local touchCorner = Instance.new("UICorner")
+		touchCorner.CornerRadius = UDim.new(0, 1024)
+		touchCorner.Parent = touchButton
+		local touchTextLimit = Instance.new("UITextSizeConstraint")
+		touchTextLimit.MaxTextSize = 16
+		touchTextLimit.Parent = touchButton
+		table.insert(GuiLibrary.MobileButtons, touchButton)
+end	
+    
 
-    touchButton.MouseButton1Click:Connect(function()
-        buttonapi.ToggleButton(true)
-        touchButton.BackgroundColor3 = buttonapi.Enabled and Color3.new(0, 0.7, 0) or Color3.new()
-    end)
-
-    local touchedButton = false
-    local touchStartTime = 0
-
-    touchButton.MouseButton1Down:Connect(function()
-        touchedButton = true
-        touchStartTime = tick()
-    end)
-
-    touchButton.MouseButton1Up:Connect(function()
-        if touchedButton then
-            local touchDuration = tick() - touchStartTime
-            if touchDuration < 1 then
-                local ind = table.find(GuiLibrary.MobileButtons, touchButton)
-                if ind then
-                    table.remove(GuiLibrary.MobileButtons, ind)
-                end
-               wait(10)
-                touchButton:Destroy()
-            end
-        end
-        touchedButton = false
-    end)
-
-    local touchCorner = Instance.new("UICorner")
-    touchCorner.CornerRadius = UDim.new(0, 1024)
-    touchCorner.Parent = touchButton
-
-    local touchTextLimit = Instance.new("UITextSizeConstraint")
-    touchTextLimit.MaxTextSize = 16
-    touchTextLimit.Parent = touchButton
-
-    table.insert(GuiLibrary.MobileButtons, touchButton)
-end
-
-	GuiLibrary.SaveSettings = function()
+GuiLibrary.SaveSettings = function()
 		if not loadedsuccessfully then return end
 		writefile(baseDirectory.."Profiles/"..(shared.CustomSaveVape or game.PlaceId)..".vapeprofiles.txt", httpService:JSONEncode(GuiLibrary.Profiles))
 		local WindowTable = {}
