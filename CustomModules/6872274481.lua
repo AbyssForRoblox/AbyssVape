@@ -1,3 +1,34 @@
+
+--[[                                                             
+                                                              
+   ,---,           ,---,.               .--.--.    .--.--.    
+  '  .' \        ,'  .'  \       ,---, /  /    '. /  /    '.  
+ /  ;    '.    ,---.' .' |      /_ ./||  :  /`. /|  :  /`. /  
+:  :       \   |   |  |: |,---, |  ' :;  |  |--` ;  |  |--`   
+:  |   /\   \  :   :  :  /___/ \.  : ||  :  ;_   |  :  ;_     
+|  :  ' ;.   : :   |    ; .  \  \ ,' ' \  \    `. \  \    `.  
+|  |  ;/  \   \|   :     \ \  ;  `  ,'  `----.   \ `----.   \ 
+'  :  | \  \ ,'|   |   . |  \  \    '   __ \  \  | __ \  \  | 
+|  |  '  '--'  '   :  '; |   '  \   |  /  /`--'  //  /`--'  / 
+|  :  :        |   |  | ;     \  ;  ; '--'.     /'--'.     /  
+|  | ,'        |   :   /       :  \  \  `--'---'   `--'---'   
+`--''          |   | ,'         \  ' ;                        
+               `----'            `--`                         
+                           ,-.----.                           
+               ,---,       \    /  \      ,---,.              
+       ,---.  '  .' \      |   :    \   ,'  .' |              
+      /__./| /  ;    '.    |   |  .\ :,---.'   |              
+ ,---.;  ; |:  :       \   .   :  |: ||   |   .'              
+/___/ \  | |:  |   /\   \  |   |   \ ::   :  |-,              
+\   ;  \ ' ||  :  ' ;.   : |   : .   /:   |  ;/|              
+ \   \  \: ||  |  ;/  \   \;   | |`-' |   :   .'              
+  ;   \  ' .'  :  | \  \ ,'|   | ;    |   |  |-,              
+   \   \   '|  |  '  '--'  :   ' |    '   :  ;/|              
+    \   `  ;|  :  :        :   : :    |   |    \              
+     :   \ ||  | ,'        |   | :    |   :   .'              
+      '---" `--''          `---'.|    |   | ,'                
+   vape/CustomModules/6872274481.lua by abyss and star 100%!                          `---`    `----'                  
+ --]]                        
 local GuiLibrary = shared.GuiLibrary
 local playersService = game:GetService("Players")
 local textService = game:GetService("TextService")
@@ -111,7 +142,7 @@ end
 
 local function vapeGithubRequest(scripturl)
 	if not isfile("vape/"..scripturl) then
-		local suc, res = pcall(function() return game:HttpGet("https://raw.githubusercontent.com/AbyssForRoblox/AbyssVape/"..readfile("vape/commithash.txt").."/"..scripturl, true) end)
+		local suc, res = pcall(function() return game:HttpGet("https://raw.githubusercontent.com/7GrandDadPGN/VapeV4ForRoblox/"..readfile("vape/commithash.txt").."/"..scripturl, true) end)
 		assert(suc, res)
 		assert(res ~= "404: Not Found", res)
 		if scripturl:find(".lua") then res = "--This watermark is used to delete the file if its cached, remove it to make the file persist after commits.\n"..res end
@@ -2099,28 +2130,27 @@ run(function()
 end)
 
 run(function()
-	local ReachValue = {Value = 14}
+	local ReachValue = {Value = 3.5}
 
-	Reach = GuiLibrary.ObjectsThatCanBeSaved.CombatWindow.Api.CreateOptionsButton({
+	Reach = combat.Api.CreateOptionsButton({
 		Name = "Reach",
 		Function = function(callback)
-			bedwars.CombatConstant.RAYCAST_SWORD_CHARACTER_DISTANCE = callback and ReachValue.Value + 2 or 14.4
+			bedwars.CombatConstant.RAYCAST_SWORD_CHARACTER_DISTANCE = callback and (ReachValue.Value + 2) * 4 or 14.4 
 		end,
 		HoverText = "Extends attack reach"
 	})
 	ReachValue = Reach.CreateSlider({
-		Name = "Reach",
+		Name = "Reach (in blocks)",
 		Min = 0,
-		Max = 18,
+		Max = 4.5,
 		Function = function(val)
 			if Reach.Enabled then
-				bedwars.CombatConstant.RAYCAST_SWORD_CHARACTER_DISTANCE = val + 2
+				bedwars.CombatConstant.RAYCAST_SWORD_CHARACTER_DISTANCE = (val + 2) * 4
 			end
 		end,
-		Default = 18
+		Default = 4.5
 	})
 end)
-
 run(function()
 	local Sprint = {Enabled = false}
 	local oldSprintFunction
@@ -3119,6 +3149,175 @@ run(function()
 			{CFrame = CFrame.new(0.7, -0.71, 0.59) * CFrame.Angles(math.rad(-84), math.rad(50), math.rad(-38)), Time = 0.1},
 			{CFrame = CFrame.new(0.7, -0.71, 0.59) * CFrame.Angles(math.rad(-84), math.rad(50), math.rad(-38)), Time = 0.05},
 			{CFrame = CFrame.new(0.63, -0.1, 1.37) * CFrame.Angles(math.rad(-84), math.rad(50), math.rad(-38)), Time = 0.15}
+},
+Funny = {
+			{CFrame = CFrame.new(0, 0, 1.5) * CFrame.Angles(math.rad(0), math.rad(0), math.rad(0)),Time = 0.15},
+			{CFrame = CFrame.new(0, 0, -1.5) * CFrame.Angles(math.rad(0), math.rad(0), math.rad(0)),Time = 0.15},
+			{CFrame = CFrame.new(0, 0, 0) * CFrame.Angles(math.rad(0), math.rad(0), math.rad(0)), Time = 0.15},
+			{CFrame = CFrame.new(0, 0, 0) * CFrame.Angles(math.rad(-55), math.rad(0), math.rad(0)), Time = 0.15}
+		},
+		FunnyFuture = {
+			{CFrame = CFrame.new(0, 0, 0) * CFrame.Angles(math.rad(-60), math.rad(0), math.rad(0)),Time = 0.25},
+			{CFrame = CFrame.new(0, 0, 0) * CFrame.Angles(math.rad(0), math.rad(0), math.rad(0)),Time = 0.25}
+		},
+		Goofy = {
+			{CFrame = CFrame.new(0.69, -0.7, 0.6) * CFrame.Angles(math.rad(-30), math.rad(50), math.rad(-90)), Time = 0.25},
+			{CFrame = CFrame.new(-1, -1, 1) * CFrame.Angles(math.rad(0), math.rad(0), math.rad(0)),Time = 0.25},
+			{CFrame = CFrame.new(0, 0, 0) * CFrame.Angles(math.rad(0), math.rad(0), math.rad(-33)),Time = 0.25}
+		},
+		Future = {
+			{CFrame = CFrame.new(0.69, -0.7, 0.10) * CFrame.Angles(math.rad(295), math.rad(55), math.rad(290)), Time = 0.20},
+			{CFrame = CFrame.new(0, 0, 0) * CFrame.Angles(math.rad(0), math.rad(0), math.rad(0)),Time = 0.25}
+		},
+		Pop = {
+			{CFrame = CFrame.new(0.69, -0.7, 0.6) * CFrame.Angles(math.rad(-30), math.rad(50), math.rad(-90)), Time = 0.15},
+			{CFrame = CFrame.new(0, 0, 0) * CFrame.Angles(math.rad(0), math.rad(0), math.rad(0)),Time = 0.25},
+			{CFrame = CFrame.new(0, 0, 0) * CFrame.Angles(math.rad(-30), math.rad(80), math.rad(-90)), Time = 0.35},
+			{CFrame = CFrame.new(0, 1, 0) * CFrame.Angles(math.rad(0), math.rad(0), math.rad(0)), Time = 0.35}
+		},
+		FunnyV2 = {
+			{CFrame = CFrame.new(0.10, -0.5, -1) * CFrame.Angles(math.rad(295), math.rad(80), math.rad(300)), Time = 0.45},
+			{CFrame = CFrame.new(-5, 0, 0) * CFrame.Angles(math.rad(0), math.rad(0), math.rad(0)), Time = 0.45},
+			{CFrame = CFrame.new(5, 0, 0) * CFrame.Angles(math.rad(0), math.rad(0), math.rad(0)), Time = 0.45},
+		},
+		Smooth = {
+			{CFrame = CFrame.new(-0.42, 0, 0.30) * CFrame.Angles(math.rad(0), math.rad(80), math.rad(60)), Time = 0.25},
+			{CFrame = CFrame.new(-0.42, 0, 0.30) * CFrame.Angles(math.rad(0), math.rad(100), math.rad(60)), Time = 0.25},
+			{CFrame = CFrame.new(-0.42, 0, 0.30) * CFrame.Angles(math.rad(0), math.rad(60), math.rad(60)), Time = 0.25},
+		},
+		FasterSmooth = {
+			{CFrame = CFrame.new(-0.42, 0, 0.30) * CFrame.Angles(math.rad(0), math.rad(80), math.rad(60)), Time = 0.11},
+			{CFrame = CFrame.new(-0.42, 0, 0.30) * CFrame.Angles(math.rad(0), math.rad(100), math.rad(60)), Time = 0.11},
+			{CFrame = CFrame.new(-0.42, 0, 0.30) * CFrame.Angles(math.rad(0), math.rad(60), math.rad(60)), Time = 0.11},
+		},
+		PopV2 = {
+			{CFrame = CFrame.new(0.10, -0.3, -0.30) * CFrame.Angles(math.rad(295), math.rad(80), math.rad(290)), Time = 0.09},
+			{CFrame = CFrame.new(0.10, 0.10, -1) * CFrame.Angles(math.rad(295), math.rad(80), math.rad(300)), Time = 0.1},
+			{CFrame = CFrame.new(0.69, -0.7, 0.6) * CFrame.Angles(math.rad(-30), math.rad(50), math.rad(-90)), Time = 0.15},
+		},
+		Bob = {
+			{CFrame = CFrame.new(-0.7, -0.71, 0.59) * CFrame.Angles(math.rad(-84), math.rad(50), math.rad(-38)), Time = 0.2},
+			{CFrame = CFrame.new(-0.7, -2.5, 0.59) * CFrame.Angles(math.rad(-84), math.rad(50), math.rad(-38)), Time = 0.2}
+		},
+		Knife = {
+			{CFrame = CFrame.new(-0.7, -0.71, 0.59) * CFrame.Angles(math.rad(-84), math.rad(50), math.rad(-38)), Time = 0.2},
+			{CFrame = CFrame.new(1, -0.71, 0.59) * CFrame.Angles(math.rad(-84), math.rad(50), math.rad(-38)), Time = 0.2},
+			{CFrame = CFrame.new(4, -0.71, 0.59) * CFrame.Angles(math.rad(-84), math.rad(50), math.rad(-38)), Time = 0.2},
+		},
+		FunnyExhibition = {
+			{CFrame = CFrame.new(-1.5, -0.50, 0.20) * CFrame.Angles(math.rad(-84), math.rad(50), math.rad(-38)), Time = 0.10},
+			{CFrame = CFrame.new(-0.55, -0.20, 1.5) * CFrame.Angles(math.rad(-84), math.rad(50), math.rad(-38)), Time = 0.2},
+		},
+		Remake = {
+			{CFrame = CFrame.new(-0.10, -0.45, -0.20) * CFrame.Angles(math.rad(-84), math.rad(50), math.rad(-50)), Time = 0.01},
+			{CFrame = CFrame.new(0.7, -0.71, -1) * CFrame.Angles(math.rad(-90), math.rad(50), math.rad(-38)), Time = 0.2},
+			{CFrame = CFrame.new(0.63, -0.1, 1.50) * CFrame.Angles(math.rad(-84), math.rad(50), math.rad(-38)), Time = 0.15}
+		},
+		PopV3 = {
+			{CFrame = CFrame.new(0.69, -0.10, 0.6) * CFrame.Angles(math.rad(-30), math.rad(50), math.rad(-90)), Time = 0.1},
+			{CFrame = CFrame.new(0.7, -0.71, 0.59) * CFrame.Angles(math.rad(-84), math.rad(50), math.rad(-38)), Time = 0.1},
+			{CFrame = CFrame.new(0.69, -2, 0.6) * CFrame.Angles(math.rad(-30), math.rad(50), math.rad(-90)), Time = 0.1}
+		},
+		PopV4 = {
+			{CFrame = CFrame.new(0.69, -0.10, 0.6) * CFrame.Angles(math.rad(-30), math.rad(50), math.rad(-90)), Time = 0.01},
+			{CFrame = CFrame.new(0.7, -0.30, 0.59) * CFrame.Angles(math.rad(-84), math.rad(50), math.rad(-38)), Time = 0.01},
+			{CFrame = CFrame.new(0.69, -2, 0.6) * CFrame.Angles(math.rad(-30), math.rad(50), math.rad(-90)), Time = 0.01}
+		},
+		Shake = {
+			{CFrame = CFrame.new(0.69, -0.8, 0.6) * CFrame.Angles(math.rad(-60), math.rad(30), math.rad(-35)), Time = 0.05},
+			{CFrame = CFrame.new(0.8, -0.71, 0.30) * CFrame.Angles(math.rad(-60), math.rad(39), math.rad(-55)), Time = 0.02},
+			{CFrame = CFrame.new(0.8, -2, 0.45) * CFrame.Angles(math.rad(-60), math.rad(30), math.rad(-55)), Time = 0.03}
+		},
+		Idk = {
+			{CFrame = CFrame.new(0, -0.1, -0.30) * CFrame.Angles(math.rad(-20), math.rad(20), math.rad(0)), Time = 0.30},
+			{CFrame = CFrame.new(0, -0.50, -0.30) * CFrame.Angles(math.rad(-40), math.rad(41), math.rad(0)), Time = 0.32},
+			{CFrame = CFrame.new(0, -0.1, -0.30) * CFrame.Angles(math.rad(-60), math.rad(0), math.rad(0)), Time = 0.32}
+		},
+		Block = {
+			{CFrame = CFrame.new(1, -0.71, 0.59) * CFrame.Angles(math.rad(-84), math.rad(50), math.rad(-38)), Time = 0.2},
+			{CFrame = CFrame.new(0, 0, 0) * CFrame.Angles(math.rad(45), math.rad(0), math.rad(0)), Time = 0.2},
+			{CFrame = CFrame.new(1, 0, 0) * CFrame.Angles(math.rad(-60), math.rad(0), math.rad(0)), Time = 0.2},
+			{CFrame = CFrame.new(0.3, -0.71, 0.59) * CFrame.Angles(math.rad(-84), math.rad(50), math.rad(-38)), Time = 0.2}
+		},
+		BingChilling = {
+			{CFrame = CFrame.new(0.07, -0.7, 0.6) * CFrame.Angles(math.rad(-30), math.rad(50), math.rad(-90)), Time = 0.1},
+			{CFrame = CFrame.new(0.7, -0.71, 0.59) * CFrame.Angles(math.rad(-84), math.rad(50), math.rad(-38)), Time = 0.2}
+		},
+		['Womp Womp'] = {
+			{CFrame = CFrame.new(0.07, -0.7, 0.6) * CFrame.Angles(math.rad(-30), math.rad(15), math.rad(-90)), Time = 0.1},
+			{CFrame = CFrame.new(0.7, -0.71, 0.59) * CFrame.Angles(math.rad(-84), math.rad(50), math.rad(-38)), Time = 0.2}
+		},
+		['Yomp Yomp'] = {
+			{CFrame = CFrame.new(0.07, -0.7, 0.6) * CFrame.Angles(math.rad(0), math.rad(15), math.rad(-20)), Time = 0.1},
+			{CFrame = CFrame.new(0.7, -0.71, 0.59) * CFrame.Angles(math.rad(-84), math.rad(50), math.rad(-38)), Time = 0.2}
+		},
+		FunnyV3 = {
+			{CFrame = CFrame.new(0.8, 10.7, 3.6) * CFrame.Angles(math.rad(-16), math.rad(60), math.rad(-80)), Time = 0.1},
+			{CFrame = CFrame.new(5.7, -1.7, 5.6) * CFrame.Angles(math.rad(-16), math.rad(60), math.rad(-80)), Time = 0.15},
+			{CFrame = CFrame.new(2.95, -5.06, -6.25) * CFrame.Angles(math.rad(-179), math.rad(61), math.rad(80)), Time = 0.15}
+		},
+		["Lunar Old"] = {
+			{CFrame = CFrame.new(0.150, -0.8, 0.1) * CFrame.Angles(math.rad(-45), math.rad(40), math.rad(-75)), Time = 0.15},
+			{CFrame = CFrame.new(0.02, -0.8, 0.05) * CFrame.Angles(math.rad(-60), math.rad(60), math.rad(-95)), Time = 0.15}
+		},
+		["Lunar New"] = {
+			{CFrame = CFrame.new(0.86, -0.8, 0.1) * CFrame.Angles(math.rad(-45), math.rad(40), math.rad(-75)), Time = 0.17},
+			{CFrame = CFrame.new(0.73, -0.8, 0.05) * CFrame.Angles(math.rad(-60), math.rad(60), math.rad(-95)), Time = 0.17}
+		},
+		["Lunar Fast"] = {
+			{CFrame = CFrame.new(0.95, -0.8, 0.1) * CFrame.Angles(math.rad(-45), math.rad(40), math.rad(-75)), Time = 0.15},
+			{CFrame = CFrame.new(0.40, -0.8, 0.05) * CFrame.Angles(math.rad(-60), math.rad(60), math.rad(-95)), Time = 0.15}
+		},
+		["Liquid Bounce"] = {
+			{CFrame = CFrame.new(-0.01, -0.3, -1.01) * CFrame.Angles(math.rad(-35), math.rad(90), math.rad(-90)), Time = 0.45},
+			{CFrame = CFrame.new(-0.01, -0.3, -1.01) * CFrame.Angles(math.rad(-35), math.rad(70), math.rad(-90)), Time = 0.45},
+			{CFrame = CFrame.new(-0.01, -0.3, 0.4) * CFrame.Angles(math.rad(-35), math.rad(70), math.rad(-90)), Time = 0.32}
+		},
+		["Auto Block"] = {
+			{CFrame = CFrame.new(-0.6, -0.2, 0.3) * CFrame.Angles(math.rad(0), math.rad(80), math.rad(65)), Time = 0.15},
+			{CFrame = CFrame.new(-0.6, -0.2, 0.3) * CFrame.Angles(math.rad(0), math.rad(110), math.rad(65)), Time = 0.15},
+			{CFrame = CFrame.new(-0.6, -0.2, 0.3) * CFrame.Angles(math.rad(0), math.rad(65), math.rad(65)), Time = 0.15}
+		},
+		Meteor = {
+			{CFrame = CFrame.new(0.150, -0.8, 0.1) * CFrame.Angles(math.rad(-45), math.rad(40), math.rad(-75)), Time = 0.15},
+			{CFrame = CFrame.new(0.02, -0.8, 0.05) * CFrame.Angles(math.rad(-60), math.rad(60), math.rad(-95)), Time = 0.15}
+		},
+		Switch = {
+			{CFrame = CFrame.new(0.69, -0.7, 0.1) * CFrame.Angles(math.rad(-65), math.rad(55), math.rad(-51)), Time = 0.1},
+			{CFrame = CFrame.new(0.16, -1.16, 0.5) * CFrame.Angles(math.rad(-179), math.rad(54), math.rad(33)), Time = 0.1}
+		},
+		Sideways = {
+			{CFrame = CFrame.new(5, -3, 2) * CFrame.Angles(math.rad(120), math.rad(160), math.rad(140)), Time = 0.12},
+			{CFrame = CFrame.new(5, -2.5, -1) * CFrame.Angles(math.rad(80), math.rad(180), math.rad(180)), Time = 0.12},
+			{CFrame = CFrame.new(5, -3.4, -3.3) * CFrame.Angles(math.rad(45), math.rad(160), math.rad(190)), Time = 0.12},
+			{CFrame = CFrame.new(5, -2.5, -1) * CFrame.Angles(math.rad(80), math.rad(180), math.rad(180)), Time = 0.12}
+		},
+		Stand = {
+			{CFrame = CFrame.new(0.69, -0.7, 0.6) * CFrame.Angles(math.rad(-30), math.rad(50), math.rad(-90)), Time = 0.1}
+	},
+	Smooth = {
+			{CFrame = CFrame.new(0.69, -0.7, 0.1) * CFrame.Angles(math.rad(-65), math.rad(55), math.rad(-51)), Time = 0.1},
+			{CFrame = CFrame.new(0.69, -0.71, 0.6) * CFrame.Angles(math.rad(200), math.rad(60), math.rad(1)), Time = 0.15}
+		},
+		Astral = {
+			{CFrame = CFrame.new(0.7, -0.7, 0.6) * CFrame.Angles(math.rad(-16), math.rad(60), math.rad(-80)), Time = 0.1},
+			{CFrame = CFrame.new(0.7, -0.7, 0.6) * CFrame.Angles(math.rad(-16), math.rad(60), math.rad(-80)), Time = 0.15},
+			{CFrame = CFrame.new(0.95, -1.06, -2.25) * CFrame.Angles(math.rad(-179), math.rad(61), math.rad(80)), Time = 0.15}
+		},
+		Leaked = {
+			{CFrame = CFrame.new(0.7, -0.7, 0.6) * CFrame.Angles(math.rad(-16), math.rad(60), math.rad(-80)), Time = 0},
+			{CFrame = CFrame.new(0.69, -0.7, 0.6) * CFrame.Angles(math.rad(16), math.rad(59), math.rad(-90)), Time = 0.156},
+			{CFrame = CFrame.new(0.7, -0.7, 0.6) * CFrame.Angles(math.rad(-16), math.rad(60), math.rad(-80)), Time = 0.075}
+		},
+		Slide2 = {
+			{CFrame = CFrame.new(0.7, -0.7, 0.6) * CFrame.Angles(math.rad(-16), math.rad(60), math.rad(-80)), Time = 0},
+			{CFrame = CFrame.new(0.7, -0.7, 0.6) * CFrame.Angles(math.rad(-171), math.rad(47), math.rad(74)), Time = 0.16}
+		},
+		Femboy = {
+			{CFrame = CFrame.new(0, 0, 0) * CFrame.Angles(math.rad(1), math.rad(-7), math.rad(7)), Time = 0},
+			{CFrame = CFrame.new(0, 0, 0) * CFrame.Angles(math.rad(-0), math.rad(0), math.rad(-0)), Time = 0.08},
+			{CFrame = CFrame.new(-0.01, 0, 0) * CFrame.Angles(math.rad(-7), math.rad(-7), math.rad(-1)), Time = 0.08},
+			{CFrame = CFrame.new(0, 0, 0) * CFrame.Angles(math.rad(1), math.rad(-7), math.rad(7)), Time = 0.11}
 		}
 	}
 
@@ -6316,136 +6515,7 @@ run(function()
 	})
 end)
 
- run(function()
-	local viewmodeleditor = {}
-	local viewmodeleditordepth = {}
-	local viewmodeleditorhorizontal = {}
-	local viewmodeleditorvertical = {}
-	local viewmodelnobob = {}
-	local rotationx = {}
-	local rotationy = {}
-	local rotationz = {}
-	local oldc1
-	local oldfunc
-
-	viewmodeleditor = visual.Api.CreateOptionsButton({
-		Name = 'NoBob',
-		Function = function(callback)
-			local viewmodel = camera:FindFirstChild("Viewmodel")
-			if viewmodel then
-				if callback then
-					oldfunc = bedwars.ViewmodelController.playAnimation
-					if viewmodelnobob.Enabled then
-						bedwars.ViewmodelController.playAnimation = function(self, animid, details)
-							if animid == bedwars.AnimationType.FP_WALK then
-								return
-							end
-							return oldfunc(self, animid, details)
-						end
-					end
-					bedwars.ViewmodelController:setHeldItem(lplr.Character and lplr.Character:FindFirstChild("HandInvItem") and lplr.Character.HandInvItem.Value and lplr.Character.HandInvItem.Value:Clone())
-					lplr.PlayerScripts.TS.controllers.global.viewmodel['viewmodel-controller']:SetAttribute("ConstantManager_DEPTH_OFFSET", -(viewmodeleditordepth.Value / 10))
-					lplr.PlayerScripts.TS.controllers.global.viewmodel['viewmodel-controller']:SetAttribute("ConstantManager_HORIZONTAL_OFFSET", (viewmodeleditorhorizontal.Value / 10))
-					vmy = viewmodeleditorvertical.Value / 10
-					lplr.PlayerScripts.TS.controllers.global.viewmodel['viewmodel-controller']:SetAttribute("ConstantManager_VERTICAL_OFFSET", (viewmodeleditorvertical.Value / 10))
-					oldc1 = viewmodel.RightHand.RightWrist.C1
-					viewmodel.RightHand.RightWrist.C1 = oldc1 * CFrame.Angles(math.rad(rotationx.Value), math.rad(rotationy.Value), math.rad(rotationz.Value))
-				else
-					bedwars.ViewmodelController.playAnimation = oldfunc
-					lplr.PlayerScripts.TS.controllers.global.viewmodel['viewmodel-controller']:SetAttribute("ConstantManager_DEPTH_OFFSET", 0)
-					lplr.PlayerScripts.TS.controllers.global.viewmodel['viewmodel-controller']:SetAttribute("ConstantManager_HORIZONTAL_OFFSET", 0)
-					lplr.PlayerScripts.TS.controllers.global.viewmodel['viewmodel-controller']:SetAttribute("ConstantManager_VERTICAL_OFFSET", 0)
-					viewmodel.RightHand.RightWrist.C1 = oldc1
-					vmy = 0
-				end
-			end
-		end,
-		HoverText = 'changes your sword position by using attributes.'
-	})
-
-	viewmodelnobob = viewmodeleditor.CreateToggle({
-		Name = 'RemoveBobbing',
-		Function = function(call) 
-			if viewmodeleditor.Enabled then
-				if call then
-					bedwars.ViewmodelController.playAnimation = function(self, animid, details)
-						if animid == bedwars.AnimationType.FP_WALK then
-							return
-						end
-						return oldfunc(self, animid, details)
-					end
-				else
-					bedwars.ViewmodelController.playAnimation = oldfunc
-				end
-			end
-		end,
-		HoverText = 'Remove that bobbing when you are moving.'
-	})
-	viewmodeleditordepth = viewmodeleditor.CreateSlider({
-		Name = "Depth",
-		Min = 0,
-		Max = 24,
-		Default = 8,
-		Function = function(val)
-			if viewmodeleditor.Enabled then
-				lplr.PlayerScripts.TS.controllers.global.viewmodel["viewmodel-controller"]:SetAttribute("ConstantManager_DEPTH_OFFSET", -(val / 10))
-			end
-		end
-	})
-	viewmodeleditorhorizontal = viewmodeleditor.CreateSlider({
-		Name = "Horizontal",
-		Min = 0,
-		Max = 24,
-		Default = 8,
-		Function = function(val)
-			if viewmodeleditor.Enabled then
-				lplr.PlayerScripts.TS.controllers.global.viewmodel["viewmodel-controller"]:SetAttribute("ConstantManager_HORIZONTAL_OFFSET", (val / 10))
-			end
-		end
-	})
-	viewmodeleditorvertical = viewmodeleditor.CreateSlider({
-		Name = "Vertical",
-		Min = 0,
-		Max = 24,
-		Default = -2,
-		Function = function(val)
-			if viewmodeleditor.Enabled then
-				vmy = val / 10
-				lplr.PlayerScripts.TS.controllers.global.viewmodel["viewmodel-controller"]:SetAttribute("ConstantManager_VERTICAL_OFFSET", (val / 10))
-			end
-		end
-	})
-	rotationx = viewmodeleditor.CreateSlider({
-		Name = "RotX",
-		Min = 0,
-		Max = 360,
-		Function = function(val)
-			if viewmodeleditor.Enabled then
-				camera.Viewmodel.RightHand.RightWrist.C1 = oldc1 * CFrame.Angles(math.rad(rotationx.Value), math.rad(rotationy.Value), math.rad(rotationz.Value))
-			end
-		end
-	})
-	rotationy = viewmodeleditor.CreateSlider({
-		Name = "RotY",
-		Min = 0,
-		Max = 360,
-		Function = function(val)
-			if viewmodeleditor.Enabled then
-				camera.Viewmodel.RightHand.RightWrist.C1 = oldc1 * CFrame.Angles(math.rad(rotationx.Value), math.rad(rotationy.Value), math.rad(rotationz.Value))
-			end
-		end
-	})
-	rotationz = viewmodeleditor.CreateSlider({
-		Name = "RotZ",
-		Min = 0,
-		Max = 360,
-		Function = function(val)
-			if viewmodeleditor.Enabled then
-				camera.Viewmodel.RightHand.RightWrist.C1 = oldc1 * CFrame.Angles(math.rad(rotationx.Value), math.rad(rotationy.Value), math.rad(rotationz.Value))
-			end
-		end
-	})
-end)
+ 
 run(function()
 	local SongBeats = {Enabled = false}
 	local SongBeatsList = {ObjectList = {}}
@@ -9457,7 +9527,7 @@ run(function()
 				task.spawn(function()
 					repeat
 						task.wait(0.4)
-						ReachLabel.Text = store.attackReachUpdate > tick() and store.attackReach.." studs" or "0.00 studs"
+						ReachLabel.Text = store.attackReachUpdate > tick() and store.attackReach.." blocks" or "0.00 blocks"
 					until (not ReachDisplay.Enabled)
 				end)
 			end
@@ -10516,50 +10586,6 @@ run(function()
 	})
 end)
 
---[[run(function()
-    local ScytheExploit = {Enabled = false}
-    ScytheExploit = exploit.Api.CreateOptionsButton({
-        Name = "accidentally disabled MOST of the float check",
-        Function = function(callback)
-            if callback then
-                local player = game.Players.LocalPlayer
-                local character = player.Character or player.CharacterAdded:Wait()
-                local humanoid = character:WaitForChild("Humanoid")
-
-                local fakeDeathEvent = Instance.new("BindableEvent")
-                fakeDeathEvent.Name = "FakeDeathEvent"
-                fakeDeathEvent.Parent = humanoid
-
-                local function fakeDeath()
-                    humanoid.PlatformStand = true
-                    humanoid:ChangeState(Enum.HumanoidStateType.Physics)
-                    
-                    for _, part in ipairs(character:GetChildren()) do
-                        if part:IsA("BasePart") and part ~= humanoid.RootPart then
-                            part.CanCollide = true
-                            part.Anchored = false
-                            part.Velocity = Vector3.new(math.random(-10, 10), math.random(-10, 10), math.random(-10, 10))
-                        end
-                    end
-                    
-                    fakeDeathEvent:Fire()
-                end
-
-                fakeDeathEvent.Event:Connect(function()
-                end)
-
-                task.spawn(function()
-                    repeat
-                        fakeDeath()
-                        task.wait(0.1)
-                    until not ScytheExploit.Enabled
-                end)
-            else
-                ScytheExploit.Enabled = false
-            end
-        end
-    })
-end)]]
 run(function()
     local HackerDetector = { Enabled = false }
     local refreshFrequency = { Value = 0 }
