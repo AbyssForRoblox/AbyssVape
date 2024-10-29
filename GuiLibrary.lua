@@ -466,7 +466,7 @@ if shared.VapeExecuted then
 		end)
 	end
 
-        local function createMobileButton(buttonapi, position)
+	local function createMobileButton(buttonapi, position)
 		local touchButton = Instance.new("TextButton")
 		touchButton.Size = UDim2.new(0, 40, 0, 40)
 		touchButton.BackgroundTransparency = 0.5
@@ -508,10 +508,9 @@ if shared.VapeExecuted then
 		touchTextLimit.MaxTextSize = 16
 		touchTextLimit.Parent = touchButton
 		table.insert(GuiLibrary.MobileButtons, touchButton)
-end	
-    
+	end
 
-GuiLibrary.SaveSettings = function()
+	GuiLibrary.SaveSettings = function()
 		if not loadedsuccessfully then return end
 		writefile(baseDirectory.."Profiles/"..(shared.CustomSaveVape or game.PlaceId)..".vapeprofiles.txt", httpService:JSONEncode(GuiLibrary.Profiles))
 		local WindowTable = {}
@@ -1469,276 +1468,262 @@ GuiLibrary.SaveSettings = function()
 					windowbackbutton2.Visible = false
 				end)
 
-windowapi3["CreateToggle"] = function(argstable)
-    local buttonapi = {
-        Enabled = false,
-        Keybind = "",
-        Default = argstable["Default"],
-        Object = nil
-    }
+				windowapi3["CreateToggle"] = function(argstable)
+					local buttonapi = {}
+					local currentanim
+					local amount = #children3:GetChildren()
+					local buttontext = Instance.new("TextButton")
+					buttontext.AutoButtonColor = false
+					buttontext.BackgroundTransparency = 1
+					buttontext.Name = "ButtonText"
+					buttontext.Text = "          "..(translations[argstable["Name"]] ~= nil and translations[argstable["Name"]] or argstable["Name"])
+					buttontext.Name = argstable["Name"]
+					buttontext.LayoutOrder = amount
+					buttontext.Size = UDim2.new(1, 0, 0, 30)
+					buttontext.Active = false
+					buttontext.TextColor3 = Color3.fromRGB(160, 160, 160)
+					buttontext.TextSize = 14
+					buttontext.Font = Enum.Font.Arial
+					buttontext.TextXAlignment = Enum.TextXAlignment.Left
+					buttontext.Position = UDim2.new(0, (icon and 36 or 10), 0, 0)
+					buttontext.Parent = children3
+					local buttonarrow = Instance.new("ImageLabel")
+					buttonarrow.Size = UDim2.new(1, 0, 0, 4)
+					buttonarrow.Position = UDim2.new(0, 0, 1, -4)
+					buttonarrow.BackgroundTransparency = 1
+					buttonarrow.Name = "ToggleArrow"
+					buttonarrow.Image = downloadVapeAsset("vape/assets/ToggleArrow.png")
+					buttonarrow.Visible = false
+					buttonarrow.Parent = buttontext
+					local toggleframe1 = Instance.new("Frame")
+					toggleframe1.Size = UDim2.new(0, 22, 0, 12)
+					toggleframe1.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+					toggleframe1.BorderSizePixel = 0
+					toggleframe1.Name = "ToggleFrame1"
+					toggleframe1.Position = UDim2.new(1, -30, 0, 10)
+					toggleframe1.Parent = buttontext
+					local toggleframe2 = Instance.new("Frame")
+					toggleframe2.Size = UDim2.new(0, 8, 0, 8)
+					toggleframe2.Active = false
+					toggleframe2.Position = UDim2.new(0, 2, 0, 2)
+					toggleframe2.BackgroundColor3 = Color3.fromRGB(26, 25, 26)
+					toggleframe2.BorderSizePixel = 0
+					toggleframe2.Parent = toggleframe1
+					local uicorner = Instance.new("UICorner")
+					uicorner.CornerRadius = UDim.new(0, 16)
+					uicorner.Parent = toggleframe1
+					local uicorner2 = Instance.new("UICorner")
+					uicorner2.CornerRadius = UDim.new(0, 16)
+					uicorner2.Parent = toggleframe2
 
-    local amount = #children3:GetChildren()
-    
-    local buttontext = Instance.new("TextButton")
-    buttontext.AutoButtonColor = false
-    buttontext.BackgroundTransparency = 1
-    buttontext.Name = argstable["Name"]
-    buttontext.Text = "          "..(translations[argstable["Name"]] or argstable["Name"])
-    buttontext.LayoutOrder = amount
-    buttontext.Size = UDim2.new(1, 0, 0, 30)
-    buttontext.Active = false
-    buttontext.TextColor3 = Color3.fromRGB(160, 160, 160)
-    buttontext.TextSize = 14
-    buttontext.Font = Enum.Font.Arial
-    buttontext.TextXAlignment = Enum.TextXAlignment.Left
-    buttontext.Position = UDim2.new(0, (icon and 36 or 10), 0, 0)
-    buttontext.Parent = children3
+					buttonapi["Enabled"] = false
+					buttonapi["Keybind"] = ""
+					buttonapi["Default"] = argstable["Default"]
+					buttonapi["Object"] = buttontext
+					buttonapi["ToggleButton"] = function(toggle, first)
+						buttonapi["Enabled"] = toggle
+						if buttonapi["Enabled"] then
+							if not first then
+								tweenService:Create(toggleframe1, TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), {BackgroundColor3 = Color3.fromHSV(GuiLibrary.ObjectsThatCanBeSaved["Gui ColorSliderColor"]["Api"]["Hue"], GuiLibrary.ObjectsThatCanBeSaved["Gui ColorSliderColor"]["Api"]["Sat"], GuiLibrary.ObjectsThatCanBeSaved["Gui ColorSliderColor"]["Api"]["Value"])}):Play()
+							else
+								toggleframe1.BackgroundColor3 = Color3.fromHSV(GuiLibrary.ObjectsThatCanBeSaved["Gui ColorSliderColor"]["Api"]["Hue"], GuiLibrary.ObjectsThatCanBeSaved["Gui ColorSliderColor"]["Api"]["Sat"], GuiLibrary.ObjectsThatCanBeSaved["Gui ColorSliderColor"]["Api"]["Value"])
+							end
+							toggleframe2:TweenPosition(UDim2.new(0, 12, 0, 2), Enum.EasingDirection.InOut, Enum.EasingStyle.Linear, 0.1, true)
+						else
+							if not first then
+								tweenService:Create(toggleframe1, TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), {BackgroundColor3 = Color3.fromRGB(60, 60, 60)}):Play()
+							else
+								toggleframe1.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+							end
+							toggleframe2:TweenPosition(UDim2.new(0, 2, 0, 2), Enum.EasingDirection.InOut, Enum.EasingStyle.Linear, 0.1, true)
+						end
+						argstable["Function"](buttonapi["Enabled"])
+					end
+					if argstable["Default"] then
+						buttonapi["ToggleButton"](argstable["Default"], true)
+					end
+					buttontext.MouseButton1Click:Connect(function() buttonapi["ToggleButton"](not buttonapi["Enabled"], false) end)
+					buttontext.MouseEnter:Connect(function()
+						if argstable["HoverText"] and type(argstable["HoverText"]) == "string" then
+							hoverbox.Visible = (GuiLibrary["ToggleTooltips"] and hoverbox.TextSize ~= 1)
+							local textsize = textService:GetTextSize(argstable["HoverText"], hoverbox.TextSize, hoverbox.Font, Vector2.new(99999, 99999))
+							hoverbox.Text = "  "..argstable["HoverText"]:gsub("\n", "\n  ")
+							hoverbox.Size = UDim2.new(0, 13 + textsize.X, 0, textsize.Y + 5)
+						end
+						if buttonapi["Enabled"] == false then
+							tweenService:Create(toggleframe1, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), {BackgroundColor3 = Color3.fromRGB(100, 100, 100)}):Play()
+						end
+					end)
+					if argstable["HoverText"] and type(argstable["HoverText"]) == "string" then
+						buttontext.MouseMoved:Connect(function(x, y)
+							hoverbox.Visible = (GuiLibrary["ToggleTooltips"] and hoverbox.TextSize ~= 1)
+							hoverbox.Position = UDim2.new(0, (x + 16) * (1 / GuiLibrary["MainRescale"].Scale), 0,	(y - (hoverbox.Size.Y.Offset / 2) - 26) * (1 / GuiLibrary["MainRescale"].Scale))
+						end)
+					end
+					buttontext.MouseLeave:Connect(function()
+						hoverbox.Visible = false
+						if buttonapi["Enabled"] == false then
+							tweenService:Create(toggleframe1, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), {BackgroundColor3 = Color3.fromRGB(60, 60, 60)}):Play()
+						end
+					end)
 
-    local buttonarrow = Instance.new("ImageLabel")
-    buttonarrow.Size = UDim2.new(1, 0, 0, 4)
-    buttonarrow.Position = UDim2.new(0, 0, 1, -4)
-    buttonarrow.BackgroundTransparency = 1
-    buttonarrow.Name = "ToggleArrow"
-    buttonarrow.Image = downloadVapeAsset("vape/assets/ToggleArrow.png")
-    buttonarrow.Visible = false
-    buttonarrow.Parent = buttontext
+					GuiLibrary.ObjectsThatCanBeSaved[argstable["Name"].."Toggle"] = {["Type"] = "Toggle", ["Object"] = buttontext, ["Api"] = buttonapi}
+					return buttonapi
+				end
 
-    local toggleframe1 = Instance.new("Frame")
-    toggleframe1.Size = UDim2.new(0, 22, 0, 12)
-    toggleframe1.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-    toggleframe1.BorderSizePixel = 0
-    toggleframe1.Name = "ToggleFrame1"
-    toggleframe1.Position = UDim2.new(1, -30, 0, 10)
-    toggleframe1.Parent = buttontext
+				windowapi3["CreateSlider"] = function(argstable)
 
-    local toggleframe2 = Instance.new("Frame")
-    toggleframe2.Size = UDim2.new(0, 8, 0, 8)
-    toggleframe2.Active = false
-    toggleframe2.Position = UDim2.new(0, 2, 0, 2)
-    toggleframe2.BackgroundColor3 = Color3.fromRGB(26, 25, 26)
-    toggleframe2.BorderSizePixel = 0
-    toggleframe2.Parent = toggleframe1
+					local sliderapi = {}
+					local amount2 = #children3:GetChildren()
+					local frame = Instance.new("Frame")
+					frame.Size = UDim2.new(0, 220, 0, 50)
+					frame.BackgroundTransparency = 1
+					frame.ClipsDescendants = true
+					frame.LayoutOrder = amount2
+					frame.Name = argstable["Name"]
+					frame.Parent = children3
+					local text1 = Instance.new("TextLabel")
+					text1.Font = Enum.Font.Arial
+					text1.TextXAlignment = Enum.TextXAlignment.Left
+					text1.Text = "          "..(translations[argstable["Name"]] ~= nil and translations[argstable["Name"]] or argstable["Name"])
+					text1.Size = UDim2.new(1, 0, 0, 25)
+					text1.TextColor3 = Color3.fromRGB(160, 160, 160)
+					text1.Position = UDim2.new(0, 0, 0, 4)
+					text1.BackgroundTransparency = 1
+					text1.TextSize = 12
+					text1.Parent = frame
+					local text2 = Instance.new("TextButton")
+					text2.Font = Enum.Font.Arial
+					text2.AutoButtonColor = false
+					text2.TextXAlignment = Enum.TextXAlignment.Right
+					text2.Text = tostring((argstable["Default"] or argstable["Min"])) .. " "..(argstable["Percent"] and "%" or " ").." "
+					text2.Size = UDim2.new(0, 40, 0, 25)
+					text2.Position = UDim2.new(1, -40, 0, 4)
+					text2.TextColor3 = Color3.fromRGB(160, 160, 160)
+					text2.BackgroundTransparency = 1
+					text2.TextSize = 12
+					text2.Parent = frame
+					local text3 = Instance.new("TextBox")
+					text3.Visible = false
+					text3.Font = Enum.Font.Arial
+					text3.TextXAlignment = Enum.TextXAlignment.Right
+					text3.BackgroundTransparency = 1
+					text3.TextColor3 = Color3.fromRGB(160, 160, 160)
+					text3.Text = ""
+					text3.Position = UDim2.new(1, -40, 0, 4)
+					text3.Size = UDim2.new(0, 40, 0, 25)
+					text3.TextSize = 12
+					text3.Parent = frame
+					local textdown = Instance.new("Frame")
+					textdown.BackgroundColor3 = Color3.fromRGB(37, 36, 37)
+					textdown.Size = UDim2.new(0, 30, 0, 2)
+					textdown.Position = UDim2.new(1, -38, 1, -4)
+					textdown.Visible = false
+					textdown.BorderSizePixel = 0
+					textdown.Parent = text2
+					local textdown2 = Instance.new("Frame")
+					textdown2.BackgroundColor3 = Color3.fromRGB(41, 41, 41)
+					textdown2.Size = UDim2.new(0, 30, 0, 2)
+					textdown2.Position = UDim2.new(1, -38, 1, -4)
+					textdown2.BorderSizePixel = 0
+					textdown2.Parent = text3
+					local slider1 = Instance.new("Frame")
+					slider1.Size = UDim2.new(0, 200, 0, 2)
+					slider1.BorderSizePixel = 0
+					slider1.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+					slider1.Position = UDim2.new(0, 10, 0, 37)
+					slider1.Name = "Slider"
+					slider1.Parent = frame
+					local slider2 = Instance.new("Frame")
+					slider2.BorderSizePixel = 0
+					slider2.Size = UDim2.new(math.clamp(((argstable["Default"] or argstable["Min"]) / argstable["Max"]), 0.02, 0.97), 0, 1, 0)
+					slider2.BackgroundColor3 = Color3.fromHSV(GuiLibrary.ObjectsThatCanBeSaved["Gui ColorSliderColor"]["Api"]["Hue"], GuiLibrary.ObjectsThatCanBeSaved["Gui ColorSliderColor"]["Api"]["Sat"], GuiLibrary.ObjectsThatCanBeSaved["Gui ColorSliderColor"]["Api"]["Value"])
+					slider2.Name = "FillSlider"
+					slider2.Parent = slider1
+					local slider3 = Instance.new("ImageButton")
+					slider3.AutoButtonColor = false
+					slider3.Size = UDim2.new(0, 24, 0, 16)
+					slider3.BackgroundColor3 = Color3.fromRGB(26, 25, 26)
+					slider3.BorderSizePixel = 0
+					slider3.Image = downloadVapeAsset("vape/assets/SliderButton1.png")
+					slider3.Position = UDim2.new(1, -11, 0, -7)
+					slider3.Parent = slider2
+					slider3.Name = "ButtonSlider"
+					sliderapi["Object"] = frame
+					sliderapi["Value"] = (argstable["Default"] or argstable["Min"])
+					sliderapi["Default"] = (argstable["Default"] or argstable["Min"])
+					sliderapi["Min"] = argstable["Min"]
+					sliderapi["Max"] = argstable["Max"]
+					sliderapi["SetValue"] = function(val)
+					--	val = math.clamp(val, argstable["Min"], argstable["Max"])
+						sliderapi["Value"] = val
+						slider2.Size = UDim2.new(math.clamp((val / argstable["Max"]), 0.02, 0.97), 0, 1, 0)
+						text2.Text = sliderapi["Value"] .. ".0 "..(argstable["Percent"] and "%" or " ").." "
+						argstable["Function"](val)
+					end
+					slider3.MouseButton1Down:Connect(function()
+						local x,y,xscale,yscale,xscale2 = RelativeXY(slider1, inputService:GetMouseLocation())
+						sliderapi["SetValue"](math.floor(argstable["Min"] + ((argstable["Max"] - argstable["Min"]) * xscale)))
+						text2.Text = sliderapi["Value"] .. ".0 "..(argstable["Percent"] and "%" or " ").." "
+						slider2.Size = UDim2.new(xscale2,0,1,0)
+						local move
+						local kill
+						move = inputService.InputChanged:Connect(function(input)
+							if input.UserInputType == Enum.UserInputType.MouseMovement then
+								local x,y,xscale,yscale,xscale2 = RelativeXY(slider1, inputService:GetMouseLocation())
+								sliderapi["SetValue"](math.floor(argstable["Min"] + ((argstable["Max"] - argstable["Min"]) * xscale)))
+								text2.Text = sliderapi["Value"] .. ".0 "..(argstable["Percent"] and "%" or " ").." "
+								slider2.Size = UDim2.new(xscale2,0,1,0)
+							end
+						end)
+						kill = inputService.InputEnded:Connect(function(input)
+							if input.UserInputType == Enum.UserInputType.MouseButton1 then
+								move:Disconnect()
+								kill:Disconnect()
+							end
+						end)
+					end)
+					text2.MouseEnter:Connect(function()
+						textdown.Visible = true
+					end)
+					text2.MouseLeave:Connect(function()
+						textdown.Visible = false
+					end)
+					text2.MouseButton1Click:Connect(function()
+						text3.Visible = true
+						text2.Visible = false
+						text3:CaptureFocus()
+						text3.Text = text2.Text
+					end)
+					text3.FocusLost:Connect(function(enter)
+						text3.Visible = false
+						text2.Visible = true
+						if enter then
+							sliderapi["SetValue"](tonumber(text3.Text))
+						end
+					end)
+					frame.MouseEnter:Connect(function()
+						if argstable["HoverText"] and type(argstable["HoverText"]) == "string" then
+							hoverbox.Visible = (GuiLibrary["ToggleTooltips"] and hoverbox.TextSize ~= 1)
+							local textsize = textService:GetTextSize(argstable["HoverText"], hoverbox.TextSize, hoverbox.Font, Vector2.new(99999, 99999))
+							hoverbox.Text = "  "..argstable["HoverText"]:gsub("\n", "\n  ")
+							hoverbox.Size = UDim2.new(0, 13 + textsize.X, 0, textsize.Y + 5)
+						end
+					end)
+					if argstable["HoverText"] and type(argstable["HoverText"]) == "string" then
+						frame.MouseMoved:Connect(function(x, y)
+							hoverbox.Visible = (GuiLibrary["ToggleTooltips"] and hoverbox.TextSize ~= 1)
+							hoverbox.Position = UDim2.new(0, (x + 16) * (1 / GuiLibrary["MainRescale"].Scale), 0,	(y - (hoverbox.Size.Y.Offset / 2) - 26) * (1 / GuiLibrary["MainRescale"].Scale))
+						end)
+					end
+					frame.MouseLeave:Connect(function()
+						hoverbox.Visible = false
+					end)
+					GuiLibrary.ObjectsThatCanBeSaved[argstable["Name"].."Slider"] = {["Type"] = "Slider", ["Object"] = frame, ["Api"] = sliderapi}
+					return sliderapi
+				end
 
-    local uicorner = Instance.new("UICorner")
-    uicorner.CornerRadius = UDim.new(0, 16)
-    uicorner.Parent = toggleframe1
-
-    local uicorner2 = Instance.new("UICorner")
-    uicorner2.CornerRadius = UDim.new(0, 16)
-    uicorner2.Parent = toggleframe2
-
-    buttonapi.Object = buttontext
-
-    buttonapi.ToggleButton = function(toggle, first)
-        buttonapi.Enabled = toggle
-        if buttonapi.Enabled then
-            if not first then
-                tweenService:Create(toggleframe1, TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), {BackgroundColor3 = Color3.fromHSV(GuiLibrary.ObjectsThatCanBeSaved["Gui ColorSliderColor"]["Api"]["Hue"], GuiLibrary.ObjectsThatCanBeSaved["Gui ColorSliderColor"]["Api"]["Sat"], GuiLibrary.ObjectsThatCanBeSaved["Gui ColorSliderColor"]["Api"]["Value"])}):Play()
-            else
-                toggleframe1.BackgroundColor3 = Color3.fromHSV(GuiLibrary.ObjectsThatCanBeSaved["Gui ColorSliderColor"]["Api"]["Hue"], GuiLibrary.ObjectsThatCanBeSaved["Gui ColorSliderColor"]["Api"]["Sat"], GuiLibrary.ObjectsThatCanBeSaved["Gui ColorSliderColor"]["Api"]["Value"])
-            end
-            toggleframe2:TweenPosition(UDim2.new(0, 12, 0, 2), Enum.EasingDirection.InOut, Enum.EasingStyle.Linear, 0.1, true)
-        else
-            if not first then
-                tweenService:Create(toggleframe1, TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), {BackgroundColor3 = Color3.fromRGB(60, 60, 60)}):Play()
-            else
-                toggleframe1.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-            end
-            toggleframe2:TweenPosition(UDim2.new(0, 2, 0, 2), Enum.EasingDirection.InOut, Enum.EasingStyle.Linear, 0.1, true)
-        end
-        argstable["Function"](buttonapi.Enabled)
-    end
-
-    if argstable["Default"] then
-        buttonapi.ToggleButton(argstable["Default"], true)
-    end
-
-    buttontext.MouseButton1Click:Connect(function() 
-        buttonapi.ToggleButton(not buttonapi.Enabled, false) 
-    end)
-
-    buttontext.MouseEnter:Connect(function()
-        if argstable["HoverText"] and type(argstable["HoverText"]) == "string" then
-            hoverbox.Visible = (GuiLibrary["ToggleTooltips"] and hoverbox.TextSize ~= 1)
-            local textsize = textService:GetTextSize(argstable["HoverText"], hoverbox.TextSize, hoverbox.Font, Vector2.new(99999, 99999))
-            hoverbox.Text = "  "..argstable["HoverText"]:gsub("\n", "\n  ")
-            hoverbox.Size = UDim2.new(0, 13 + textsize.X, 0, textsize.Y + 5)
-        end
-        if buttonapi.Enabled == false then
-            tweenService:Create(toggleframe1, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), {BackgroundColor3 = Color3.fromRGB(100, 100, 100)}):Play()
-        end
-    end)
-
-    if argstable["HoverText"] and type(argstable["HoverText"]) == "string" then
-        buttontext.MouseMoved:Connect(function(x, y)
-            hoverbox.Visible = (GuiLibrary["ToggleTooltips"] and hoverbox.TextSize ~= 1)
-            hoverbox.Position = UDim2.new(0, (x + 16) * (1 / GuiLibrary["MainRescale"].Scale), 0, (y - (hoverbox.Size.Y.Offset / 2) - 26) * (1 / GuiLibrary["MainRescale"].Scale))
-        end)
-    end
-
-    buttontext.MouseLeave:Connect(function()
-        hoverbox.Visible = false
-        if buttonapi.Enabled == false then
-            tweenService:Create(toggleframe1, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), {BackgroundColor3 = Color3.fromRGB(60, 60, 60)}):Play()
-          end
-     end)
-
-        GuiLibrary.ObjectsThatCanBeSaved[argstable["Name"].."Toggle"] = {["Type"] = "Toggle", ["Object"] = buttontext, ["Api"] = buttonapi}
-         return buttonapi
-      end
-
-windowapi3["CreateSlider"] = function(args)
-    local sliderapi = {
-        Object = nil,
-        Value = args.Default or args.Min,
-        Default = args.Default or args.Min,
-        Min = args.Min,
-        Max = args.Max
-    }
-
-    local function createInstance(className, properties)
-        local inst = Instance.new(className)
-        for k, v in pairs(properties) do
-            inst[k] = v
-        end
-        return inst
-    end
-
-    local frame = createInstance("Frame", {
-        Size = UDim2.new(0, 220, 0, 50),
-        BackgroundTransparency = 1,
-        ClipsDescendants = true,
-        LayoutOrder = #children3:GetChildren(),
-        Name = args.Name,
-        Parent = children3
-    })
-
-    local text1 = createInstance("TextLabel", {
-        Font = Enum.Font.Arial,
-        TextXAlignment = Enum.TextXAlignment.Left,
-        Text = "          " .. (translations[args.Name] or args.Name),
-        Size = UDim2.new(1, 0, 0, 25),
-        TextColor3 = Color3.fromRGB(160, 160, 160),
-        Position = UDim2.new(0, 0, 0, 4),
-        BackgroundTransparency = 1,
-        TextSize = 12,
-        Parent = frame
-    })
-
-    local text2 = createInstance("TextButton", {
-        Font = Enum.Font.Arial,
-        AutoButtonColor = false,
-        TextXAlignment = Enum.TextXAlignment.Right,
-        Text = string.format("%.1f %s", sliderapi.Value, args.Percent and "%" or ""),
-        Size = UDim2.new(0, 60, 0, 30),
-        Position = UDim2.new(1, -60, 0, 10),
-        TextColor3 = Color3.fromRGB(160, 160, 160),
-        BackgroundTransparency = 1,
-        TextSize = 12,
-        Parent = frame
-    })
-
-    local slider1 = createInstance("Frame", {
-        Size = UDim2.new(0, 200, 0, 4),
-        BorderSizePixel = 0,
-        BackgroundColor3 = Color3.fromRGB(60, 60, 60),
-        Position = UDim2.new(0.5, -100, 0.5, -10),
-        Name = "Slider",
-        Parent = frame
-    })
-
-    local slider2 = createInstance("Frame", {
-        BorderSizePixel = 0,
-        Size = UDim2.new(math.clamp(sliderapi.Value / args.Max, 0.02, 0.97), 0, 1, 0),
-        BackgroundColor3 = Color3.fromHSV(GuiLibrary.ObjectsThatCanBeSaved["Gui ColorSliderColor"].Api.Hue,
-                                            GuiLibrary.ObjectsThatCanBeSaved["Gui ColorSliderColor"].Api.Sat,
-                                            GuiLibrary.ObjectsThatCanBeSaved["Gui ColorSliderColor"].Api.Value),
-        Name = "FillSlider",
-        Parent = slider1
-    })
-
-    local slider3 = createInstance("ImageButton", {
-        AutoButtonColor = false,
-        Size = UDim2.new(0, 32, 0, 32),
-        BackgroundColor3 = Color3.fromRGB(26, 25, 26),
-        BorderSizePixel = 0,
-        Image = downloadVapeAsset("vape/assets/SliderButton1.png"),
-        Position = UDim2.new(1, -16, 0.5, -16),
-        Name = "ButtonSlider",
-        Parent = slider2
-    })
-
-    sliderapi.Object = frame
-
-    local function updateSlider(value)
-        value = math.clamp(value, args.Min, args.Max)
-        sliderapi.Value = value
-        slider2.Size = UDim2.new(math.clamp(value / args.Max, 0.02, 0.97), 0, 1, 0)
-        text2.Text = string.format("%.1f %s", value, args.Percent and "%" or "")
-        
-		if args.Function then 
-			args.Function(value) 
-		end
-    end
-
-    sliderapi.SetValue = updateSlider
-
-    local function onSliderInteraction(input)
-		local xScale 
-		if input.UserInputType == Enum.UserInputType.Touch then 
-			xScale= (input.Position.X - slider1.AbsolutePosition.X) / slider1.AbsoluteSize.X 
-		else 
-			xScale= (input.Position.X - slider1.AbsolutePosition.X) / slider1.AbsoluteSize.X 
-		end 
-		updateSlider(args.Min + (args.Max - args.Min) * math.clamp(xScale ,0 ,1))
-	end
-
-	slider3.InputBegan:Connect(function(input)
-		if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-			local connection
-			connection= input.Changed:Connect(function()
-				if input.UserInputState == Enum.UserInputState.End then 
-					connection:Disconnect() 
-				else 
-					onSliderInteraction(input) 
-				end 
-			end)
-		end 
-	end)
-
-	text2.MouseButton1Click:Connect(function()
-		local textBox= createInstance("TextBox", {
-			Text= text2.Text,
-			Size= text2.Size,
-			Position= text2.Position,
-			TextColor3= text2.TextColor3,
-			BackgroundTransparency=1,
-			TextSize=12,
-			Parent=frame
-		})
-		
-		text2.Visible=false 
-		textBox:CaptureFocus() 
-		
-		textBox.FocusLost:Connect(function(enterPressed)
-			text2.Visible=true 
-			textBox:Destroy() 
-
-			if enterPressed then 
-				updateSlider(tonumber(textBox.Text) or sliderapi.Value) 
-			end 
-		end)
-	end)
-
-	if args.HoverText then
-		local hoverBox= GuiLibrary.CreateHoverBox(frame,args.HoverText) 
-	end 
-
-	GuiLibrary.ObjectsThatCanBeSaved[args.Name.."Slider"]={Type="Slider",Object=frame ,Api=sliderapi}
-	return sliderapi
-end
-
-	windowapi3["CreateButton2"] = function(argstable)
+				windowapi3["CreateButton2"] = function(argstable)
 					local buttonapi = {}
 					local currentanim
 					local amount = #children3:GetChildren()
