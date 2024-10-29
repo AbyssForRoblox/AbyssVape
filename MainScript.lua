@@ -1,3 +1,4 @@
+--This watermark is used to delete the file if its cached, remove it to make the file persist after commits.
 repeat task.wait() until game:IsLoaded()
 local GuiLibrary
 local baseDirectory = (shared.VapePrivate and "vapeprivate/" or "vape/")
@@ -85,17 +86,13 @@ local vapeAssetTable = {
 	["vape/assets/VapeLogo2.png"] = "rbxassetid://13350876307",
 	["vape/assets/VapeLogo4.png"] = "rbxassetid://13350877564"
 }
-if inputService:GetPlatform() ~= Enum.Platform.Windows then
-	--mobile exploit fix
-	getgenv().getsynasset = nil
+if identifyexecutor():find("Wave") or identifyexecutor():find("macsploit") or identifyexecutor():find("Fluxus") then
 	getgenv().getcustomasset = nil
-	-- why is this needed
-	getsynasset = nil
 	getcustomasset = nil
 end
 local getcustomasset = getsynasset or getcustomasset or function(location) return vapeAssetTable[location] or "" end
 local customassetcheck = (getsynasset or getcustomasset) and true
-local queueonteleport = syn and syn.queue_on_teleport or queue_on_teleport or function() end
+local queueonteleport = syn and syn.queue_on_teleport or queue_on_teleport or queueonteleport or function() end
 local delfile = delfile or function(file) writefile(file, "") end
 
 local function displayErrorPopup(text, funclist)
@@ -105,7 +102,7 @@ local function displayErrorPopup(text, funclist)
 	local prompt = ErrorPrompt.new("Default")
 	prompt._hideErrorCode = true
 	local gui = Instance.new("ScreenGui", game:GetService("CoreGui"))
-	prompt:setErrorTitle("Abyss Vape")
+	prompt:setErrorTitle("Vape")
 	local funcs
 	if funclist then
 		funcs = {}
@@ -143,15 +140,15 @@ local function vapeGithubRequest(scripturl)
 				displayErrorPopup("The connection to github is taking a while, Please be patient.")
 			end
 		end)
-		suc, res = pcall(function() return game:HttpGet("https://raw.githubusercontent.com/AbyssForRoblox/AbyssVape/"..readfile("vape/commithash.txt").."/"..scripturl, true) end)
+		suc, res = pcall(function() return game:HttpGet("https://raw.githubusercontent.com/7GrandDadPGN/VapeV4ForRoblox/"..scripturl, true) end)
 		if not suc or res == "404: Not Found" then
 			displayErrorPopup("Failed to connect to github : vape/"..scripturl.." : "..res)
 			error(res)
 		end
 		if scripturl:find(".lua") then res = "--This watermark is used to delete the file if its cached, remove it to make the file persist after commits.\n"..res end
-		writefile("vape/"..scripturl, res)
+		writefile(baseDirectory..scripturl, res)
 	end
-	return readfile("vape/"..scripturl)
+	return readfile(baseDirectory..scripturl)
 end
 
 local function downloadVapeAsset(path)
@@ -190,27 +187,27 @@ for i,v in pairs({baseDirectory:gsub("/", ""), "vape", "vape/Libraries", "vape/C
 end
 task.spawn(function()
 	local success, assetver = pcall(function() return vapeGithubRequest("assetsversion.txt") end)
-	if not isfile("vape/assetsversion.txt") then writefile("vape/assetsversion.txt", "0") end
-	if success and assetver > readfile("vape/assetsversion.txt") then
+	if not isfile(baseDirectory.. "assetsversion.txt") then writefile(baseDirectory.. "assetsversion.txt", "0") end
+	if success and assetver > readfile(baseDirectory.. "assetsversion.txt") then
 		redownloadedAssets = true
-		if isfolder("vape/assets") and not shared.VapeDeveloper then
+		if isfolder(baseDirectory.. "assets") and not shared.VapeDeveloper then
 			if delfolder then
-				delfolder("vape/assets")
-				makefolder("vape/assets")
+				delfolder(baseDirectory.. "assets")
+				makefolder(baseDirectory.. "assets")
 			end
 		end
-		writefile("vape/assetsversion.txt", assetver)
+		writefile(baseDirectory.. "assetsversion.txt", assetver)
 	end
 end)
-if not isfile("vape/CustomModules/cachechecked.txt") then
+if not isfile(baseDirectory.. "CustomModules/cachechecked.txt") then
 	local isNotCached = false
-	for i,v in pairs({"vape/Universal.lua", "vape/MainScript.lua", "vape/GuiLibrary.lua"}) do
+	for i,v in pairs({baseDirectory.. "Universal.lua", baseDirectory.. "/MainScript.lua", baseDirectory.. "/GuiLibrary.lua"}) do
 		if isfile(v) and not readfile(v):find("--This watermark is used to delete the file if its cached, remove it to make the file persist after commits.") then
 			isNotCached = true
 		end
 	end
 	if isfolder("vape/CustomModules") then
-		for i,v in pairs(listfiles("vape/CustomModules")) do
+		for i,v in pairs(listfiles(baseDirectory.. "CustomModules")) do
 			if isfile(v) and not readfile(v):find("--This watermark is used to delete the file if its cached, remove it to make the file persist after commits.") then
 				isNotCached = true
 			end
@@ -218,24 +215,24 @@ if not isfile("vape/CustomModules/cachechecked.txt") then
 	end
 	if isNotCached and not shared.VapeDeveloper then
 		displayErrorPopup("Vape has detected uncached files, If you have CustomModules click no, else click yes.", {No = function() end, Yes = function()
-			for i,v in pairs({"vape/Universal.lua", "vape/MainScript.lua", "vape/GuiLibrary.lua"}) do
+			for i,v in pairs({baseDirectory.. "/Universal.lua", baseDirectory.. "/MainScript.lua", baseDirectory.. "/GuiLibrary.lua"}) do
 				if isfile(v) and not readfile(v):find("--This watermark is used to delete the file if its cached, remove it to make the file persist after commits.") then
 					delfile(v)
 				end
 			end
-			for i,v in pairs(listfiles("vape/CustomModules")) do
+			for i,v in pairs(listfiles(baseDirectory.. "CustomModules")) do
 				if isfile(v) and not readfile(v):find("--This watermark is used to delete the file if its cached, remove it to make the file persist after commits.") then
 					local last = v:split('\\')
 					last = last[#last]
-					local suc, publicrepo = pcall(function() return game:HttpGet("https://raw.githubusercontent.com/AbyssForRoblox/AbyssVape/"..readfile("vape/commithash.txt").."/CustomModules/"..last) end)
+					local suc, publicrepo = pcall(function() return game:HttpGet("https://raw.githubusercontent.com/7GrandDadPGN/VapeV4ForRoblox/CustomModules/"..last) end)
 					if suc and publicrepo and publicrepo ~= "404: Not Found" then
-						writefile("vape/CustomModules/"..last, "--This watermark is used to delete the file if its cached, remove it to make the file persist after commits.\n"..publicrepo)
+						writefile(baseDirectory.. "CustomModules/"..last, "--This watermark is used to delete the file if its cached, remove it to make the file persist after commits.\n"..publicrepo)
 					end
 				end
 			end
 		end})
 	end
-	writefile("vape/CustomModules/cachechecked.txt", "verified")
+	writefile(baseDirectory.. "CustomModules/cachechecked.txt", "verified")
 end
 
 GuiLibrary = loadstring(vapeGithubRequest("GuiLibrary.lua"))()
@@ -266,7 +263,7 @@ task.spawn(function()
 		if image and image.ContentImageSize == Vector2.zero and (not errorPopupShown) and (not redownloadedAssets) and (not isfile("vape/assets/check3.txt")) then
             errorPopupShown = true
             displayErrorPopup("Assets failed to load, Try another executor (executor : "..(identifyexecutor and identifyexecutor() or "Unknown")..")", {OK = function()
-                writefile("vape/assets/check3.txt", "")
+                writefile(baseDirectory.. "assets/check3.txt", "")
             end})
         end
 	end)
@@ -299,9 +296,9 @@ local World = GuiLibrary.CreateWindow({
 	IconSize = 16
 })
 local Exploit = GuiLibrary.CreateWindow({
-	Name = "Exploit",
-	Icon = "vape/assets/TargetIcon2.png",
-	IconSize = 16
+	Name = 'Exploit',
+	Icon = 'vape/assets/exploiticon.png',
+	IconSize = 18
 })
 local Friends = GuiLibrary.CreateWindow2({
 	Name = "Friends",
@@ -349,12 +346,13 @@ GUI.CreateButton({
 	Icon = "vape/assets/WorldIcon.png",
 	IconSize = 16
 })
+GUI.CreateDivider("Abyss")
 GUI.CreateButton({
 	Name = "Exploit",
 	Function = function(callback) Exploit.SetVisible(callback) end,
-	Icon = "vape/assets/TargetIcon2.png",
-	IconSize = 16
-})					
+	Icon = "vape/assets/exploiticon.png",
+	IconSize = 18
+})
 GUI.CreateDivider("MISC")
 GUI.CreateButton({
 	Name = "Friends",
@@ -1061,12 +1059,12 @@ local function TextGUIUpdate()
             local textsize = textService:GetTextSize(v, VapeText.TextSize, VapeText.Font, Vector2.new(1000000, 1000000))
             local backgroundFrame = Instance.new("Frame")
             backgroundFrame.BorderSizePixel = 0
-            backgroundFrame.BackgroundTransparency = 0.62
+            backgroundFrame.BackgroundTransparency = 0.44
             backgroundFrame.BackgroundColor3 = Color3.new()
             backgroundFrame.Visible = true
             backgroundFrame.ZIndex = 0
             backgroundFrame.LayoutOrder = i
-            backgroundFrame.Size = UDim2.fromOffset(textsize.X + 8, textsize.Y + 3)
+            backgroundFrame.Size = UDim2.fromOffset(textsize.X + 8, textsize.Y + VapeScale.Scale + 2)
             backgroundFrame.Parent = VapeBackground
             local backgroundLineFrame = Instance.new("Frame")
             backgroundLineFrame.Size = UDim2.new(0, 2, 1, 0)
@@ -1584,7 +1582,7 @@ local windowSortOrder = {
 	RenderButton = 3,
 	UtilityButton = 4,
 	WorldButton = 5,
-	ExploitButton = 6,																																			
+	ExploitButton= 6,
 	FriendsButton = 7,
 	TargetsButton = 8,
 	ProfilesButton = 9
@@ -1804,11 +1802,10 @@ local teleportConnection = playersService.LocalPlayer.OnTeleport:Connect(functio
 		teleportedServers = true
 		local teleportScript = [[
 			shared.VapeSwitchServers = true
-			if shared.VapeDeveloper then
-				loadstring(readfile("vape/NewMainScript.lua"))()
-			else
-				loadstring(game:HttpGet("https://raw.githubusercontent.com/AbyssForRoblox/AbyssVape/"..readfile("vape/commithash.txt").."/NewMainScript.lua", true))()
+			loadfile = loadfile or function(file)
+				return loadstring(readfile(file))
 			end
+			loadfile("vape/loader.lua")()
 		]]
 		if shared.VapeDeveloper then
 			teleportScript = 'shared.VapeDeveloper = true\n'..teleportScript
@@ -1909,14 +1906,14 @@ GUISettings.CreateButton2({
 			BlatantWindow = 3,
 			RenderWindow = 4,
 			UtilityWindow = 5,
-			ExploitButton = 6,																																															
-			WorldWindow = 7,
+			WorldWindow = 6,
+			ExploitWindow = 7,
 			FriendsWindow = 8,
 			TargetsWindow = 9,
 			ProfilesWindow = 10,
 			["Text GUICustomWindow"] = 11,
 			TargetInfoCustomWindow = 12,
-			RadarCustomWindow = 13,
+			RadarCustomWindow = 13
 		}
 		local storedpos = {}
 		local num = 6
@@ -1950,23 +1947,26 @@ GeneralSettings.CreateButton2({
 	Function = GuiLibrary.SelfDestruct
 })
 
+GeneralSettings.CreateButton2({
+	Name = "REINJECT",
+	Function = function(calling)
+		GuiLibrary.SelfDestruct();
+		loadfile("vape/MainScript.lua")()
+	end
+})
+
 local function loadVape()
 	if not shared.VapeIndependent then
 		loadstring(vapeGithubRequest("Universal.lua"))()
-		if isfile("vape/CustomModules/"..game.PlaceId..".lua") then
-			loadstring(readfile("vape/CustomModules/"..game.PlaceId..".lua"))()
+		if isfile(baseDirectory.. "CustomModules/"..game.PlaceId..".lua") then
+			loadstring(readfile(baseDirectory.. "CustomModules/"..game.PlaceId..".lua"))()
 		else
 			if not shared.VapeDeveloper then
-				local suc, publicrepo = pcall(function() return game:HttpGet("https://raw.githubusercontent.com/AbyssForRoblox/AbyssVape/"..readfile("vape/commithash.txt").."/CustomModules/"..game.PlaceId..".lua") end)
+				local suc, publicrepo = pcall(function() return game:HttpGet("https://raw.githubusercontent.com/7GrandDadPGN/VapeV4ForRoblox/CustomModules/"..game.PlaceId..".lua") end)
 				if suc and publicrepo and publicrepo ~= "404: Not Found" then
-					writefile("vape/CustomModules/"..game.PlaceId..".lua", "--This watermark is used to delete the file if its cached, remove it to make the file persist after commits.\n"..publicrepo)
-					loadstring(readfile("vape/CustomModules/"..game.PlaceId..".lua"))()
+					writefile(baseDirectory.. "CustomModules/"..game.PlaceId..".lua", "--This watermark is used to delete the file if its cached, remove it to make the file persist after commits.\n"..publicrepo)
+					loadstring(readfile(baseDirectory.. "CustomModules/"..game.PlaceId..".lua"))()
 				end
-			end
-		end
-		if shared.VapePrivate then
-			if isfile("vapeprivate/CustomModules/"..game.PlaceId..".lua") then
-				loadstring(readfile("vapeprivate/CustomModules/"..game.PlaceId..".lua"))()
 			end
 		end
 	else
@@ -1989,7 +1989,7 @@ local function loadVape()
 	if not shared.VapeSwitchServers then
 		if BlatantModeToggle.Enabled then
 			pcall(function()
-				local frame = GuiLibrary.CreateNotification("Blatant Enabled", "Abyss Vape is now in Blatant Mode.", 5.5, "assets/WarningNotification.png")
+				local frame = GuiLibrary.CreateNotification("Blatant Enabled", "Vape is now in Blatant Mode.", 3, "assets/WarningNotification.png")
 				frame.Frame.Frame.ImageColor3 = Color3.fromRGB(236, 129, 44)
 			end)
 		end
