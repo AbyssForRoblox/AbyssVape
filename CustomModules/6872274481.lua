@@ -9445,45 +9445,39 @@ task.spawn(function()
 	end
 end)
 
-
-
-
-
-
-
-
 run(function()
-	InfiniteJump = blatant.Api.CreateOptionsButton({
-		Name = "InfiniteJump",
-		Function = function(callback)
-			if callback then
-
-			end
-		end
-	})
-	game:GetService("UserInputService").JumpRequest:Connect(function()
-		if not InfiniteJump.Enabled then return end
-		if lplr.Character and lplr.Character:FindFirstChildOfClass("Humanoid") then
-			local hum = lplr.Character:FindFirstChildOfClass("Humanoid")
-			hum:ChangeState("Jumping")
-		end
-	end)         
+    local InfiniteJump: vapemodule = {}
+    
+    InfiniteJump = blatant.Api.CreateOptionsButton({
+        Name = "InfiniteJump",
+        Function = function(call: boolean)
+            if call then
+                InfiniteJump.Connection = game:GetService("UserInputService").JumpRequest:Connect(function()
+                    if not InfiniteJump.Enabled then return end
+                    if lplr.Character and lplr.Character:FindFirstChildOfClass("Humanoid") then
+                        local hum = lplr.Character:FindFirstChildOfClass("Humanoid")
+                        hum:ChangeState("Jumping")
+                    end
+                end)
+            else
+                if InfiniteJump.Connection then
+                    InfiniteJump.Connection:Disconnect()
+                end
+            end
+        end,
+        HoverText = "Allows infinite jumping"
+    })
 end)
 
-
-
-
-
-
 run(function()
-    local AutoUpgradeStats = {Enabled = false}
+    local AutoUpgradeStats: vapemodule = {}
     local replicatedStorage = game:GetService("ReplicatedStorage")
     local netManaged = replicatedStorage.rbxts_include.node_modules:FindFirstChild("@rbxts").net.out._NetManaged
 
-    AutoUpgradeStats = utility.Api.CreateOptionsButton({
+    AutoUpgradeStats = visual.Api.CreateOptionsButton({
         Name = "AutoUpgradeStats",
-        Function = function(callback)
-            if callback then                                                                                                                                                            
+        Function = function(call: boolean)
+            if call then
                 local promoment = {
                     {"SPEED", 1}, {"SPEED", 2}, {"SPEED", 3},
                     {"DAMAGE", 1}, {"DAMAGE", 2}, {"DAMAGE", 3},
@@ -9491,294 +9485,328 @@ run(function()
                     {"DESTRUCTION", 1}, {"DESTRUCTION", 2}, {"DESTRUCTION", 3}
                 }
                 local levels = {3, 6, 5, 4, 7, 8, 9, 10, 11, 1, 2, 12, 13, 14, 15, 16, 17, 18, 19, 20}
-                task.spawn(function()
+                AutoUpgradeStats.Connection = task.spawn(function()
                     repeat
                         for _, upgrade in ipairs(promoment) do
                             netManaged.RequestUpgradeStat:InvokeServer(unpack(upgrade))
                         end
-    
                         for _, level in ipairs(levels) do
                             netManaged.RequestPurchaseTeamLevel:InvokeServer(level)
                         end
-    
-                        wait(0.1)
-                    until (not AutoUpgradeStats.Enabled)
-                end)   
+                        task.wait(0.1)
+                    until not AutoUpgradeStats.Enabled
+                end)
+            else
+                if AutoUpgradeStats.Connection then
+                    task.cancel(AutoUpgradeStats.Connection)
+                end
             end
         end,
         HoverText = "pro moment eeeeajjsjskekssk"
     })
 end)
-
-
-
-
 run(function()
-	local HotbarMods = {}
-	local HotbarRounding = {}
-	local HotbarHighlight = {}
-	local HotbarColorToggle = {}
-	local HotbarHideSlotIcons = {}
-	local HotbarSlotNumberColorToggle = {}
-	local HotbarRoundRadius = {Value = 8}
-	local HotbarColor = {Hue = 0, Sat = 0, Value = 0}
-	local HotbarHighlightColor = {Hue = 0, Sat = 0, Value = 0}
-	local HotbarSlotNumberColor = {Hue = 0, Sat = 0, Value = 0}
-	local hotbarsloticons = {}
-	local hotbarobjects = {}
-	local hotbarcoloricons = {}
-	local HotbarModsGradient = {}
-	local hotbarslotgradients = {}
-	local HotbarModsGradientColor = {Hue = 0, Sat = 0, Value = 0}
-	local HotbarModsGradientColor2 = {Hue = 0, Sat = 0, Value = 0}
-	local function hotbarFunction()
-		local inventoryicons = ({pcall(function() return lplr.PlayerGui.hotbar['1'].ItemsHotbar end)})[2]
-		if inventoryicons and type(inventoryicons) == 'userdata' then
-			for i,v in next, inventoryicons:GetChildren() do 
-				local sloticon = ({pcall(function() return v:FindFirstChildWhichIsA('ImageButton'):FindFirstChildWhichIsA('TextLabel') end)})[2]
-				if type(sloticon) ~= 'userdata' then 
-					continue
-				end
-				if HotbarColorToggle.Enabled and not HotbarModsGradient.Enabled then 
-					sloticon.Parent.BackgroundColor3 = Color3.fromHSV(HotbarColor.Hue, HotbarColor.Sat, HotbarColor.Value)
-					table.insert(hotbarcoloricons, sloticon.Parent) 
-				end
-				if HotbarModsGradient.Enabled then 
-					sloticon.Parent.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-					if sloticon.Parent:FindFirstChildWhichIsA('UIGradient') == nil then 
-						local gradient = Instance.new('UIGradient') 
-						local color = Color3.fromHSV(HotbarModsGradientColor.Hue, HotbarModsGradientColor.Sat, HotbarModsGradientColor.Value)
-						local color2 = Color3.fromHSV(HotbarModsGradientColor2.Hue, HotbarModsGradientColor2.Sat, HotbarModsGradientColor2.Value)
-						gradient.Color = ColorSequence.new({ColorSequenceKeypoint.new(0, color), ColorSequenceKeypoint.new(1, color2)})
-						gradient.Parent = sloticon.Parent
-						table.insert(hotbarslotgradients, gradient)
-						table.insert(hotbarcoloricons, sloticon.Parent) 
-					end
-				end
-				if HotbarRounding.Enabled then 
-					local uicorner = Instance.new('UICorner')
-					uicorner.Parent = sloticon.Parent
-					uicorner.CornerRadius = UDim.new(0, HotbarRoundRadius.Value)
-					table.insert(hotbarobjects, uicorner)
-				end
-				if HotbarHighlight.Enabled then
-					local highlight = Instance.new('UIStroke')
-					highlight.Color = Color3.fromHSV(HotbarHighlightColor.Hue, HotbarHighlightColor.Sat, HotbarHighlightColor.Value)
-					highlight.Thickness = 1.3 
-					highlight.Parent = sloticon.Parent
-					table.insert(hotbarobjects, highlight)
-				end
-				if HotbarHideSlotIcons.Enabled then 
-					sloticon.Visible = false 
-				end
-				table.insert(hotbarsloticons, sloticon)
-			end 
-		end
-	end
-	HotbarMods = visual.Api.CreateOptionsButton({
-		Name = 'HotbarMods',
-		HoverText = 'Add customization to your hotbar.',
-		Function = function(calling)
-			if calling then 
-				task.spawn(function()
-					table.insert(HotbarMods.Connections, lplr.PlayerGui.DescendantAdded:Connect(function(v)
-						if v.Name == 'hotbar' then
-							hotbarFunction()
-						end
-					end))
-					hotbarFunction()
-				end)
-			else
-				for i,v in hotbarsloticons do 
-					pcall(function() v.Visible = true end)
-				end
-				for i,v in hotbarcoloricons do 
-					pcall(function() v.BackgroundColor3 = Color3.fromRGB(29, 36, 46) end)
-				end
-				for i,v in hotbarobjects do
-					pcall(function() v:Destroy() end)
-				end
-				for i,v in next, hotbarslotgradients do 
-					pcall(function() v:Destroy() end)
-				end
-				table.clear(hotbarobjects)
-				table.clear(hotbarsloticons)
-				table.clear(hotbarcoloricons)
-			end
-		end
-	})
-	HotbarColorToggle = HotbarMods.CreateToggle({
-		Name = 'Slot Color',
-		Function = function(calling)
-			pcall(function() HotbarColor.Object.Visible = calling end)
-			pcall(function() HotbarColorToggle.Object.Visible = calling end)
-			if HotbarMods.Enabled then 
-				HotbarMods.ToggleButton(false)
-				HotbarMods.ToggleButton(false)
-			end
-		end
-	})
-	HotbarModsGradient = HotbarMods.CreateToggle({
-		Name = 'Gradient Slot Color',
-		Function = function(calling)
-			pcall(function() HotbarModsGradientColor.Object.Visible = calling end)
-			pcall(function() HotbarModsGradientColor2.Object.Visible = calling end)
-			if HotbarMods.Enabled then 
-				HotbarMods.ToggleButton(false)
-				HotbarMods.ToggleButton(false)
-			end
-		end
-	})
-	HotbarModsGradientColor = HotbarMods.CreateColorSlider({
-		Name = 'Gradient Color',
-		Function = function(h, s, v)
-			for i,v in next, hotbarslotgradients do 
-				pcall(function() v.Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.fromHSV(HotbarModsGradientColor.Hue, HotbarModsGradientColor.Sat, HotbarModsGradientColor.Value)), ColorSequenceKeypoint.new(1, Color3.fromHSV(HotbarModsGradientColor2.Hue, HotbarModsGradientColor2.Sat, HotbarModsGradientColor2.Value))}) end)
-			end
-		end
-	})
-	HotbarModsGradientColor2 = HotbarMods.CreateColorSlider({
-		Name = 'Gradient Color 2',
-		Function = function(h, s, v)
-			for i,v in next, hotbarslotgradients do 
-				pcall(function() v.Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.fromHSV(HotbarModsGradientColor.Hue, HotbarModsGradientColor.Sat, HotbarModsGradientColor.Value)), ColorSequenceKeypoint.new(1, Color3.fromHSV(HotbarModsGradientColor2.Hue, HotbarModsGradientColor2.Sat, HotbarModsGradientColor2.Value))}) end)
-			end
-		end
-	})
-	HotbarColor = HotbarMods.CreateColorSlider({
-		Name = 'Slot Color',
-		Function = function(h, s, v)
-			for i,v in next, hotbarcoloricons do
-				if HotbarColorToggle.Enabled then
-					pcall(function() v.BackgroundColor3 = Color3.fromHSV(HotbarColor.Hue, HotbarColor.Sat, HotbarColor.Value) end) -- for some reason the 'h, s, v' didn't work :(
-				end
-			end
-		end
-	})
-	HotbarRounding = HotbarMods.CreateToggle({
-		Name = 'Rounding',
-		Function = function(calling)
-			pcall(function() HotbarRoundRadius.Object.Visible = calling end)
-			if HotbarMods.Enabled then 
-				HotbarMods.ToggleButton(false)
-				HotbarMods.ToggleButton(false)
-			end
-		end
-	})
-	HotbarRoundRadius = HotbarMods.CreateSlider({
-		Name = 'Corner Radius',
-		Min = 1,
-		Max = 20,
-		Function = function(calling)
-			for i,v in next, hotbarobjects do 
-				pcall(function() v.CornerRadius = UDim.new(0, calling) end)
-			end
-		end
-	})
-	HotbarHighlight = HotbarMods.CreateToggle({
-		Name = 'Outline Highlight',
-		Function = function(calling)
-			pcall(function() HotbarHighlightColor.Object.Visible = calling end)
-			if HotbarMods.Enabled then 
-				HotbarMods.ToggleButton(false)
-				HotbarMods.ToggleButton(false)
-			end
-		end
-	})
-	HotbarHighlightColor = HotbarMods.CreateColorSlider({
-		Name = 'Highlight Color',
-		Function = function(h, s, v)
-			for i,v in next, hotbarobjects do 
-				if v:IsA('UIStroke') and HotbarHighlight.Enabled then 
-					pcall(function() v.Color = Color3.fromHSV(HotbarHighlightColor.Hue, HotbarHighlightColor.Sat, HotbarHighlightColor.Value) end)
-				end
-			end
-		end
-	})
-	HotbarHideSlotIcons = HotbarMods.CreateToggle({
-		Name = 'No Slot Numbers',
-		Function = function()
-			if HotbarMods.Enabled then 
-				HotbarMods.ToggleButton(false)
-				HotbarMods.ToggleButton(false)
-			end
-		end
-	})
-	HotbarColor.Object.Visible = false
-	HotbarRoundRadius.Object.Visible = false
-	HotbarHighlightColor.Object.Visible = false
+    local HotbarMods: vapemodule = {}
+    local HotbarRounding: vapetoggle = {}
+    local HotbarHighlight: vapetoggle = {}
+    local HotbarColorToggle: vapetoggle = {}
+    local HotbarHideSlotIcons: vapetoggle = {}
+    local HotbarSlotNumberColorToggle: vapetoggle = {}
+    local HotbarRoundRadius: vapeslider = {Value = 8}
+    local HotbarColor: vapecolorslider = {Hue = 0, Sat = 0, Value = 0}
+    local HotbarHighlightColor: vapecolorslider = {Hue = 0, Sat = 0, Value = 0}
+    local HotbarSlotNumberColor: vapecolorslider = {Hue = 0, Sat = 0, Value = 0}
+    local HotbarModsGradient: vapetoggle = {}
+    local HotbarModsGradientColor: vapecolorslider = {Hue = 0, Sat = 0, Value = 0}
+    local HotbarModsGradientColor2: vapecolorslider = {Hue = 0, Sat = 0, Value = 0}
+    
+    local hotbarsloticons = {}
+    local hotbarobjects = {}
+    local hotbarcoloricons = {}
+    local hotbarslotgradients = {}
+
+    local function hotbarFunction()
+        local inventoryicons = ({pcall(function() return lplr.PlayerGui.hotbar['1'].ItemsHotbar end)})[2]
+        if inventoryicons and type(inventoryicons) == 'userdata' then
+            for i,v in next, inventoryicons:GetChildren() do 
+                local sloticon = ({pcall(function() return v:FindFirstChildWhichIsA('ImageButton'):FindFirstChildWhichIsA('TextLabel') end)})[2]
+                if type(sloticon) ~= 'userdata' then 
+                    continue
+                end
+                if HotbarColorToggle.Enabled and not HotbarModsGradient.Enabled then 
+                    sloticon.Parent.BackgroundColor3 = Color3.fromHSV(HotbarColor.Hue, HotbarColor.Sat, HotbarColor.Value)
+                    table.insert(hotbarcoloricons, sloticon.Parent) 
+                end
+                if HotbarModsGradient.Enabled then 
+                    sloticon.Parent.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+                    if sloticon.Parent:FindFirstChildWhichIsA('UIGradient') == nil then 
+                        local gradient = Instance.new('UIGradient') 
+                        local color = Color3.fromHSV(HotbarModsGradientColor.Hue, HotbarModsGradientColor.Sat, HotbarModsGradientColor.Value)
+                        local color2 = Color3.fromHSV(HotbarModsGradientColor2.Hue, HotbarModsGradientColor2.Sat, HotbarModsGradientColor2.Value)
+                        gradient.Color = ColorSequence.new({ColorSequenceKeypoint.new(0, color), ColorSequenceKeypoint.new(1, color2)})
+                        gradient.Parent = sloticon.Parent
+                        table.insert(hotbarslotgradients, gradient)
+                        table.insert(hotbarcoloricons, sloticon.Parent) 
+                    end
+                end
+                if HotbarRounding.Enabled then 
+                    local uicorner = Instance.new('UICorner')
+                    uicorner.Parent = sloticon.Parent
+                    uicorner.CornerRadius = UDim.new(0, HotbarRoundRadius.Value)
+                    table.insert(hotbarobjects, uicorner)
+                end
+                if HotbarHighlight.Enabled then
+                    local highlight = Instance.new('UIStroke')
+                    highlight.Color = Color3.fromHSV(HotbarHighlightColor.Hue, HotbarHighlightColor.Sat, HotbarHighlightColor.Value)
+                    highlight.Thickness = 1.3 
+                    highlight.Parent = sloticon.Parent
+                    table.insert(hotbarobjects, highlight)
+                end
+                if HotbarHideSlotIcons.Enabled then 
+                    sloticon.Visible = false 
+                end
+                table.insert(hotbarsloticons, sloticon)
+            end 
+        end
+    end
+
+    HotbarMods = visual.Api.CreateOptionsButton({
+        Name = 'HotbarMods',
+        Function = function(call: boolean)
+            if call then
+                HotbarMods.Connection = lplr.PlayerGui.DescendantAdded:Connect(function(v)
+                    if v.Name == 'hotbar' then
+                        hotbarFunction()
+                    end
+                end)
+                hotbarFunction()
+            else
+                if HotbarMods.Connection then
+                    HotbarMods.Connection:Disconnect()
+                end
+                for i,v in pairs(hotbarsloticons) do 
+                    pcall(function() v.Visible = true end)
+                end
+                for i,v in pairs(hotbarcoloricons) do 
+                    pcall(function() v.BackgroundColor3 = Color3.fromRGB(29, 36, 46) end)
+                end
+                for i,v in pairs(hotbarobjects) do
+                    pcall(function() v:Destroy() end)
+                end
+                for i,v in pairs(hotbarslotgradients) do 
+                    pcall(function() v:Destroy() end)
+                end
+                table.clear(hotbarobjects)
+                table.clear(hotbarsloticons)
+                table.clear(hotbarcoloricons)
+            end
+        end,
+        HoverText = 'Add customization to your hotbar.'
+    })
+
+    HotbarColorToggle = HotbarMods.CreateToggle({
+        Name = 'Slot Color',
+        Function = function(call: boolean)
+            pcall(function() HotbarColor.Object.Visible = call end)
+            pcall(function() HotbarColorToggle.Object.Visible = call end)
+            if HotbarMods.Enabled then 
+                HotbarMods.ToggleButton(false)
+                HotbarMods.ToggleButton(true)
+            end
+        end,
+        Default = true
+    })
+
+    HotbarModsGradient = HotbarMods.CreateToggle({
+        Name = 'Gradient Slot Color',
+        Function = function(call: boolean)
+            pcall(function() HotbarModsGradientColor.Object.Visible = call end)
+            pcall(function() HotbarModsGradientColor2.Object.Visible = call end)
+            if HotbarMods.Enabled then 
+                HotbarMods.ToggleButton(false)
+                HotbarMods.ToggleButton(true)
+            end
+        end
+    })
+
+    HotbarModsGradientColor = HotbarMods.CreateColorSlider({
+        Name = 'Gradient Color',
+        Function = function(h, s, v)
+            for i,v in next, hotbarslotgradients do 
+                pcall(function() v.Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.fromHSV(HotbarModsGradientColor.Hue, HotbarModsGradientColor.Sat, HotbarModsGradientColor.Value)), ColorSequenceKeypoint.new(1, Color3.fromHSV(HotbarModsGradientColor2.Hue, HotbarModsGradientColor2.Sat, HotbarModsGradientColor2.Value))}) end)
+            end
+        end
+    })
+
+    HotbarModsGradientColor2 = HotbarMods.CreateColorSlider({
+        Name = 'Gradient Color 2',
+        Function = function(h, s, v)
+            for i,v in next, hotbarslotgradients do 
+                pcall(function() v.Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.fromHSV(HotbarModsGradientColor.Hue, HotbarModsGradientColor.Sat, HotbarModsGradientColor.Value)), ColorSequenceKeypoint.new(1, Color3.fromHSV(HotbarModsGradientColor2.Hue, HotbarModsGradientColor2.Sat, HotbarModsGradientColor2.Value))}) end)
+            end
+        end
+    })
+
+    HotbarColor = HotbarMods.CreateColorSlider({
+        Name = 'Slot Color',
+        Function = function(h, s, v)
+            for i,v in next, hotbarcoloricons do
+                if HotbarColorToggle.Enabled then
+                    pcall(function() v.BackgroundColor3 = Color3.fromHSV(HotbarColor.Hue, HotbarColor.Sat, HotbarColor.Value) end)
+                end
+            end
+        end
+    })
+
+    HotbarRounding = HotbarMods.CreateToggle({
+        Name = 'Rounding',
+        Function = function(call: boolean)
+            pcall(function() HotbarRoundRadius.Object.Visible = call end)
+            if HotbarMods.Enabled then 
+                HotbarMods.ToggleButton(false)
+                HotbarMods.ToggleButton(true)
+            end
+        end
+    })
+
+    HotbarRoundRadius = HotbarMods.CreateSlider({
+        Name = 'Corner Radius',
+        Min = 1,
+        Max = 20,
+        Function = function(val: number)
+            for i,v in next, hotbarobjects do 
+                pcall(function() v.CornerRadius = UDim.new(0, val) end)
+            end
+        end,
+        Default = 8
+    })
+
+    HotbarHighlight = HotbarMods.CreateToggle({
+        Name = 'Outline Highlight',
+        Function = function(call: boolean)
+            pcall(function() HotbarHighlightColor.Object.Visible = call end)
+            if HotbarMods.Enabled then 
+                HotbarMods.ToggleButton(false)
+                HotbarMods.ToggleButton(true)
+            end
+        end
+    })
+
+    HotbarHighlightColor = HotbarMods.CreateColorSlider({
+        Name = 'Highlight Color',
+        Function = function(h, s, v)
+            for i,v in next, hotbarobjects do 
+                if v:IsA('UIStroke') and HotbarHighlight.Enabled then 
+                    pcall(function() v.Color = Color3.fromHSV(HotbarHighlightColor.Hue, HotbarHighlightColor.Sat, HotbarHighlightColor.Value) end)
+                end
+            end
+        end
+    })
+
+    HotbarHideSlotIcons = HotbarMods.CreateToggle({
+        Name = 'No Slot Numbers',
+        Function = function()
+            if HotbarMods.Enabled then 
+                HotbarMods.ToggleButton(false)
+                HotbarMods.ToggleButton(true)
+            end
+        end
+    })
+
+    HotbarColor.Object.Visible = false
+    HotbarRoundRadius.Object.Visible = false
+    HotbarHighlightColor.Object.Visible = false
 end)
 
 run(function()
-	local ClanNotifier = {}
-	local clanstonotify = {ObjectList = {}}
-	local notifiedplayers = {}
-	local autofamousclan = {Enabled = false, clans = {"PVP", "ALIEN", "69", "GDoggs", "Pluto", "gg", "IPS", "CZ", "L8R", "FSH", "SEN"}}
-	local function clanFunction(plr)
-		repeat task.wait() until plr:GetAttribute('ClanTag')
-		if table.find(notifiedplayers, plr) then
-			return
-		end
-		for i,v in next, clanstonotify.ObjectList do 
-			if plr:GetAttribute('ClanTag'):upper() == v:upper() then 
-				warningNotification('ClanNotifier', plr.DisplayName..' is in the '..v:upper()..' clan.', 13)
-				table.insert(notifiedplayers, plr)
-				break
-			end
-		end
-		table.insert(ClanNotifier.Connections, plr:GetAttributeChangedSignal('ClanTag'):Connect(function()
-			if tostring(plr:GetAttribute('ClanTag')):upper() == v:upper() and table.find(notifiedplayers, plr) == nil then 
-				warningNotification('ClanNotifier', plr.DisplayName..' is in the '..v:upper()..' clan.', 13)
-				table.insert(notifiedplayers, plr)
-			end
-		end))
-	end
-	ClanNotifier = utility.Api.CreateOptionsButton({
-		Name = 'ClanNotifier',
-		HoverText = 'Notifies when certain\nclans are in the game.',
-		Function = function(calling) 
-			if calling then 
-				for i,v in playersService:GetPlayers() do 
-					task.spawn(clanFunction, v)
-				end
-				table.insert(ClanNotifier.Connections, playersService.PlayerAdded:Connect(clanFunction))
-			end
-		end
-	})
-	clanstonotify = ClanNotifier.CreateTextList({
-		Name = 'Clans',
-		TempText = 'clans to notify',
-		AddFunction = function()
-			if ClanNotifier.Enabled then 
-				ClanNotifier.ToggleButton()
-				ClanNotifier.ToggleButton()
-			end
-		end,
-		RemoveFunction = function() end
-	})
-	autofamousclan = ClanNotifier.CreateToggle({
-		Name = 'AddFamousClan',
-		Function = function(call)
-			local autofamousclan = {Enabled = false, clans = {"PVP", "ALIEN", "69", "GDoggs", "Pluto", "gg", "IPS", "CZ", "L8R", "FSH", "SEN"}}
-			if call then
-				for i,v in autofamousclan.clans do
-					table.insert(clanstonotify.ObjectList, v)
-				end
-			else
-				for i,v in autofamousclan.clans do
-					table.remove(clanstonotify.ObjectList, i)
-				end
-			end
-		end,
-		HoverText = "all nn clan will be added to the list automatically 🤢"
-	})
+    local ClanNotifier: vapemodule = {}
+    local clanstonotify: vapetextlist = {ObjectList = {}}
+    local notifiedplayers = {}
+    local autofamousclan: vapetoggle = {}
+    
+    ClanNotifier = utility.Api.CreateOptionsButton({
+        Name = 'ClanNotifier',
+        Function = function(call: boolean)
+            if call then
+                for i,v in pairs(game:GetService("Players"):GetPlayers()) do 
+                    task.spawn(function(plr)
+                        repeat task.wait() until plr:GetAttribute('ClanTag')
+                        if table.find(ClanNotifier.notifiedplayers, plr) then return end
+                        for i,v in pairs(clanstonotify.ObjectList) do 
+                            if plr:GetAttribute('ClanTag'):upper() == v:upper() then 
+                                warningNotification('ClanNotifier', plr.DisplayName..' is in the '..v:upper()..' clan.', 13)
+                                table.insert(ClanNotifier.notifiedplayers, plr)
+                                break
+                            end
+                        end
+                    end, v)
+                end
+                ClanNotifier.playeraddedconnection = game:GetService("Players").PlayerAdded:Connect(function(plr)
+                    task.spawn(function()
+                        repeat task.wait() until plr:GetAttribute('ClanTag')
+                        if table.find(ClanNotifier.notifiedplayers, plr) then return end
+                        for i,v in pairs(clanstonotify.ObjectList) do 
+                            if plr:GetAttribute('ClanTag'):upper() == v:upper() then 
+                                warningNotification('ClanNotifier', plr.DisplayName..' is in the '..v:upper()..' clan.', 13)
+                                table.insert(ClanNotifier.notifiedplayers, plr)
+                                break
+                            end
+                        end
+                    end)
+                end)
+            else
+                if ClanNotifier.playeraddedconnection then
+                    ClanNotifier.playeraddedconnection:Disconnect()
+                end
+                table.clear(ClanNotifier.notifiedplayers)
+            end
+        end,
+        HoverText = 'Notifies when certain\nclans are in the game.'
+    })
+
+    clanstonotify = ClanNotifier.CreateTextList({
+        Name = 'Clans',
+        TempText = 'clans to notify',
+        AddFunction = function()
+            if ClanNotifier.Enabled then 
+                ClanNotifier.ToggleButton(false)
+                ClanNotifier.ToggleButton(true)
+            end
+        end,
+        RemoveFunction = function() end
+    })
+
+    autofamousclan = ClanNotifier.CreateToggle({
+        Name = 'AddFamousClan',
+        Function = function(call: boolean)
+            if call then
+                for i,v in pairs({"PVP", "ALIEN", "69", "GDoggs", "Pluto", "gg", "IPS", "CZ", "L8R", "FSH", "SEN"}) do
+                    table.insert(clanstonotify.ObjectList, v)
+                end
+            else
+                for i,v in pairs({"PVP", "ALIEN", "69", "GDoggs", "Pluto", "gg", "IPS", "CZ", "L8R", "FSH", "SEN"}) do
+                    table.remove(clanstonotify.ObjectList, table.find(clanstonotify.ObjectList, v))
+                end
+            end
+        end,
+        Default = false,
+        HoverText = "all nn clan will be added to the list automatically 🤢"
+    })
+
+    ClanNotifier.notifiedplayers = {}
 end)
 
+
+
 run(function()
-    local promomeng = utility.Api.CreateOptionsButton({
+    local promomeng: vapemodule = {}
+    local Action: vapedropdown = {}
+    local Detection: vapedropdown = {}
+    
+    promomeng = utility.Api.CreateOptionsButton({
         Name = "AntiBan",
-        Function = function(callback)
-            if callback then
+        Function = function(call: boolean)
+            if call then
                 if Detection.Value == "Impossible Join" then
                     local function checkImpossibleJoin(player)
                         if player:IsInGroup(5774246) and player:GetRankInGroup(5774246) >= 2 then
@@ -9798,7 +9826,8 @@ run(function()
                     setupImpossibleJoinCheck()
                 end
             end
-        end
+        end,
+        HoverText = "Detects and acts on staff joins"
     })
     
     Action = promomeng.CreateDropdown({
@@ -9815,6 +9844,7 @@ run(function()
 end)
 
 run(function()
+    local BedTP: vapemodule = {}
     local TweenService = game:GetService("TweenService")
     local collectionService = game:GetService("CollectionService")
     local lplr = game.Players.LocalPlayer
@@ -9822,7 +9852,6 @@ run(function()
     local tppos2 = nil
     local TweenSpeed = 0.7
     local HeightOffset = 5
-    local BedTP = {}
 
     local function isAlive(player)
         local character = player.Character
@@ -9890,10 +9919,10 @@ run(function()
         return bed
     end
 
-    BedTP = GuiLibrary.ObjectsThatCanBeSaved.ExploitWindow.Api.CreateOptionsButton({
+    BedTP = exploit.Api.CreateOptionsButton({
         Name = "BedTP",
-        Function = function(callback)
-            if callback then
+        Function = function(call: boolean)
+            if call then
                 task.spawn(function()
                     local InvisibilityButton = GuiLibrary.ObjectsThatCanBeSaved.InvisibilityOptionsButton
                     local GamingChairButton = GuiLibrary.ObjectsThatCanBeSaved.GamingChairOptionsButton
@@ -9944,125 +9973,125 @@ run(function()
                     BedTP.Connections = {}
                 end
             end
-        end
+        end,
+        HoverText = "Teleports to the nearest enemy bed"
     })
 end)
 
 run(function()
-	local hasTeleported = false
-	local TweenService = game:GetService("TweenService")
+    local PlayerTp: vapemodule = {}
+    local hasTeleported = false
+    local TweenService = game:GetService("TweenService")
 
-	function findNearestPlayer()
-		local nearestPlayer = nil
-		local minDistance = math.huge
+    local function findNearestPlayer()
+        local nearestPlayer = nil
+        local minDistance = math.huge
 
-		for _,v in pairs(game.Players:GetPlayers()) do
-			if v ~= lplr and v.Character and v.Character:FindFirstChild("HumanoidRootPart") and v.Team ~= lplr.Team and v.Character:FindFirstChild("Humanoid").Health > 0 then
-				local distance = (v.Character.HumanoidRootPart.Position - lplr.Character.HumanoidRootPart.Position).magnitude
-				if distance < minDistance then
-					nearestPlayer = v
-					minDistance = distance
-				end
-			end
-		end
-		return nearestPlayer
-	end
+        for _,v in pairs(game.Players:GetPlayers()) do
+            if v ~= lplr and v.Character and v.Character:FindFirstChild("HumanoidRootPart") and v.Team ~= lplr.Team and v.Character:FindFirstChild("Humanoid").Health > 0 then
+                local distance = (v.Character.HumanoidRootPart.Position - lplr.Character.HumanoidRootPart.Position).magnitude
+                if distance < minDistance then
+                    nearestPlayer = v
+                    minDistance = distance
+                end
+            end
+        end
+        return nearestPlayer
+    end
 
+    local function tweenToNearestPlayer()
+        local nearestPlayer = findNearestPlayer()
+        if nearestPlayer and not hasTeleported then
+            hasTeleported = true
 
-	function tweenToNearestPlayer()
-		local nearestPlayer = findNearestPlayer()
-		if nearestPlayer and not hasTeleported then
-			hasTeleported = true
+            local tweenInfo = TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out, 0, false, 0)
 
-			local tweenInfo = TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out, 0, false, 0)
+            local tween = TweenService:Create(lplr.Character.HumanoidRootPart, TweenInfo.new(0.64), {CFrame = nearestPlayer.Character.HumanoidRootPart.CFrame + Vector3.new(0, 2, 0)})
+            tween:Play()
+        end
+    end
 
-			local tween = TweenService:Create(lplr.Character.HumanoidRootPart, TweenInfo.new(0.64), {CFrame = nearestPlayer.Character.HumanoidRootPart.CFrame + Vector3.new(0, 2, 0)})
-			tween:Play()
-		end
-	end
-
-	PlayerTp = exploit.Api.CreateOptionsButton({
-		Name = "PlayerTP",
-		Function = function(callback)
-			if callback then
-				lplr.Character:FindFirstChildOfClass("Humanoid"):ChangeState(Enum.HumanoidStateType.Dead)
-				lplr.CharacterAdded:Connect(function()
-					wait(0.3)
-					tweenToNearestPlayer()
-				end)
-				hasTeleported = false
-				PlayerTp["ToggleButton"](false)
-			end
-		end,
-		["HoverText"] = "Teleports you to the closest player that is not on your team (BETA)"
-	})
+    PlayerTp = exploit.Api.CreateOptionsButton({
+        Name = "PlayerTP",
+        Function = function(call: boolean)
+            if call then
+                lplr.Character:FindFirstChildOfClass("Humanoid"):ChangeState(Enum.HumanoidStateType.Dead)
+                lplr.CharacterAdded:Connect(function()
+                    wait(0.3)
+                    tweenToNearestPlayer()
+                end)
+                hasTeleported = false
+                PlayerTp.ToggleButton(false)
+            end
+        end,
+        HoverText = "Teleports you to the closest player that is not on your team (BETA)"
+    })
 end)
-
-
-
-
 
 run(function() 
-	local JoinQueue = {}
-	local queuetojoin = {Value = ''}
-	local function dumpmeta()
-		local queuemeta = {}
-		for i,v in next, bedwars.QueueMeta do 
-			if v.title ~= 'Sandbox' and not v.disabled then 
-				table.insert(queuemeta, v.title) 
-			end 
-		end 
-		return queuemeta
-	end
-	JoinQueue = utility.Api.CreateOptionsButton({
-		Name = 'JoinQueue',
-		HoverText = 'Starts a match for the provided gamemode.',
-		Function = function(callback)
-			if callback then 
-				for i,v in next, bedwars.QueueMeta do 
-					if v.title == queuetojoin.Value then 
-						game:GetService("ReplicatedStorage"):WaitForChild("events-@easy-games/lobby:shared/event/lobby-events@getEvents.Events"):WaitForChild("leaveQueue"):FireServer()
-						task.wait(0.1)
-						local args = {
-							[1] = {
-								["queueType"] = i
-							}
-						}
-						game:GetService("ReplicatedStorage"):WaitForChild("events-@easy-games/lobby:shared/event/lobby-events@getEvents.Events"):WaitForChild("joinQueue"):FireServer(unpack(args))
-						local listofmodes = {}
-						for i,v in pairs(bedwars.QueueMeta) do
-						if not v.disabled and not v.voiceChatOnly and not v.rankCategory then table.insert(listofmodes, i) end
-						end
-						break
-					end
-				end
-				JoinQueue.ToggleButton()
-			end
-		end
-	})
-	queuetojoin = JoinQueue.CreateDropdown({
-		Name = 'QueueType',
-		List = dumpmeta(),
-		Function = function() end
-	})
-	task.spawn(function()
-		repeat task.wait() until shared.VapeFullyLoaded 
-		for i,v in next, bedwars.QueueMeta do 
-			if i == store.queueType then 
-				queuetojoin.SetValue(v.title) 
-			end
-		end
-	end)
+    local JoinQueue: vapemodule = {}
+    local queuetojoin: vapedropdown = {Value = ''}
+    
+    local function dumpmeta()
+        local queuemeta = {}
+        for i,v in next, bedwars.QueueMeta do 
+            if v.title ~= 'Sandbox' and not v.disabled then 
+                table.insert(queuemeta, v.title) 
+            end 
+        end 
+        return queuemeta
+    end
+    
+    JoinQueue = utility.Api.CreateOptionsButton({
+        Name = 'JoinQueue',
+        Function = function(call: boolean)
+            if call then 
+                for i,v in next, bedwars.QueueMeta do 
+                    if v.title == queuetojoin.Value then 
+                        game:GetService("ReplicatedStorage"):WaitForChild("events-@easy-games/lobby:shared/event/lobby-events@getEvents.Events"):WaitForChild("leaveQueue"):FireServer()
+                        task.wait(0.1)
+                        local args = {
+                            [1] = {
+                                ["queueType"] = i
+                            }
+                        }
+                        game:GetService("ReplicatedStorage"):WaitForChild("events-@easy-games/lobby:shared/event/lobby-events@getEvents.Events"):WaitForChild("joinQueue"):FireServer(unpack(args))
+                        local listofmodes = {}
+                        for i,v in pairs(bedwars.QueueMeta) do
+                        if not v.disabled and not v.voiceChatOnly and not v.rankCategory then table.insert(listofmodes, i) end
+                        end
+                        break
+                    end
+                end
+                JoinQueue.ToggleButton()
+            end
+        end,
+        HoverText = 'Starts a match for the provided gamemode.'
+    })
+    
+    queuetojoin = JoinQueue.CreateDropdown({
+        Name = 'QueueType',
+        List = dumpmeta(),
+        Function = function() end
+    })
+    
+    task.spawn(function()
+        repeat task.wait() until shared.VapeFullyLoaded 
+        for i,v in next, bedwars.QueueMeta do 
+            if i == store.queueType then 
+                queuetojoin.SetValue(v.title) 
+            end
+        end
+    end)
 end)
-																																																																																																																																																																																																																			
 
 run(function()
-    local FourEXploit = {Enabled = false}
+    local FourEXploit: vapemodule = {Enabled = false}
 
-    FourEXploit = exploit.Api.CreateOptionsButton({
+    FourEXploit = utility.Api.CreateOptionsButton({
         Name = "autobuy wool",
-        Function = function(callback)
-            if callback then 
+        Function = function(call: boolean)
+            if call then 
                 FourEXploit.Enabled = true
                 task.spawn(function()
                     repeat 
@@ -10087,15 +10116,18 @@ run(function()
             else
                 FourEXploit.Enabled = false
             end
-        end
+        end,
+        HoverText = "Automatically buys wool"
     })
 end)
+
 run(function()
-    local charoutlinecolor = Color3.new(1, 1, 1)
+    local characteroutline: vapemodule = {}
+    local charoutlinecolor: vapecolorslider = Color3.new(1, 1, 1)
     local outline = Instance.new('Highlight', GuiLibrary.MainGui)
     local outlinetask
 
-    local createoutline = function()
+    local function createoutline()
         pcall(task.cancel, outlinetask)
         outline.Adornee = lplr.Character
         outlinetask = task.spawn(function()
@@ -10113,16 +10145,16 @@ run(function()
 
     characteroutline = visual.Api.CreateOptionsButton({
         Name = 'OutlineEffect',
-        HoverText = 'Adds an outline to your character.',
-        Function = function(calling)
-            if calling then
+        Function = function(call: boolean)
+            if call then
                 task.spawn(createoutline)
                 table.insert(characteroutline.Connections, lplr.CharacterAdded:Connect(createoutline))
             else
                 pcall(task.cancel, outlinetask)
                 outline.Adornee = nil
             end
-        end
+        end,
+        HoverText = 'Adds an outline to your character.'
     })
 
     charoutlinecolor = characteroutline.CreateColorSlider({
@@ -10135,106 +10167,98 @@ run(function()
     outline.FillTransparency = 1
 end)
 
-
-
-
-
-
 run(function()
-	local AntiDeath = {Enabled = false}
-	local AntiDeathMode = {Value = 'Velocity'}
-	local AntiDeathHealth = {Value = 50}
-	local AntiDeathVelo = {Value = 600}
-	local AntiDeathAuto = {Enabled = true}
-	local AntiDeathNot = {Enabled = true}
-	local function get_health()
-		return entityLibrary.character.Humanoid.Health
-	end
-	local boost, info, sent = false, false, false
-	AntiDeath = exploit.Api.CreateOptionsButton({
-		Name = 'AntiDeath',
+    local AntiDeath: vapemodule = {Enabled = false}
+    local AntiDeathMode: vapedropdown = {Value = 'Velocity'}
+    local AntiDeathHealth: vapeslider = {Value = 50}
+    local AntiDeathVelo: vapeslider = {Value = 600}
+    local AntiDeathAuto: vapetoggle = {Enabled = true}
+    local AntiDeathNot: vapetoggle = {Enabled = true}
+    
+    local function get_health()
+        return entityLibrary.character.Humanoid.Health
+    end
+    
+    local boost, info, sent = false, false, false
+    
+    AntiDeath = utility.Api.CreateOptionsButton({
+        Name = 'AntiDeath',
+        Function = function(call: boolean)
+            if call then
+                task.spawn(function()
+                    repeat task.wait()
+                        if entityLibrary.isAlive then
+                            if get_health() < AntiDeathHealth.Value and get_health() > 0 then
+                                if not boost then
+                                    if AntiDeathMode.Value == 'Velocity' then
+                                        entityLibrary.character.HumanoidRootPart.Velocity += Vector3.new(0, AntiDeathVelo.Value, 0)
+                                    else
+                                        if not GuiLibrary.ObjectsThatCanBeSaved.InfiniteFlyOptionsButton.Api.Enabled then
+                                            GuiLibrary.ObjectsThatCanBeSaved.InfiniteFlyOptionsButton.Api.ToggleButton(true)
+                                            info = true
+                                        end
+                                    end
+                                end
+                                boost = true
+                                if not sent and AntiDeathNot.Enabled then
+                                    warningNotification('AntiDeath | '..AntiDeathMode.Value, 'Successfully performed action.', 3)
+                                end
+                                sent = true
+                            elseif get_health() >= AntiDeathHealth.Value then
+                                if info and AntiDeathAuto.Enabled then
+                                    if GuiLibrary.ObjectsThatCanBeSaved.InfiniteFlyOptionsButton.Api.Enabled then
+                                        GuiLibrary.ObjectsThatCanBeSaved.InfiniteFlyOptionsButton.Api.ToggleButton(false)
+                                    end
+                                end
+                                boost, info, sent = false, false, false
+                            end
+                        end
+                    until not AntiDeath.Enabled
+                end)
+            else
+                boost, info, sent = false, false, false
+            end
+        end,
         HoverText = 'Prevents you from dying.',
-		Function = function(callback)
-			if callback then
-				task.spawn(function()
-					repeat task.wait()
-						if entityLibrary.isAlive then
-							if get_health() < AntiDeathHealth.Value and get_health() > 0 then
-								if not boost then
-									if AntiDeathMode.Value == 'Velocity' then
-										entityLibrary.character.HumanoidRootPart.Velocity += Vector3.new(0, AntiDeathVelo.Value, 0)
-									else
-										if not GuiLibrary.ObjectsThatCanBeSaved.InfiniteFlyOptionsButton.Api.Enabled then
-											GuiLibrary.ObjectsThatCanBeSaved.InfiniteFlyOptionsButton.Api.ToggleButton(true)
-											info = true
-										end
-									end
-								end
-								boost = true
-								if not sent then
-									warningNotification('AntiDeath | '..AntiDeathMode.Value, 'Succesfully performed action.', 3)
-								end
-								sent = true
-							elseif get_health() >= AntiDeathHealth.Value then
-								if info and AntiDeathAuto.Enabled then
-									if GuiLibrary.ObjectsThatCanBeSaved.InfiniteFlyOptionsButton.Api.Enabled then
-										GuiLibrary.ObjectsThatCanBeSaved.InfiniteFlyOptionsButton.Api.ToggleButton(false)
-									end
-								end
-								boost, info, sent = false, false, false
-							end
-						end
-					until not AntiDeath.Enabled
-				end)
-			else
-				boost, info, sent = false, false, false
-			end
-		end,
-        Default = false,
         ExtraText = function()
             return AntiDeathMode.Value
         end
-	})
-	AntiDeathMode = AntiDeath.CreateDropdown({
-		Name = 'Mode',
-		List = {
-			'Velocity',
-			'Infinite'
-		},
-		HoverText = 'Mode to prevent death.',
-		Value = 'Infinite',
-		Function = function() end
-	})
-	AntiDeathHealth = AntiDeath.CreateSlider({
-		Name = 'Health',
-		Min = 10,
-		Max = 99,
-		HoverText = 'Health at which AntiDeath will perform its actions.',
-		Function = function() end,
-		Default = 50
-	})
-	AntiDeathVelo = AntiDeath.CreateSlider({
-		Name = 'Velocity',
-		Min = 100,
-		Max = 600,
-		HoverText = 'Amount to boost the velocity.',
-		Function = function() end,
-		Default = 600
-	})
-	AntiDeathAuto = AntiDeath.CreateToggle({
-		Name = 'Auto Disable',
-		Default = true,
-		HoverText = 'Automatically disables InfinteFly after healing.',
-		Function = function() end
-	})
-	AntiDeathNot = AntiDeath.CreateToggle({
-		Name = 'Notification',
-		Default = true,
-		HoverText = 'Notifies you when AntiDeath actioned.',
-		Function = function() end
-	})
+    })
+    
+    AntiDeathMode = AntiDeath.CreateDropdown({
+        Name = 'Mode',
+        List = {'Velocity', 'Infinite'},
+        Function = function() end
+    })
+    
+    AntiDeathHealth = AntiDeath.CreateSlider({
+        Name = 'Health',
+        Min = 10,
+        Max = 99,
+        Function = function() end,
+        Default = 50
+    })
+    
+    AntiDeathVelo = AntiDeath.CreateSlider({
+        Name = 'Velocity',
+        Min = 100,
+        Max = 600,
+        Function = function() end,
+        Default = 600
+    })
+    
+    AntiDeathAuto = AntiDeath.CreateToggle({
+        Name = 'Auto Disable',
+        Function = function() end,
+        Default = true
+    })
+    
+    AntiDeathNot = AntiDeath.CreateToggle({
+        Name = 'Notification',
+        Function = function() end,
+        Default = true
+    })
 end)
-
 local alreadydetectedlist = {}
 local Blackdetector = {Enabled = false}
 run(function()
@@ -10476,69 +10500,67 @@ run(function()
 		HoverText = "Removes KillFeed"
 	})
 end)
-
 run(function()
-    local HackerDetector = { Enabled = false }
-    local refreshFrequency = { Value = 0 }
-    local notifyDuration = { Value = 15 }
-    local ageCheck = { Value = 10 }
-    local speedACheck = { Enabled = false }
-    local speedBCheck = { Enabled = false }
-    local flyACheck = { Enabled = false }
-    local flyBCheck = { Enabled = false }
-    local altCheck = { Enabled = false }
+    local HackerDetector: vapemodule = {}
+    local notifyDuration: vapeslider = {}
+    local ageCheck: vapeslider = {}
+    local speedACheck: vapetoggle = {}
+    local speedBCheck: vapetoggle = {}
+    local flyACheck: vapetoggle = {}
+    local flyBCheck: vapetoggle = {}
+    local altCheck: vapetoggle = {}
     local detected = {}
     local deathTPCheck = {}
     local players = {}
     local localPlayer = game.Players.LocalPlayer
     local localPlayerName = localPlayer.Name
 
-    local function checkHighSpeed(playerName)
-        local pos = players[playerName].pos
+    local function checkHighSpeed(v)
+        local pos = players[v.Name].pos
         local newPos = Vector2.new(pos.X, pos.Z)
         local flagged, looped = 0, 0
 
         repeat
             task.wait(0.1)
-            local mag = (Vector2.new(players[playerName].pos.X, players[playerName].pos.Z) - newPos).magnitude * 8.94
+            local mag = (Vector2.new(players[v.Name].pos.X, players[v.Name].pos.Z) - newPos).magnitude * 8.94
             if mag >= 35 then flagged += 1 end
             looped += 1
         until looped >= 25
 
-        if flagged >= 22 and not detected[playerName] and players[playerName].isAlive then
-            warningNotification("HackerDetector", playerName .. " is cheating using ScytheDisabler. (Speed: " .. tostring(math.round(mag * 10) / 10) .. ")", notifyDuration.Value)
-            detected[playerName] = true
+        if flagged >= 22 and not detected[v.Name] and players[v.Name].isAlive then
+            warningNotification("HackerDetector", v.Name .. " is cheating using ScytheDisabler. (Speed: " .. tostring(math.round(mag * 10) / 10) .. ")", notifyDuration.Value)
+            detected[v.Name] = true
         end
     end
 
-    local function checkVerticalPos(playerName)
-        if players[playerName].pos.Y > 500 and not detected[playerName] and players[playerName].isAlive then
-            warningNotification("HackerDetector", playerName .. " is cheating with InfFly. (YPos: " .. tostring(math.round(players[playerName].pos.Y)) .. ")", notifyDuration.Value)
-            detected[playerName] = true
+    local function checkVerticalPos(v)
+        if players[v.Name].pos.Y > 500 and not detected[v.Name] and players[v.Name].isAlive then
+            warningNotification("HackerDetector", v.Name .. " is cheating with InfFly. (YPos: " .. tostring(math.round(players[v.Name].pos.Y)) .. ")", notifyDuration.Value)
+            detected[v.Name] = true
         end
     end
 
     local function checkAccountAge()
-        game.Players.PlayerAdded:Connect(function(player)
-            if player.AccountAge < ageCheck.Value and not detected[player.Name] and players[player.Name] and players[player.Name].isAlive then
-                warningNotification("HackerDetector", player.Name .. " Alt detected account age: " .. player.AccountAge, notifyDuration.Value)
-                detected[player.Name] = true
+        game.Players.PlayerAdded:Connect(function(v)
+            if v.AccountAge < ageCheck.Value and not detected[v.Name] and players[v.Name] and players[v.Name].isAlive then
+                warningNotification("HackerDetector", v.Name .. " Alt detected account age: " .. v.AccountAge, notifyDuration.Value)
+                detected[v.Name] = true
             end
         end)
     end
 
-    local function checkFly(playerName)
-        local waited, oldYPos = 0, players[playerName].pos.Y
-        local oldXZ = Vector2.new(players[playerName].pos.X, players[playerName].pos.Z)
+    local function checkFly(v)
+        local waited, oldYPos = 0, players[v.Name].pos.Y
+        local oldXZ = Vector2.new(players[v.Name].pos.X, players[v.Name].pos.Z)
 
         repeat
             task.wait()
-            if not players[playerName].isAlive or players[playerName].floor == Enum.Material.Air and waited < 1.22 then return end
+            if not players[v.Name].isAlive or players[v.Name].floor == Enum.Material.Air and waited < 1.22 then return end
             waited += 0.1
-            if waited >= 1.3 and players[playerName].pos.Y > oldYPos - 60 and players[playerName].pos.Y < oldYPos + 50 and (Vector2.new(players[playerName].pos.X, players[playerName].pos.Z) - oldXZ).magnitude > 10 then
-                if not detected[playerName] then
-                    warningNotification("HackerDetector", playerName .. " is cheating by flying. (Time flew: " .. tostring(math.round(waited * 100) / 100) .. " YDisplacement: " .. tostring(math.round(players[playerName].pos.Y - oldYPos)) .. ")", notifyDuration.Value)
-                    detected[playerName] = true
+            if waited >= 1.3 and players[v.Name].pos.Y > oldYPos - 60 and players[v.Name].pos.Y < oldYPos + 50 and (Vector2.new(players[v.Name].pos.X, players[v.Name].pos.Z) - oldXZ).magnitude > 10 then
+                if not detected[v.Name] then
+                    warningNotification("HackerDetector", v.Name .. " is cheating by flying. (Time flew: " .. tostring(math.round(waited * 100) / 100) .. " YDisplacement: " .. tostring(math.round(players[v.Name].pos.Y - oldYPos)) .. ")", notifyDuration.Value)
+                    detected[v.Name] = true
                 end
             end
         until waited > 1.5
@@ -10547,40 +10569,40 @@ run(function()
     local function startChecks()
         task.spawn(function()
             repeat
-                task.wait(refreshFrequency.Value / 100)
-                for _, plr in ipairs(game.Players:GetPlayers()) do
-                    if plr.Name ~= localPlayerName and plr.TeamColor ~= localPlayer.TeamColor and plr.Character and plr.Character:FindFirstChild("Humanoid") and plr.Character.Humanoid.Health > 0 then
-                        players[plr.Name] = {
+                for _, v in ipairs(game.Players:GetPlayers()) do
+                    if v.Name ~= localPlayerName and v.TeamColor ~= localPlayer.TeamColor and v.Character and v.Character:FindFirstChild("Humanoid") and v.Character.Humanoid.Health > 0 then
+                        players[v.Name] = {
                             isAlive = true,
-                            pos = plr.Character.PrimaryPart.Position,
-                            floor = plr.Character.Humanoid.FloorMaterial
+                            pos = v.Character.PrimaryPart.Position,
+                            floor = v.Character.Humanoid.FloorMaterial
                         }
-                        if speedACheck.Enabled then checkHighSpeed(plr.Name) end
-                        if flyBCheck.Enabled then checkVerticalPos(plr.Name) end
-                        if flyACheck.Enabled then checkFly(plr.Name) end
+                        if speedACheck.Enabled then checkHighSpeed(v) end
+                        if flyBCheck.Enabled then checkVerticalPos(v) end
+                        if flyACheck.Enabled then checkFly(v) end
                         if altCheck.Enabled then checkAccountAge() end
                     else
-                        players[plr.Name] = { isAlive = false, pos = nil, floor = nil }
+                        players[v.Name] = { isAlive = false, pos = nil, floor = nil }
                     end
                 end
+                task.wait()
             until not HackerDetector.Enabled
         end)
     end
 
     local function startDeathTPCheck()
         task.spawn(function()
-            for _, plr in ipairs(game.Players:GetPlayers()) do
-                if plr.Name ~= localPlayer.Name and speedBCheck.Enabled then
-                    local con = plr.CharacterAdded:Connect(function()
-                        repeat task.wait() until plr.Character and plr.Character:FindFirstChild("Humanoid") and plr.Character.PrimaryPart
+            for _, v in ipairs(game.Players:GetPlayers()) do
+                if v.Name ~= localPlayer.Name and speedBCheck.Enabled then
+                    local con = v.CharacterAdded:Connect(function()
+                        repeat task.wait() until v.Character and v.Character:FindFirstChild("Humanoid") and v.Character.PrimaryPart
                         task.wait(1.8)
-                        local pos = plr.Character.PrimaryPart.Position
+                        local pos = v.Character.PrimaryPart.Position
                         local newPos = Vector2.new(pos.X, pos.Z)
                         task.wait(1.8)
-                        local newPos2 = Vector2.new(plr.Character.PrimaryPart.Position.X, plr.Character.PrimaryPart.Position.Z)
-                        if (newPos2 - newPos).magnitude >= 80 and not detected[plr.Name] then
-                            warningNotification("HackerDetector", plr.Name .. " is cheating using DeathTP. (Speed: " .. tostring(math.round((newPos2 - newPos).magnitude * 10) / 10) .. ")", notifyDuration.Value)
-                            detected[plr.Name] = true
+                        local newPos2 = Vector2.new(v.Character.PrimaryPart.Position.X, v.Character.PrimaryPart.Position.Z)
+                        if (newPos2 - newPos).magnitude >= 80 and not detected[v.Name] then
+                            warningNotification("HackerDetector", v.Name .. " is cheating using DeathTP. (Speed: " .. tostring(math.round((newPos2 - newPos).magnitude * 10) / 10) .. ")", notifyDuration.Value)
+                            detected[v.Name] = true
                         end
                     end)
                     table.insert(deathTPCheck, con)
@@ -10589,10 +10611,9 @@ run(function()
         end)
     end
 
-    HackerDetector = GuiLibrary["ObjectsThatCanBeSaved"]["UtilityWindow"]["Api"]["CreateOptionsButton"]({
+    HackerDetector = utility.Api.CreateOptionsButton({
         Name = 'HackerDetector',
-        HoverText = 'Detects blatant cheaters',
-        Function = function(callback)
+        Function = function(callback: boolean)
             if callback then
                 startChecks()
                 startDeathTPCheck()
@@ -10602,64 +10623,56 @@ run(function()
                 end
                 table.clear(deathTPCheck)
             end
-        end
+        end,
+        HoverText = 'Detects blatant cheaters'
     })
 
-    refreshFrequency = HackerDetector["CreateSlider"]({
-        Name = "Check Cooldown",
-        HoverText = "Sets how often the checks run (except DeathTP)",
-        Min = 0,
-        Max = 100,
-        Default = 0,
-        Function = function() end
-    })
-
-    notifyDuration = HackerDetector["CreateSlider"]({
+    notifyDuration = HackerDetector.CreateSlider({
         Name = "Duration",
-        HoverText = "Duration of the notification",
         Min = 0,
         Max = 60,
+        Function = function(val: number) end,
         Default = 15,
-        Function = function() end
+        HoverText = "Duration of the notification"
     })
 
-    ageCheck = HackerDetector["CreateSlider"]({
+    ageCheck = HackerDetector.CreateSlider({
         Name = "Age Check",
-        HoverText = "Age to detect alt accounts",
         Min = 0,
         Max = 50,
+        Function = function(val: number) end,
         Default = 10,
-        Function = function() end
+        HoverText = "Age to detect alt accounts"
     })
 
-    speedACheck = HackerDetector["CreateToggle"]({
+    speedACheck = HackerDetector.CreateToggle({
         Name = "Disabler",
-        Default = true,
-        Function = function() end
+        Function = function() end,
+        Default = true
     })
 
-    speedBCheck = HackerDetector["CreateToggle"]({
+    speedBCheck = HackerDetector.CreateToggle({
         Name = "DeathTP",
-        Default = true,
-        Function = function() end
+        Function = function() end,
+        Default = true
     })
 
-    flyACheck = HackerDetector["CreateToggle"]({
+    flyACheck = HackerDetector.CreateToggle({
         Name = "Flight",
-        Default = true,
-        Function = function() end
+        Function = function() end,
+        Default = true
     })
 
-    flyBCheck = HackerDetector["CreateToggle"]({
+    flyBCheck = HackerDetector.CreateToggle({
         Name = "Infinite Flight",
-        Default = true,
-        Function = function() end
+        Function = function() end,
+        Default = true
     })
 
-    altCheck = HackerDetector["CreateToggle"]({
+    altCheck = HackerDetector.CreateToggle({
         Name = "AltDetector",
-        Default = true,
-        Function = function() end
+        Function = function() end,
+        Default = true
     })
 end)
 run(function()
