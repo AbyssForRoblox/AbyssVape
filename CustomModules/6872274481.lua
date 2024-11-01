@@ -11739,7 +11739,7 @@ run(function()
         teleportTween:Play()
     end
 
-    DiamondTP = utility.Api.CreateOptionsButton({
+    DiamondTP = exploit.Api.CreateOptionsButton({
         Name = "DiamondTP",
         Function = function(call: boolean)
             if call then
@@ -11798,7 +11798,7 @@ run(function()
         teleportTween:Play()
     end
 
-    EmeraldTP = utility.Api.CreateOptionsButton({
+    EmeraldTP = exploit.Api.CreateOptionsButton({
         Name = "EmeraldTP",
         Function = function(call: boolean)
             if call then
@@ -11857,7 +11857,7 @@ run(function()
         teleportTween:Play()
     end
 
-    GoldTP = utility.Api.CreateOptionsButton({
+    GoldTP = exploit.Api.CreateOptionsButton({
         Name = "GoldTP",
         Function = function(call: boolean)
             if call then
@@ -11893,7 +11893,7 @@ end)
 run(function() 
     local HannahAura: vapemodule = {};
     
-    HannahAura = utility.Api.CreateOptionsButton({
+    HannahAura = exploit.Api.CreateOptionsButton({
         Name = "HannahAura",
         Function = function(call: boolean)
             if call then
