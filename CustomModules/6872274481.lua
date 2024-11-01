@@ -446,7 +446,7 @@ local function getSpeed()
 			speed = speed + (8 * (SpeedDamageBoost - 1))
 		end
 		if store.grapple > tick() then
-			speed = speed + GrappleSpeed.Value
+			speed = speed + 90
 		end
 		 if store.scythe > tick() then
 			speed = speed + 40
@@ -460,7 +460,7 @@ local function getSpeed()
 			speed = speed + 12
 		end
 		if store.zephyrOrb ~= 0 then
-			speed = speed + ZephyrSpeed.Value
+			speed = speed + 28
 		end
 	end
 	return speed
@@ -2509,7 +2509,7 @@ run(function()
 					FlyAnywayProgressBarFrame.Frame:TweenSize(UDim2.new(1, 0, 0, 20), Enum.EasingDirection.InOut, Enum.EasingStyle.Linear, 0, true)
 				end
 
-				groundtime = tick() + (2.6 + (entityLibrary.groundTick - tick()))
+				groundtime = tick() + (999.9 + (entityLibrary.groundTick - tick()))
 				FlyCoroutine = coroutine.create(function()
 					repeat
 						repeat task.wait() until (groundtime - tick()) < 0.6 and not onground
@@ -2557,7 +2557,7 @@ run(function()
 							onground = newray and true or false
 							if lastonground ~= onground then
 								if (not onground) then
-									groundtime = tick() + (2.6 + (entityLibrary.groundTick - tick()))
+									groundtime = tick() + (999.9 + (entityLibrary.groundTick - tick()))
 									if FlyAnywayProgressBarFrame then
 										FlyAnywayProgressBarFrame.Frame:TweenSize(UDim2.new(0, 0, 0, 20), Enum.EasingDirection.InOut, Enum.EasingStyle.Linear, groundtime - tick(), true)
 									end
@@ -3545,23 +3545,7 @@ Funny = {
 								store.attackReach = math.floor((selfrootpos - root.Position).magnitude * 100) / 100
 								store.attackReachUpdate = tick() + 1
 								killaurarealremote:FireServer({
-									weapon = sword.tool,
-									chargedAttack = {chargeRatio = swordmeta.sword.chargedAttack and not swordmeta.sword.chargedAttack.disableOnGrounded and 0.999 or 0},
-									entityInstance = plr.Character,
-									validate = {
-										raycast = {
-											cameraPosition = attackValue(root.Position),
-											cursorDirection = attackValue(CFrame.new(selfpos, root.Position).lookVector)
-										},
-										targetPosition = attackValue(root.Position),
-										selfPosition = attackValue(selfpos)
-									}
-								})
-								local spear = getItemNear('spear')
-								if spear then
-									switchItem(spear.tool)
-									killaurarealremote:FireServer({
-										weapon = spear.tool,
+										weapon = sword.tool,
 										chargedAttack = {chargeRatio = swordmeta.sword.chargedAttack and not swordmeta.sword.chargedAttack.disableOnGrounded and 0.999 or 0},
 										entityInstance = plr.Character,
 										validate = {
@@ -3573,11 +3557,27 @@ Funny = {
 											selfPosition = attackValue(selfpos)
 										}
 									})
+									local spear = getItemNear('spear')
+									if spear then
+										switchItem(spear.tool)
+										killaurarealremote:FireServer({
+											weapon = spear.tool,
+											chargedAttack = {chargeRatio = swordmeta.sword.chargedAttack and not swordmeta.sword.chargedAttack.disableOnGrounded and 0.999 or 0},
+											entityInstance = plr.Character,
+											validate = {
+												raycast = {
+													cameraPosition = attackValue(root.Position),
+													cursorDirection = attackValue(CFrame.new(selfpos, root.Position).lookVector)
+												},
+												targetPosition = attackValue(root.Position),
+												selfPosition = attackValue(selfpos)
+											}
+										})
+									end
+									break
 								end
-								break
 							end
 						end
-					end
 					if not firstPlayerNear then
 						targetedPlayer = nil
 						killauraNearPlayer = false
@@ -5092,29 +5092,30 @@ run(function()
 		end
 	})
 end)
-
 run(function()
 	local ChestESPList = {ObjectList = {}, RefreshList = function() end}
 	local function nearchestitem(item)
-		for i,v in next, (ChestESPList.ObjectList) do 
+		for i,v in pairs(ChestESPList.ObjectList) do
 			if item:find(v) then return v end
 		end
 	end
 	local function refreshAdornee(v)
-		local chest = v.Adornee.ChestFolderValue.Value
+		local chest = v:FindFirstChild("ChestFolderValue")
+		chest = chest and chest.Value or nil
+		if not chest then return end
 		local chestitems = chest and chest:GetChildren() or {}
-		for i2,v2 in next, (v.Frame:GetChildren()) do
-			if v2:IsA('ImageLabel') then
+		for i2,v2 in pairs(v.Frame:GetChildren()) do
+			if v2:IsA("ImageLabel") then
 				v2:Remove()
 			end
 		end
 		v.Enabled = false
 		local alreadygot = {}
-		for itemNumber, item in next, (chestitems) do
-			if alreadygot[item.Name] == nil and (table.find(ChestESPList.ObjectList, item.Name) or nearchestitem(item.Name)) then 
+		for itemNumber, item in pairs(chestitems) do
+			if alreadygot[item.Name] == nil and (table.find(ChestESPList.ObjectList, item.Name) or nearchestitem(item.Name)) then
 				alreadygot[item.Name] = true
 				v.Enabled = true
-				local blockimage = Instance.new('ImageLabel')
+				local blockimage = Instance.new("ImageLabel")
 				blockimage.Size = UDim2.new(0, 32, 0, 32)
 				blockimage.BackgroundTransparency = 1
 				blockimage.Image = bedwars.getIcon({itemType = item.Name}, true)
@@ -5123,58 +5124,49 @@ run(function()
 		end
 	end
 
-	local ChestESPFolder = Instance.new('Folder')
-	ChestESPFolder.Name = 'ChestESPFolder'
+	local ChestESPFolder = Instance.new("Folder")
+	ChestESPFolder.Name = "ChestESPFolder"
 	ChestESPFolder.Parent = GuiLibrary.MainGui
-	local ChestESP = {}
-	local ChestESPBackground = {}
-	local ChestESPBackgroundColor = {Hue = 0, Sat = 0, Value = 0}
-	local ChestESPGradient = {}
-	local ChestESPGradientColor = {Hue = 0, Sat = 0, Value = 0}
+	local ChestESP = {Enabled = false}
+	local ChestESPBackground = {Enabled = true}
 
 	local function chestfunc(v)
 		task.spawn(function()
-			local billboard = Instance.new('BillboardGui')
+			local chest = v:FindFirstChild("ChestFolderValue")
+			chest = chest and chest.Value or nil
+			if not chest then return end
+			local billboard = Instance.new("BillboardGui")
 			billboard.Parent = ChestESPFolder
-			billboard.Name = 'chest'
+			billboard.Name = "chest"
 			billboard.StudsOffsetWorldSpace = Vector3.new(0, 3, 0)
 			billboard.Size = UDim2.new(0, 42, 0, 42)
 			billboard.AlwaysOnTop = true
 			billboard.Adornee = v
-			local frame = Instance.new('Frame')
+			local frame = Instance.new("Frame")
 			frame.Size = UDim2.new(1, 0, 1, 0)
-			frame.BackgroundColor3 = Color3.fromHSV(ChestESPBackgroundColor.Hue, ChestESPBackgroundColor.Sat, ChestESPBackgroundColor.Value)
+			frame.BackgroundColor3 = Color3.new(0, 0, 0)
 			frame.BackgroundTransparency = ChestESPBackground.Enabled and 0.5 or 1
 			frame.Parent = billboard
-			local gradient = Instance.new('UIGradient')
-			gradient.Rotation = 90
-			gradient.Color = ColorSequence.new({
-				ColorSequenceKeypoint.new(0, Color3.fromHSV(ChestESPBackgroundColor.Hue, ChestESPBackgroundColor.Sat, ChestESPBackgroundColor.Value)),
-				ColorSequenceKeypoint.new(1, Color3.fromHSV(ChestESPGradientColor.Hue, ChestESPGradientColor.Sat, ChestESPGradientColor.Value))
-			})
-			gradient.Enabled = ChestESPGradient.Enabled
-			gradient.Parent = frame
-			local uilistlayout = Instance.new('UIListLayout')
+			local uilistlayout = Instance.new("UIListLayout")
 			uilistlayout.FillDirection = Enum.FillDirection.Horizontal
 			uilistlayout.Padding = UDim.new(0, 4)
 			uilistlayout.VerticalAlignment = Enum.VerticalAlignment.Center
 			uilistlayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
-			uilistlayout:GetPropertyChangedSignal('AbsoluteContentSize'):Connect(function()
+			uilistlayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
 				billboard.Size = UDim2.new(0, math.max(uilistlayout.AbsoluteContentSize.X + 12, 42), 0, 42)
 			end)
 			uilistlayout.Parent = frame
-			local uicorner = Instance.new('UICorner')
+			local uicorner = Instance.new("UICorner")
 			uicorner.CornerRadius = UDim.new(0, 4)
 			uicorner.Parent = frame
-			local chest = v:WaitForChild('ChestFolderValue').Value
-			if chest then 
+			if chest then
 				table.insert(ChestESP.Connections, chest.ChildAdded:Connect(function(item)
-					if table.find(ChestESPList.ObjectList, item.Name) or nearchestitem(item.Name) then 
+					if table.find(ChestESPList.ObjectList, item.Name) or nearchestitem(item.Name) then
 						refreshAdornee(billboard)
 					end
 				end))
 				table.insert(ChestESP.Connections, chest.ChildRemoved:Connect(function(item)
-					if table.find(ChestESPList.ObjectList, item.Name) or nearchestitem(item.Name) then 
+					if table.find(ChestESPList.ObjectList, item.Name) or nearchestitem(item.Name) then
 						refreshAdornee(billboard)
 					end
 				end))
@@ -5184,12 +5176,12 @@ run(function()
 	end
 
 	ChestESP = GuiLibrary.ObjectsThatCanBeSaved.RenderWindow.Api.CreateOptionsButton({
-		Name = 'ChestESP',
-		Function = function(calling)
-			if calling then
+		Name = "ChestESP",
+		Function = function(callback)
+			if callback then
 				task.spawn(function()
-					table.insert(ChestESP.Connections, collectionService:GetInstanceAddedSignal('chest'):Connect(chestfunc))
-					for i,v in next, (collectionService:GetTagged('chest')) do chestfunc(v) end
+					table.insert(ChestESP.Connections, collectionService:GetInstanceAddedSignal("chest"):Connect(chestfunc))
+					for i,v in pairs(collectionService:GetTagged("chest")) do chestfunc(v) end
 				end)
 			else
 				ChestESPFolder:ClearAllChildren()
@@ -5197,60 +5189,33 @@ run(function()
 		end
 	})
 	ChestESPList = ChestESP.CreateTextList({
-		Name = 'ItemList',
-		TempText = 'item or part of item',
+		Name = "ItemList",
+		TempText = "item or part of item",
 		AddFunction = function()
-			if ChestESP.Enabled then 
+			if ChestESP.Enabled then
 				ChestESP.ToggleButton(false)
 				ChestESP.ToggleButton(false)
 			end
 		end,
 		RemoveFunction = function()
-			if ChestESP.Enabled then 
+			if ChestESP.Enabled then
 				ChestESP.ToggleButton(false)
 				ChestESP.ToggleButton(false)
 			end
 		end
 	})
 	ChestESPBackground = ChestESP.CreateToggle({
-		Name = 'Background',
+		Name = "Background",
 		Function = function()
-			if ChestESP.Enabled then 
+			if ChestESP.Enabled then
 				ChestESP.ToggleButton(false)
 				ChestESP.ToggleButton(false)
 			end
 		end,
 		Default = true
 	})
-	ChestESPBackgroundColor = ChestESP.CreateColorSlider({
-		Name = 'Background Color',
-		Function = function()
-			if ChestESP.Enabled then
-				ChestESP.ToggleButton(false)
-				ChestESP.ToggleButton(true)
-			end
-		end
-	})
-	ChestESPGradient = ChestESP.CreateToggle({
-		Name = 'Gradient',
-		Function = function()
-			if ChestESP.Enabled then 
-				ChestESP.ToggleButton(false)
-				ChestESP.ToggleButton(false)
-			end
-		end,
-		Default = false
-	})
-	ChestESPGradientColor = ChestESP.CreateColorSlider({
-		Name = 'Gradient Color',
-		Function = function()
-			if ChestESP.Enabled then
-				ChestESP.ToggleButton(false)
-				ChestESP.ToggleButton(true)
-			end
-		end
-	})
 end)
+
 run(function()
     local FieldOfViewValue = {Value = 70}
     local oldfov
@@ -11086,129 +11051,7 @@ run(function()
 	HealthbarGradientColor.Object.Visible = false
 end)
 
-local function getNotificationMessage(messagesList, defaultMessage, replaceTag, replaceValue)
-    local message = #messagesList > 0 and messagesList[math.random(1, #messagesList)] or defaultMessage
-    return message:gsub(replaceTag, replaceValue)
-end
 
-local function handleBedBreakEvent(bedTable, lplr, BedBreakMessage)
-    if bedTable.brokenBedTeam.id == lplr:GetAttribute("Team") then
-        warningNotification("Bed", "Your bed has been destroyed by " .. (bedTable.player.DisplayName or bedTable.player.Name) .. "! Be careful.", 7)
-    elseif bedTable.player.UserId == lplr.UserId then
-        local team = bedwars.QueueMeta[bedwarsStore.queueType].teams[tonumber(bedTable.brokenBedTeam.id)]
-        local teamname = team and team.displayName:lower() or "unknown"
-        local message = getNotificationMessage({}, "You have destroyed <bed>'s bed", "<bed>", teamname)
-        Action("EventNotifier", message, 7)
-    end
-end
-
-local function handleEntityDeathEvent(deathTable, lplr, DeathMessage, FinalKillMessage)
-    local killer = playersService:GetPlayerFromCharacter(deathTable.fromEntity)
-    local killed = playersService:GetPlayerFromCharacter(deathTable.entityInstance)
-    
-    if not killed or not killer then return end
-    
-    if deathTable.finalKill then
-        if killed == lplr and killer ~= lplr then
-            local message = getNotificationMessage({}, "You have lost to <name>. Good game.", "<name>", killer.DisplayName)
-            warningNotification("EventNotifier", message, 7)
-        elseif killer == lplr then
-            local message = getNotificationMessage({}, "You've defeated <name>!", "<name>", killed.DisplayName)
-            warningNotification("EventNotifier", message, 7)
-        end
-    else
-        if deathTable.fromEntity == lplr.Character and deathTable.entityInstance ~= lplr.Character then
-            local message = getNotificationMessage({}, "You have killed <name>.", "<name>", killed.DisplayName)
-            warningNotification("EventNotifier", message, 7)
-        end
-    end
-end
-
-local function handleMatchEndEvent(winstuff, lplr)
-    local myTeam = bedwars.ClientStoreHandler:getState().Game.myTeam
-    if myTeam and myTeam.id == winstuff.winningTeamId then
-        InfoNotification("EventNotifier", "You've won the game! gg", 60)
-    end
-end
-
-local function handleBedShieldEndEvent()
-    warningNotification("EventNotifier", "Bed shields are down.", 7)
-end
-
-local function initializeNotifications(notifications, lplr)
-    notifications = utility.Api.CreateOptionsButton({ -- thank you salad
-        Name = "EventNotifier",
-        Function = function(notified)
-            if notified then
-                task.spawn(function()
-                    table.insert(notifications.Connections, vapeEvents.BedwarsBedBreak.Event:Connect(function(bedTable)
-                        handleBedBreakEvent(bedTable, lplr)
-                    end))
-
-                    table.insert(notifications.Connections, vapeEvents.EntityDeathEvent.Event:Connect(function(deathTable)
-                        handleEntityDeathEvent(deathTable, lplr)
-                    end))
-                    
-                    table.insert(notifications.Connections, vapeEvents.MatchEndEvent.Event:Connect(function(winstuff)
-                        handleMatchEndEvent(winstuff, lplr)
-                    end))
-
-                    table.insert(notifications.Connections, vapeEvents.BedShieldsEnd.Event:Connect(handleBedShieldEndEvent))
-                end)
-            end
-        end,
-        HoverText = "This module will notify you on specific events\ni looked at voidware's code for some lines of code\nso credits to Blanked Void",
-		ExtraText = function() return "UselessModule" end
-    })
-
-    local toggles = {
-        {"Final Kill Notifier", "Notifies you when you final kill someone (he wont be able to respawn)"},
-        {"No Bed Notifier", "Notifies you when your bed gets destroyed by someone"},
-        {"Player Death Notifier", "Notifies you when you pass away (with cheats lmao)"},
-        {"Bed Destroyer Notifier", "Notifies when you destroy a team's bed."},
-        {"Kills Notifier", "Notifies when you kill someone."},
-        {"Game Won Notifier", "Notifies you when you win the game."},
-        {"End Of Bed Protection", "Notifies you when bed shields end."}
-    }
-
-    for _, toggle in ipairs(toggles) do
-        notifications.CreateToggle({
-            Name = toggle[1],
-            Function = function() end,
-            Default = true,
-            HoverText = toggle[2]
-        })
-    end
-end
-
-run(function()
-    local lplr = game.Players.LocalPlayer 
-    local notifications = {Connections = {}}
-    initializeNotifications(notifications, lplr)
-end)
-run(function()
-  local ihopethepersonwhopatchedscythedisablercommitsssuicide = GuiLibrary.ObjectsThatCanBeSaved.UtilityWindow.Api.CreateOptionsButton({
-    Name = 'AnticheatBypass',
-    Function = function(call)
-      if call then
-          end
-    end
- })
- ZephyrSpeed = ihopethepersonwhopatchedscythedisablercommitsssuicide.CreateSlider({
-    Name = "Zephyr Speed",
-    Min = 1,
-    Max = 32,
-    Function = function(val) end,
-    Default = 28
-})
-GrappleSpeed = ihopethepersonwhopatchedscythedisablercommitsssuicide.CreateSlider({
-    Name = "Grapple Disabler Speed",
-    Min = 1,
-    Max = 150,
-    Function = function(val) end,
-    Default = 90
-})
-end)
 
 run(function()
     local ScytheDisabler = {Enabled = false}
@@ -11263,7 +11106,6 @@ run(function()
         HoverText = "Scythe exploit" -- im using the method from the scythe disabler in abyss (old) so if it looks pasted.. well now you know -- thanks star
     })
 end)
-
   
 
 run(function()
@@ -11871,553 +11713,206 @@ run(function()
 	end
 })
 end)
-run(function()
-    local teammodes
-    local lolfuni = GuiLibrary.ObjectsThatCanBeSaved.UtilityWindow.Api.CreateOptionsButton({
-        Name = 'Custom Match TeamSwitcher',
-        Function = function(call)
-            if call then
-                if teammodes.Value == 'Blue' then
-                    local args = {
-                        [1] = tostring(game.JobId),
-                        [2] = {
-                            [1] = "Blue"
-                        }
-                    }
-                    game:GetService("ReplicatedStorage").rbxts_include.node_modules:FindFirstChild("@rbxts").net.out._NetManaged:FindFirstChild("CustomMatches/SelectTeam"):FireServer(unpack(args))
-                elseif teammodes.Value == 'Pink' then
-                    local args = {
-                        [1] = tostring(game.JobId),
-                        [2] = {
-                            [1] = "Pink"
-                        }
-                    }
-                    game:GetService("ReplicatedStorage").rbxts_include.node_modules:FindFirstChild("@rbxts").net.out._NetManaged:FindFirstChild("CustomMatches/SelectTeam"):FireServer(unpack(args))
-                elseif teammodes.Value == 'Orange' then
-                    local args = {
-                        [1] = tostring(game.JobId),
-                        [2] = {
-                            [1] = "Orange"
-                        }
-                    }
-                    game:GetService("ReplicatedStorage").rbxts_include.node_modules:FindFirstChild("@rbxts").net.out._NetManaged:FindFirstChild("CustomMatches/SelectTeam"):FireServer(unpack(args))
-                elseif teammodes.Value == 'Yellow' then
-                    local args = {
-                        [1] = tostring(game.JobId),
-                        [2] = {
-                            [1] = "Yellow"
-                        }
-                    }
-                    game:GetService("ReplicatedStorage").rbxts_include.node_modules:FindFirstChild("@rbxts").net.out._NetManaged:FindFirstChild("CustomMatches/SelectTeam"):FireServer(unpack(args))
+run(function() 
+    local DiamondTP: vapemodule = {};
+    
+    local function getClosestDiamond(startPosition)
+        local closestDiamond
+        local maxDistance = 9e9
+
+        for _, diamond in collectionService:GetTagged("ItemDrop") do
+            if diamond.Name == "diamond" then
+                local magnitude = (diamond.Position - startPosition).Magnitude
+                if magnitude < maxDistance then
+                    closestDiamond = diamond
+                    maxDistance = magnitude
                 end
             end
         end
-    })
 
-    teammodes = lolfuni.CreateDropdown({
-        Name = "Team",
-        List = {"Orange", "Yellow", "Pink", "Blue"},
-        Function = function(val) end
+        return closestDiamond
+    end
+
+    local function teleportToPosition(position)
+        local tweenInfo = TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out, 0, false, 0)
+        local teleportTween = tweenService:Create(lplr.Character:WaitForChild("HumanoidRootPart"), TweenInfo.new(0.64), {CFrame = CFrame.new(position) + Vector3.new(0, 3, 0)})
+        teleportTween:Play()
+    end
+
+    DiamondTP = utility.Api.CreateOptionsButton({
+        Name = "DiamondTP",
+        Function = function(call: boolean)
+            if call then
+                local character = lplr.Character or lplr.CharacterAdded:Wait()
+                local humanoid = character:WaitForChild("Humanoid")
+                local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+
+                local diamond = getClosestDiamond(humanoidRootPart.Position)
+                if diamond then
+                    humanoid:ChangeState(Enum.HumanoidStateType.Dead)
+
+                    local connection
+                    connection = lplr.CharacterAdded:Connect(function()
+                        connection:Disconnect()
+
+                        task.delay(0.3, function()
+                            if not diamond then
+                                return
+                            end
+
+                            teleportToPosition(diamond.Position)
+                        end)
+                    end)
+                end
+                
+                DiamondTP.ToggleButton(false)
+            end
+        end,
+        HoverText = "Teleports you to the closest diamond drop"
     })
 end)
-run(function()
-			local ArmorColoring = {Enabled = false}
-			local armorcolorboots = {Enabled = false}
-			local armorcolorchestplate = {Enabled = false}
-			local armorcolorhelmet = {Enabled = false}
-			local armorcolorneon = {Enabled = false}
-			local armorcolor = {Hue = 0, Sat = 0, Value = 0}
-			local oldarmortextures = {}
-			local transformedobjects = {}
-			local function isArmor(tool) return armorcolorhelmet.Enabled and tool.Name:find("_helmet") or armorcolorchestplate.Enabled and tool.Name:find("_chestplate") or armorcolorboots.Enabled and tool.Name:find("_boots") or nil end
-			local function refresharmor()
-				local suc = pcall(function()
-					for i,v in pairs(lplr.Character:GetChildren()) do
-						if v:IsA("Accessory") and v:GetAttribute("ArmorSlot") and isArmor(v) then
-							local handle = v:FindFirstChild("Handle")
-							if not handle then continue end
-							if oldarmortextures[v] == nil then oldarmortextures[v] = handle.TextureID end
-							handle.TextureID = ""
-							handle.Color = Color3.fromHSV(armorcolor.Hue, armorcolor.Sat, armorcolor.Value)
-							handle.Material = armorcolorneon.Enabled and Enum.Material.Neon or Enum.Material.SmoothPlastic
-							table.insert(transformedobjects, handle)
-						end 
-					end
-				end)
-				return suc
-			end
-			ArmorColoring = GuiLibrary.ObjectsThatCanBeSaved.RenderWindow.Api.CreateOptionsButton({
-				Name = "ArmorColoring",
-				HoverText = "Add some glow up to your armor.",
-				Function = function(callback)
-					if callback then
-						task.spawn(function()
-							if not isAlive() then repeat task.wait() until isAlive() end
-							task.spawn(refresharmor)
-							table.insert(ArmorColoring.Connections, lplr.CharacterAdded:Connect(function()
-								if not isAlive() then repeat task.wait() until isAlive() end
-								ArmorColoring.ToggleButton(false)
-								ArmorColoring.ToggleButton(false)
-							end))
-							table.insert(ArmorColoring.Connections, lplr.Character.ChildAdded:Connect(function(v)
-								if v:IsA("Accessory") and v:GetAttribute("ArmorSlot") and isArmor(v) then
-									refresharmor()
-								end
-							end))
-						end)
-					else
-						for i,v in pairs(transformedobjects) do
-							if v.Parent and oldarmortextures[v.Parent] then
-								pcall(function() v.TextureID = oldarmortextures[v.Parent] end)
-								v = nil
-							end
-						end
-					end
-				end
-			})
-			armorcolor = ArmorColoring.CreateColorSlider({
-				Name = "Color",
-				Function = function()
-					if ArmorColoring.Enabled then
-						refresharmor()
-					end
-				end
-			})
-			armorcolorneon = ArmorColoring.CreateToggle({
-				Name = "Neon",
-				Function = function()
-				if ArmorColoring.Enabled then
-					ArmorColoring.ToggleButton(false)
-					ArmorColoring.ToggleButton(false)
-				end
-			    end
-			})
-			armorcolorhelmet = ArmorColoring.CreateToggle({
-				Name = "Helmet",
-				Function = function()
-				if ArmorColoring.Enabled then
-					ArmorColoring.ToggleButton(false)
-					ArmorColoring.ToggleButton(false)
-				end
-			    end
-			})
-			armorcolorchestplate = ArmorColoring.CreateToggle({
-				Name = "Chestplate",
-				Function = function()
-				if ArmorColoring.Enabled then
-					ArmorColoring.ToggleButton(false)
-					ArmorColoring.ToggleButton(false)
-				end
-			    end
-			})
-			armorcolorboots = ArmorColoring.CreateToggle({
-				Name = "Boots",
-				Default = true,
-				Function = function()
-				if ArmorColoring.Enabled then
-					ArmorColoring.ToggleButton(false)
-					ArmorColoring.ToggleButton(false)
-				end
-			    end
-			})
-		end)
-run(function()
-    local bedwarsontop = GuiLibrary.ObjectsThatCanBeSaved.ExploitWindow.Api.CreateOptionsButton({
-        Name = 'FlyBypass',
-        Function = function(call)
-            if call and entityLibrary.isAlive then
-                task.spawn(function()
-                    repeat
-                        local args = {
-                            [1] = "QUEEN_BEE_GLIDE"
-                        }
-                        
-                        game:GetService("ReplicatedStorage"):FindFirstChild("events-@easy-games/game-core:shared/game-core-networking@getEvents.Events").useAbility:FireServer(unpack(args))
-                        task.wait(0.1)
-                    until not bedwarsontop.Enabled
-                end)
+
+run(function() 
+    local EmeraldTP: vapemodule = {};
+    
+    local function getClosestEmerald(startPosition)
+        local closestEmerald
+        local maxDistance = 9e9
+
+        for _, emerald in collectionService:GetTagged("ItemDrop") do
+            if emerald.Name == "emerald" then
+                local magnitude = (emerald.Position - startPosition).Magnitude
+                if magnitude < maxDistance then
+                    closestEmerald = emerald
+                    maxDistance = magnitude
+                end
             end
         end
+
+        return closestEmerald
+    end
+
+    local function teleportToPosition(position)
+        local tweenInfo = TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out, 0, false, 0)
+        local teleportTween = tweenService:Create(lplr.Character:WaitForChild("HumanoidRootPart"), TweenInfo.new(0.64), {CFrame = CFrame.new(position) + Vector3.new(0, 3, 0)})
+        teleportTween:Play()
+    end
+
+    EmeraldTP = utility.Api.CreateOptionsButton({
+        Name = "EmeraldTP",
+        Function = function(call: boolean)
+            if call then
+                local character = lplr.Character or lplr.CharacterAdded:Wait()
+                local humanoid = character:WaitForChild("Humanoid")
+                local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+
+                local emerald = getClosestEmerald(humanoidRootPart.Position)
+                if emerald then
+                    humanoid:ChangeState(Enum.HumanoidStateType.Dead)
+
+                    local connection
+                    connection = lplr.CharacterAdded:Connect(function()
+                        connection:Disconnect()
+
+                        task.delay(0.3, function()
+                            if not emerald then
+                                return
+                            end
+
+                            teleportToPosition(emerald.Position)
+                        end)
+                    end)
+                end
+                
+                EmeraldTP.ToggleButton(false)
+            end
+        end,
+        HoverText = "Teleports you to the closest emerald drop"
     })
 end)
 
-run(function()
-	local teleporting = false
+run(function() 
+    local GoldTP: vapemodule = {};
+    
+    local function getClosestGold(startPosition)
+        local closestGold
+        local maxDistance = 9e9
 
-	local function getClosestDiamond(startPosition)
-		local closestDiamond
-		local maxDistance = 9e9
-
-		for _, diamond in collectionService:GetTagged("ItemDrop") do
-			if diamond.Name == "diamond" then
-				local magnitude = (diamond.Position - startPosition).Magnitude
-				if magnitude < maxDistance then
-					closestDiamond = diamond
-					maxDistance = magnitude
-				end
-			end
-		end
-
-		return closestDiamond
-	end
-
-	function teleportToPosition(position)
-		teleporting = true
-
-		local tweenInfo = TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out, 0, false, 0)
-		local teleportTween = tweenService:Create(lplr.Character:WaitForChild("HumanoidRootPart"), TweenInfo.new(0.64), {CFrame = CFrame.new(position) + Vector3.new(0, 3, 0)})
-		teleportTween:Play()
-		teleportTween.Completed:Connect(function()
-			teleporting = false
-		end)
-	end
-
-	local DiamondTP
-	DiamondTP = exploit.Api.CreateOptionsButton({
-		Name = "DiamondTP",
-		Function = function(callback)
-			if callback then
-				if not teleporting then
-				    local character = lplr.Character or lplr.CharacterAdded:Wait()
-					local humanoid = character:WaitForChild("Humanoid")
-					local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
-
-					local diamond = getClosestDiamond(humanoidRootPart.Position)
-					if diamond then
-						humanoid:ChangeState(Enum.HumanoidStateType.Dead)
-
-						local connection
-						connection = lplr.CharacterAdded:Connect(function()
-							connection:Disconnect()
-
-							task.delay(0.3, function()
-								if not diamond then
-									return
-								end
-
-								teleportToPosition(diamond.Position)
-							end)
-						end)
-					end
-				end
-				
-				DiamondTP["ToggleButton"](false)
-			end
-		end,
-
-		HoverText = "Teleports you to the closest diamond drop"
-	})
-end)
-run(function()
-	local teleporting = false
-
-	local function getClosestEmerald(startPosition)
-		local closestEmerald
-		local maxDistance = 9e9
-
-		for _, emerald in collectionService:GetTagged("ItemDrop") do
-			if emerald.Name == "emerald" then
-				local magnitude = (emerald.Position - startPosition).Magnitude
-				if magnitude < maxDistance then
-					closestEmerald = emerald
-					maxDistance = magnitude
-				end
-			end
-		end
-
-		return closestEmerald
-	end
-
-	function teleportToPosition(position)
-		teleporting = true
-
-		local tweenInfo = TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out, 0, false, 0)
-		local teleportTween = tweenService:Create(lplr.Character:WaitForChild("HumanoidRootPart"), TweenInfo.new(0.64), {CFrame = CFrame.new(position) + Vector3.new(0, 3, 0)})
-		teleportTween:Play()
-		teleportTween.Completed:Connect(function()
-			teleporting = false
-		end)
-	end
-
-	local EmeraldTP
-	EmeraldTP = exploit.Api.CreateOptionsButton({
-		Name = "EmeraldTP",
-		Function = function(callback)
-			if callback then
-				if not teleporting then
-				    local character = lplr.Character or lplr.CharacterAdded:Wait()
-					local humanoid = character:WaitForChild("Humanoid")
-					local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
-
-					local emerald = getClosestEmerald(humanoidRootPart.Position)
-					if emerald then
-						humanoid:ChangeState(Enum.HumanoidStateType.Dead)
-
-						local connection
-						connection = lplr.CharacterAdded:Connect(function()
-							connection:Disconnect()
-
-							task.delay(0.3, function()
-								if not emerald then
-									return
-								end
-
-								teleportToPosition(emerald.Position)
-							end)
-						end)
-					end
-				end
-				
-				EmeraldTP["ToggleButton"](false)
-			end
-		end,
-
-		HoverText = "Teleports you to the closest emerald drop"
-	})
-end)
-run(function()
-	local teleporting = false
-
-	local function getClosestGold(startPosition)
-		local closestGold
-		local maxDistance = 9e9
-
-		for _, gold in collectionService:GetTagged("ItemDrop") do
-			if gold.Name == "gold" then
-				local magnitude = (gold.Position - startPosition).Magnitude
-				if magnitude < maxDistance then
-					closestGold = gold
-					maxDistance = magnitude
-				end
-			end
-		end
-
-		return closestGold
-	end
-
-	function teleportToPosition(position)
-		teleporting = true
-
-		local tweenInfo = TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out, 0, false, 0)
-		local teleportTween = tweenService:Create(lplr.Character:WaitForChild("HumanoidRootPart"), TweenInfo.new(0.64), {CFrame = CFrame.new(position) + Vector3.new(0, 3, 0)})
-		teleportTween:Play()
-		teleportTween.Completed:Connect(function()
-			teleporting = false
-		end)
-	end
-
-	local GoldTP
-	GoldTP = exploit.Api.CreateOptionsButton({
-		Name = "GoldTP",
-		Function = function(callback)
-			if callback then
-				if not teleporting then
-				    local character = lplr.Character or lplr.CharacterAdded:Wait()
-					local humanoid = character:WaitForChild("Humanoid")
-					local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
-
-					local gold = getClosestGold(humanoidRootPart.Position)
-					if gold then
-						humanoid:ChangeState(Enum.HumanoidStateType.Dead)
-
-						local connection
-						connection = lplr.CharacterAdded:Connect(function()
-							connection:Disconnect()
-
-							task.delay(0.3, function()
-								if not gold then
-									return
-								end
-
-								teleportToPosition(gold.Position)
-							end)
-						end)
-					end
-				end
-				
-				GoldTP["ToggleButton"](false)
-			end
-		end,
-
-		HoverText = "Teleports you to the closest gold drop"
-	})
-end)
-run(function()
-	local ItemNotifier = {Enabled = false}
-	local ItemNotifierItem = {Value = 'scythe'}
-	local ItemNotifierDur = {Value = 3}
-	ItemNotifier = GuiLibrary["ObjectsThatCanBeSaved"]["UtilityWindow"]["Api"]["CreateOptionsButton"]({
-		Name = 'ItemNotifier',
-        HoverText = 'Notifies you when an item has been\nfound in your inventory',
-		Function = function(callback)
-			if callback then
-				task.spawn(function()
-					repeat task.wait() until (getItemNear(ItemNotifierItem.Value) and entityLibrary.isAlive) or (not ItemNotifier.Enabled)
-					if getItemNear(ItemNotifierItem.Value) and entityLibrary.isAlive then
-						warningNotification('ItemNotifier', 'You have a '..ItemNotifierItem.Value, ItemNotifierDur.Value)
-					end
-					return
-				end)
-			end
-		end,
-        Default = false,
-        ExtraText = function()
-			if ItemNotifierItem.Value == 'scythe' then
-				return 'Scythe'
-			else
-            	return ItemNotifierItem.Value
-			end
+        for _, gold in collectionService:GetTagged("ItemDrop") do
+            if gold.Name == "gold" then
+                local magnitude = (gold.Position - startPosition).Magnitude
+                if magnitude < maxDistance then
+                    closestGold = gold
+                    maxDistance = magnitude
+                end
+            end
         end
-	})
-	ItemNotifierItem = ItemNotifier.CreateTextBox({
-		Name = 'Item',
-		TempText = 'Item Name',
-		HoverText = 'Item name to search for',
-		FocusLost = function(enter)
-			if ItemNotifier.Enabled then
-				ItemNotifier.ToggleButton(false)
-				ItemNotifier.ToggleButton(false)
-			end
-		end
-	})
-	ItemNotifierDur = ItemNotifier.CreateSlider({
-		Name = 'Duration',
-		Min = 1,
-		Max = 10,
-		HoverText = 'Duration of the notification',
-		Function = function() end,
-		Default = 3
-	})
-end)
-run(function()
-	local LagbackDetector = {Enabled = false}
-	local LagbackDetectorDur = {Value = 5}
-	local sendlagback, sendlagback2 = true, false
-	LagbackDetector = GuiLibrary.ObjectsThatCanBeSaved['UtilityWindow'].Api.CreateOptionsButton({
-		Name = 'LagbackDetector',
-        HoverText = 'Detects when you lagback',
-		Function = function(callback)
-			if callback then
-				task.spawn(function()
-					sendlagback, sendlagback2 = true, false
-					repeat task.wait()
-						if entityLibrary.isAlive then
-							if isnetworkowner(lplr.Character.HumanoidRootPart) then
-								if sendlagback2 then
-									warningNotification('LagbackDetector', 'You are free to go', LagbackDetectorDur.Value)
-								end
-								sendlagback2 = false
-							elseif not isnetworkowner(lplr.Character.HumanoidRootPart) then
-								if sendlagback then
-									warningNotification('LagbackDetector', 'Lagbacked, please stand still', LagbackDetectorDur.Value)
-								end
-								sendlagback2 = true
-								sendlagback = false
-								task.wait(LagbackDetectorDur.Value)
-								sendlagback = true
-							end
-						end
-					until not LagbackDetector.Enabled
-				end)
-			else
-				sendlagback, sendlagback2 = true, false
-			end
-		end,
-        Default = false
-	})
-	LagbackDetectorDur = LagbackDetector.CreateSlider({
-		Name = 'Duration',
-		Min = 1,
-		Max = 10,
-		HoverText = 'Duration of the notification',
-		Function = function() end,
-		Default = 5
-	})
-end)
-run(function()
-  local abilityexploit = GuiLibrary.ObjectsThatCanBeSaved.ExploitWindow.Api.CreateOptionsButton({
-    Name = "AbilityExploit",
-    Function = function(callback)
-      if callback then
-        task.spawn(function()
-          repeat
-            task.wait(0.1)
-          until not callback
-        end)
-      end
+
+        return closestGold
     end
-  })
 
-  local methods = abilityexploit.CreateDropdown({
-    Name = "Ability Selection",
-    List = {"rebellion_aura_swap", "rebellion_shield", "open_black_market", "enable_life_force_attack"},
-    Function = function(selected) 
-      local args = {
-        [1] = selected
-      }
-      game:GetService("ReplicatedStorage"):FindFirstChild("events-@easy-games/game-core:shared/game-core-networking@getEvents.Events").useAbility:FireServer(unpack(args))
+    local function teleportToPosition(position)
+        local tweenInfo = TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out, 0, false, 0)
+        local teleportTween = tweenService:Create(lplr.Character:WaitForChild("HumanoidRootPart"), TweenInfo.new(0.64), {CFrame = CFrame.new(position) + Vector3.new(0, 3, 0)})
+        teleportTween:Play()
     end
-  })
-end)
-run(function()
-	local CustomJump = {Enabled = false}
-	local CustomJumpMode = {Value = "Normal"}
-	local CustomJumpVelocity = {Value = 50}
-	CustomJump = GuiLibrary.ObjectsThatCanBeSaved.UtilityWindow.Api.CreateOptionsButton({
-		Name = "CustomJump",
-        HoverText = "Customizes your jumping ability",
-		Function = function(callback)
-			if callback then
-				game:GetService("UserInputService").JumpRequest:Connect(function()
-					if CustomJumpMode.Value == "Normal" then
-						game:GetService("Players").LocalPlayer.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
-					elseif CustomJumpMode.Value == "Velocity" then
-						game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.Velocity = Vector3.new(game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.Velocity.X,CustomJumpVelocity.Value,game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.Velocity.Z)
-					end
-				end)
-			end
-		end
-	})
-	CustomJumpMode = CustomJump.CreateDropdown({
-		Name = "Mode",
-		List = {
-			"Normal",
-			"Velocity"
-		},
-		Function = function() end,
-	})
-	CustomJumpVelocity = CustomJump.CreateSlider({
-		Name = "Velocity",
-		Min = 1,
-		Max = 100,
-		Function = function() end,
-		Default = 50
-	})
+
+    GoldTP = utility.Api.CreateOptionsButton({
+        Name = "GoldTP",
+        Function = function(call: boolean)
+            if call then
+                local character = lplr.Character or lplr.CharacterAdded:Wait()
+                local humanoid = character:WaitForChild("Humanoid")
+                local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+
+                local gold = getClosestGold(humanoidRootPart.Position)
+                if gold then
+                    humanoid:ChangeState(Enum.HumanoidStateType.Dead)
+
+                    local connection
+                    connection = lplr.CharacterAdded:Connect(function()
+                        connection:Disconnect()
+
+                        task.delay(0.3, function()
+                            if not gold then
+                                return
+                            end
+
+                            teleportToPosition(gold.Position)
+                        end)
+                    end)
+                end
+                
+                GoldTP.ToggleButton(false)
+            end
+        end,
+        HoverText = "Teleports you to the closest gold drop"
+    })
 end)
 
-
-run(function()
-	local HannahExploit = {Enabled = false}
-	HannahExploit = GuiLibrary.ObjectsThatCanBeSaved.UtilityWindow.Api.CreateOptionsButton({
-		Name = "HannahAura",
-		Function = function(callback)
-			if callback then
-				RunLoops:BindToHeartbeat("hannah",function()
-					for i,v in pairs(game.Players:GetChildren()) do
-						local args = {
-							[1] = {
-								["user"] = game:GetService("Players").LocalPlayer,
-								["victimEntity"] = v.Character
-							}
-						}
-	
-						game:GetService("ReplicatedStorage"):WaitForChild("rbxts_include"):WaitForChild("node_modules"):WaitForChild("@rbxts"):WaitForChild("net"):WaitForChild("out"):WaitForChild("_NetManaged"):WaitForChild("HannahPromptTrigger"):InvokeServer(unpack(args))
-					end
-				end)
-			else
-				RunLoops:UnbindFromHeartbeat("hannah")
-			end
-		end,
-		HoverText = "Sometimes you will teleport across the map with Hannah"
-	})
+run(function() 
+    local HannahAura: vapemodule = {};
+    
+    HannahAura = utility.Api.CreateOptionsButton({
+        Name = "HannahAura",
+        Function = function(call: boolean)
+            if call then
+                RunLoops:BindToHeartbeat("hannah", function()
+                    for i,v in pairs(game.Players:GetChildren()) do
+                        local args = {
+                            [1] = {
+                                ["user"] = game:GetService("Players").LocalPlayer,
+                                ["victimEntity"] = v.Character
+                            }
+                        }
+    
+                        game:GetService("ReplicatedStorage"):WaitForChild("rbxts_include"):WaitForChild("node_modules"):WaitForChild("@rbxts"):WaitForChild("net"):WaitForChild("out"):WaitForChild("_NetManaged"):WaitForChild("HannahPromptTrigger"):InvokeServer(unpack(args))
+                    end
+                end)
+            else
+                RunLoops:UnbindFromHeartbeat("hannah")
+            end
+        end,
+        HoverText = "Sometimes you will teleport across the map with Hannah"
+    })
 end)
