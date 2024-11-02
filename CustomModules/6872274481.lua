@@ -11912,3 +11912,18 @@ run(function()
         HoverText = "Sometimes you will teleport across the map with Hannah"
     })
 end)
+run(function()
+	local multiaura = {}
+	multiaura = exploit.Api.CreateOptionsButton({
+		Name = 'BashExploit',
+		Function = function(call)
+			if call then
+				RunLoops:BindToStepped("multi", function()
+					replicatedstorage["events-@easy-games/game-core:shared/game-core-networking@getEvents.Events"].useAbility:FireServer("enter_knight_shield_defensive_stance")
+				end)
+			else
+				RunLoops:UnbindFromStepped("multi")
+			end
+		end
+	})
+end)
