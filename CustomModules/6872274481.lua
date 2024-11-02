@@ -11941,6 +11941,7 @@ run(function()
         Name = "AntiHit",
         Function = function(callback: boolean)
             if callback then
+			if getItemNear("scythe") then repeat task.wait until not getItemNear("scythe")																																																																																																																																																																																																																																																																																																									
 				spawn(function()
 					while task.wait() do
 						if (not GodMode.Enabled) then return end
