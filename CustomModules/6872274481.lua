@@ -11051,16 +11051,14 @@ run(function()
 	HealthbarGradientColor.Object.Visible = false
 end)
 
-
-
 run(function()
-    local ScytheDisabler = {Enabled = false}
+    local ScytheDisabler: vapemodule = {}
     local tick = 0
     local direction
 
-    ScytheDisabler = GuiLibrary.ObjectsThatCanBeSaved.WorldWindow.Api.CreateOptionsButton({
+    ScytheDisabler = world.Api.CreateOptionsButton({
         Name = "ScytheDisabler",
-        Function = function(callback)
+        Function = function(callback: boolean)
             if callback then
                 RunLoops:BindToStepped("ScytheDisabler", function()
                     local lplr = game.Players.LocalPlayer
@@ -11081,20 +11079,6 @@ run(function()
                             bedwars.Client:Get("ScytheDash"):SendToServer({direction = direction})
                             local heartbeat = game:GetService("RunService").Heartbeat
                             heartbeat:Wait()
-
-                            local scythe = getScytheInInventory(lplr)
-                            if scythe then
-                                lplr.Character.HandInvItem.Value = scythe.Name
-                                lplr.Character.HumanoidRootPart.Velocity = Vector3.new(0, -math.huge, 0)
-                                lplr.Character.Humanoid.WalkSpeed = math.huge
-
-                                for _, descendant in ipairs(lplr.Character:GetDescendants()) do
-                                    if descendant:IsA("BasePart") then
-                                        descendant.Velocity = Vector3.new(0, 0, 0)
-                                        descendant.CanCollide = false
-                                    end
-                                end
-                            end
                         end
                     end
                 end)
@@ -11103,11 +11087,9 @@ run(function()
                 sethiddenproperty(entityLibrary.character.HumanoidRootPart, "NetworkIsSleeping", false)
             end
         end,
-        HoverText = "Scythe exploit" -- im using the method from the scythe disabler in abyss (old) so if it looks pasted.. well now you know -- thanks star
+        HoverText = "Scythe exploit"
     })
 end)
-  
-
 run(function()
 	local KaidaInstaKill = {Enabled = false}
 	local Range = {Value = 40}
@@ -11488,230 +11470,244 @@ run(function()
 	})
 	visualrootcolor.Object.Visible = false
 end)
-
-
 run(function() 
-	local ViewmodelMods = {}
-	local ViewmodelHighlight = {Value = 'Normal'}
-	local ViewmodelThird = {}
-	local ViewmodelTransparency = {Value = 0}
-	local ViewmodelColor = {Hue = 0, Sat = 0, Value = 0}
-	local ViewmodelAttributes = {}
-	local ViewmodelNoBob = {}
-	local viewmodelstuff = {}
-	local nobobdepth = {Value = 8}
-	local nobobhorizontal = {Value = 8}
-	local nobobvertical = {Value = -2}
-	local rotationx = {Value = 0}
-	local rotationy = {Value = 0}
-	local rotationz = {Value = 0}
-	local oldviewmodelanim
-	local oldviewmodelC1
-	local updatefuncs = {
-		Normal = function(part, original) 
-			local highlight = original or Instance.new('Highlight')
-			highlight.FillColor = Color3.fromHSV(ViewmodelColor.Hue, ViewmodelColor.Sat, ViewmodelColor.Value)
-			highlight.FillTransparency = (ViewmodelTransparency.Value / 85)
-			highlight.OutlineTransparency = 1
-			highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
-			highlight.Parent = part
-			table.insert(viewmodelstuff, highlight)
-			part.TextureID = ''
-		end,
-		Classic = function(part)
-			part.TextureID = ''
-			part.Color = Color3.fromHSV(ViewmodelColor.Hue, ViewmodelColor.Sat, ViewmodelColor.Value)
-		end
-	}
-	local function viewmodelFunction(handle)
-		local exist, handle = pcall(function()
-			return handle and handle:IsA('Part') and handle or gameCamera.Viewmodel:FindFirstChildWhichIsA('Accessory').Handle
-		end)
-		if exist then 
-			updatefuncs[ViewmodelHighlight.Value](handle, handle:FindFirstChildWhichIsA('Highlight'))
-		end
-		local exist2, handle2 = pcall(function()
-			for i,v in next, lplr.Character:GetChildren() do 
-				if v:IsA('Accessory') and v.Name == handle.Parent.Name and v:GetAttribute('InvItem') then 
-					return v.Handle
-				end
-			end
-		end)
-		if exist2 and handle2 and ViewmodelThird.Enabled and ViewmodelHighlight.Value == 'Classic' then 
-			updatefuncs[ViewmodelHighlight.Value](handle2, handle2:FindFirstChildWhichIsA('Highlight'))
-		end
-	end
-	ViewmodelMods = GuiLibrary.ObjectsThatCanBeSaved.RenderWindow.Api.CreateOptionsButton({
-		Name = 'ViewModelMods',
-		HoverText = 'Customize the first person\nviewmodel experience.',
-		Function = function(calling)
-			if calling then 
-				local viewmodel = gameCamera:WaitForChild('Viewmodel')
-				viewmodelFunction()
-				table.insert(ViewmodelMods.Connections, viewmodel.ChildAdded:Connect(viewmodelFunction)) 
-				oldviewmodelanim = bedwars.ViewmodelController.playAnimation 
-				bedwars.ViewmodelController.playAnimation = function(self, animid, details)
-					if animid == bedwars.AnimationType.FP_WALK and ViewmodelAttributes.Enabled and ViewmodelNoBob.Enabled then 
-						return 
-					end 
-					return oldviewmodelanim(self, animid, details)
-				end
-				if ViewmodelAttributes.Enabled then 
-					lplr.PlayerScripts.TS.controllers.global.viewmodel['viewmodel-controller']:SetAttribute('ConstantManager_DEPTH_OFFSET', -(nobobdepth.Value / 10))
-					lplr.PlayerScripts.TS.controllers.global.viewmodel['viewmodel-controller']:SetAttribute('ConstantManager_HORIZONTAL_OFFSET', (nobobhorizontal.Value / 10))
-					lplr.PlayerScripts.TS.controllers.global.viewmodel['viewmodel-controller']:SetAttribute('ConstantManager_VERTICAL_OFFSET', (nobobvertical.Value / 10))
-					pcall(function() oldviewmodelC1 = viewmodel.RightHand.RightWrist.C1 end)
-				end
-			else
-				if oldviewmodelanim then 
-					bedwars.ViewmodelController.playAnimation = oldviewmodelanim 
-					oldviewmodelanim = nil
-				end
-				if oldviewmodelC1 then 
-					pcall(function() gameCamera.Viewmodel.RightHand.RightWrist.C1 = oldviewmodelC1 end)
-					oldviewmodelC1 = nil
-				end
-				lplr.PlayerScripts.TS.controllers.global.viewmodel['viewmodel-controller']:SetAttribute('ConstantManager_DEPTH_OFFSET', 0)
-				lplr.PlayerScripts.TS.controllers.global.viewmodel['viewmodel-controller']:SetAttribute('ConstantManager_HORIZONTAL_OFFSET', 0)
-				lplr.PlayerScripts.TS.controllers.global.viewmodel['viewmodel-controller']:SetAttribute('ConstantManager_VERTICAL_OFFSET', 0)
-				for i,v in next, viewmodelstuff do 
-					pcall(function() v:Destroy() end) 
-				end
-				table.clear(viewmodelstuff)
-			end
-		end
-	})
-	ViewmodelHighlight = ViewmodelMods.CreateDropdown({
-		Name = 'Mode',
-		List = {'Normal', 'Classic'},
-		Function = function(value)
-			pcall(function() ViewmodelThird.Object.Visible = (value ~= 'Normal') end)
-			pcall(function() ViewmodelTransparency.Visible = (value ~= 'Classic') end)
-			if ViewmodelMods.Enabled then 
-				ViewmodelMods.ToggleButton()
-				ViewmodelMods.ToggleButton() 
-			end
-		end
-	})
-	ViewmodelColor = ViewmodelMods.CreateColorSlider({
-		Name = 'Color',
-		Function = function() 
-			if ViewmodelMods.Enabled then
-			   viewmodelFunction() 
-			end
-		end
-	})
-	ViewmodelTransparency = ViewmodelMods.CreateSlider({
-		Name = 'Transparency',
-		Min = 0, 
-		Max = 85, 
-		Default = 15,
-		Function = function() 
-			if ViewmodelMods.Enabled then
-				viewmodelFunction() 
-			 end 
-		end
-	})
-	ViewmodelThird = ViewmodelMods.CreateToggle({
-		Name = 'Hand',
-		Default = true,
-		HoverText = 'Also changes the tool in third person.',
-		Function = function() 
-			if ViewmodelMods.Enabled then
-				viewmodelFunction() 
-			 end
-		end
-	})
-	ViewmodelAttributes = ViewmodelMods.CreateToggle({
-		Name = 'Attributes',
-		HoverText = 'Size & Rotations for viewmodel.',
-		Function = function(calling)
-			pcall(function() ViewmodelNoBob.Object.Visible = calling end)
-			pcall(function() nobobdepth.Object.Visible = calling end)
-			pcall(function() nobobhorizontal.Object.Visible = calling end)
-			pcall(function() nobobvertical.Object.Visible = calling end)
-			pcall(function() rotationx.Object.Visible = calling end)
-			pcall(function() rotationy.Object.Visible = calling end)
-			pcall(function() rotationz.Object.Visible = calling end)
-			if ViewmodelMods.Enabled then 
-				ViewmodelMods.ToggleButton() 
-				ViewmodelMods.ToggleButton()
-			end
-		end
-	})
-	ViewmodelNoBob = ViewmodelMods.CreateToggle({
-		Name = 'No Bobbing',
-		HoverText = 'No ugly bobbing.',
-		Function = function()
-			if ViewmodelMods.Enabled and ViewmodelAttributes.Enabled then 
-				ViewmodelMods.ToggleButton() 
-				ViewmodelMods.ToggleButton()
-			end
-		end
-	})
-	nobobdepth = ViewmodelMods.CreateSlider({
-		Name = 'Depth',
-		Min = 0,
-		Max = 24,
-		Default = 8,
-		Function = function(val)
-			if ViewmodelMods.Enabled and ViewmodelAttributes.Enabled then
-				lplr.PlayerScripts.TS.controllers.global.viewmodel['viewmodel-controller']:SetAttribute('ConstantManager_DEPTH_OFFSET', -(val / 10))
-			end
-		end
-	})
-	nobobhorizontal = ViewmodelMods.CreateSlider({
-		Name = 'Horizontal',
-		Min = 0,
-		Max = 24,
-		Default = 8,
-		Function = function(val)
-			if ViewmodelMods.Enabled and ViewmodelAttributes.Enabled then
-				lplr.PlayerScripts.TS.controllers.global.viewmodel['viewmodel-controller']:SetAttribute('ConstantManager_HORIZONTAL_OFFSET', (val / 10))
-			end
-		end
-	})
-	nobobvertical = ViewmodelMods.CreateSlider({
-		Name = 'Vertical',
-		Min = 0,
-		Max = 24,
-		Default = -2,
-		Function = function(val)
-			if ViewmodelMods.Enabled and ViewmodelAttributes.Enabled then
-				lplr.PlayerScripts.TS.controllers.global.viewmodel['viewmodel-controller']:SetAttribute('ConstantManager_VERTICAL_OFFSET', (val / 10))
-			end
-		end
-	})
-	rotationx = ViewmodelMods.CreateSlider({
-		Name = 'RotX',
-		Min = 0,
-		Max = 360,
-		Function = function(val)
-			if ViewmodelMods.Enabled and ViewmodelAttributes.Enabled then
-				gameCamera.Viewmodel.RightHand.RightWrist.C1 = oldviewmodelC1 * CFrame.Angles(math.rad(rotationx.Value), math.rad(rotationy.Value), math.rad(rotationz.Value))
-			end
-		end
-	})
-	rotationy = ViewmodelMods.CreateSlider({
-		Name = 'RotY',
-		Min = 0,
-		Max = 360,
-		Function = function(val)
-			if ViewmodelMods.Enabled and ViewmodelAttributes.Enabled then
-				gameCamera.Viewmodel.RightHand.RightWrist.C1 = oldviewmodelC1 * CFrame.Angles(math.rad(rotationx.Value), math.rad(rotationy.Value), math.rad(rotationz.Value))
-			end
-		end
-	})
-	rotationz = ViewmodelMods.CreateSlider({
-	Name = 'RotZ',
-	Min = 0,
-	Max = 360,
-	Function = function(val)
-		if ViewmodelMods.Enabled and ViewmodelAttributes.Enabled then
-			gameCamera.Viewmodel.RightHand.RightWrist.C1 = oldviewmodelC1 * CFrame.Angles(math.rad(rotationx.Value), math.rad(rotationy.Value), math.rad(val))
-		end
-	end
-})
+    local ViewmodelMods: vapemodule = {};
+    local ViewmodelHighlight: vapeslider = {};
+    local ViewmodelThird: vapetoggle = {};
+    local ViewmodelTransparency: vapeslider = {};
+    local ViewmodelColor: vapeslider = {};
+    local ViewmodelAttributes: vapetoggle = {};
+    local ViewmodelNoBob: vapetoggle = {};
+    local nobobdepth: vapeslider = {};
+    local nobobhorizontal: vapeslider = {};
+    local nobobvertical: vapeslider = {};
+    local rotationx: vapeslider = {};
+    local rotationy: vapeslider = {};
+    local rotationz: vapeslider = {};
+
+    local viewmodelstuff = {}
+    local oldviewmodelanim
+    local oldviewmodelC1
+
+    local updatefuncs = {
+        Normal = function(part, original) 
+            local highlight = original or Instance.new('Highlight')
+            highlight.FillColor = Color3.fromHSV(ViewmodelColor.Hue, ViewmodelColor.Sat, ViewmodelColor.Value)
+            highlight.FillTransparency = (ViewmodelTransparency.Value / 85)
+            highlight.OutlineTransparency = 1
+            highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+            highlight.Parent = part
+            table.insert(viewmodelstuff, highlight)
+            part.TextureID = ''
+        end,
+        Classic = function(part)
+            part.TextureID = ''
+            part.Color = Color3.fromHSV(ViewmodelColor.Hue, ViewmodelColor.Sat, ViewmodelColor.Value)
+        end
+    }
+
+    local function viewmodelFunction(handle)
+        local exist, handle = pcall(function()
+            return handle and handle:IsA('Part') and handle or gameCamera.Viewmodel:FindFirstChildWhichIsA('Accessory').Handle
+        end)
+        if exist then 
+            updatefuncs[ViewmodelHighlight.Value](handle, handle:FindFirstChildWhichIsA('Highlight'))
+        end
+        local exist2, handle2 = pcall(function()
+            for i,v in next, lplr.Character:GetChildren() do 
+                if v:IsA('Accessory') and v.Name == handle.Parent.Name and v:GetAttribute('InvItem') then 
+                    return v.Handle
+                end
+            end
+        end)
+        if exist2 and handle2 and ViewmodelThird.Enabled and ViewmodelHighlight.Value == 'Classic' then 
+            updatefuncs[ViewmodelHighlight.Value](handle2, handle2:FindFirstChildWhichIsA('Highlight'))
+        end
+    end
+
+    ViewmodelMods = visual.Api.CreateOptionsButton({
+        Name = 'ViewModelMods',
+        Function = function(calling: boolean)
+            if calling then 
+                local viewmodel = gameCamera:WaitForChild('Viewmodel')
+                viewmodelFunction()
+                table.insert(ViewmodelMods.Connections, viewmodel.ChildAdded:Connect(viewmodelFunction)) 
+                oldviewmodelanim = bedwars.ViewmodelController.playAnimation 
+                bedwars.ViewmodelController.playAnimation = function(self, animid, details)
+                    if animid == bedwars.AnimationType.FP_WALK and ViewmodelAttributes.Enabled and ViewmodelNoBob.Enabled then 
+                        return 
+                    end 
+                    return oldviewmodelanim(self, animid, details)
+                end
+                if ViewmodelAttributes.Enabled then 
+                    lplr.PlayerScripts.TS.controllers.global.viewmodel['viewmodel-controller']:SetAttribute('ConstantManager_DEPTH_OFFSET', -(nobobdepth.Value / 10))
+                    lplr.PlayerScripts.TS.controllers.global.viewmodel['viewmodel-controller']:SetAttribute('ConstantManager_HORIZONTAL_OFFSET', (nobobhorizontal.Value / 10))
+                    lplr.PlayerScripts.TS.controllers.global.viewmodel['viewmodel-controller']:SetAttribute('ConstantManager_VERTICAL_OFFSET', (nobobvertical.Value / 10))
+                    pcall(function() oldviewmodelC1 = viewmodel.RightHand.RightWrist.C1 end)
+                end
+            else
+                if oldviewmodelanim then 
+                    bedwars.ViewmodelController.playAnimation = oldviewmodelanim 
+                    oldviewmodelanim = nil
+                end
+                if oldviewmodelC1 then 
+                    pcall(function() gameCamera.Viewmodel.RightHand.RightWrist.C1 = oldviewmodelC1 end)
+                    oldviewmodelC1 = nil
+                end
+                lplr.PlayerScripts.TS.controllers.global.viewmodel['viewmodel-controller']:SetAttribute('ConstantManager_DEPTH_OFFSET', 0)
+                lplr.PlayerScripts.TS.controllers.global.viewmodel['viewmodel-controller']:SetAttribute('ConstantManager_HORIZONTAL_OFFSET', 0)
+                lplr.PlayerScripts.TS.controllers.global.viewmodel['viewmodel-controller']:SetAttribute('ConstantManager_VERTICAL_OFFSET', 0)
+                for i,v in next, viewmodelstuff do 
+                    pcall(function() v:Destroy() end) 
+                end
+                table.clear(viewmodelstuff)
+            end
+        end,
+        HoverText = 'Customize the first person\nviewmodel experience.'
+    })
+
+    ViewmodelHighlight = ViewmodelMods.CreateDropdown({
+        Name = 'Mode',
+        List = {'Normal', 'Classic'},
+        Function = function(value: string)
+            pcall(function() ViewmodelThird.Object.Visible = (value ~= 'Normal') end)
+            pcall(function() ViewmodelTransparency.Visible = (value ~= 'Classic') end)
+            if ViewmodelMods.Enabled then 
+                ViewmodelMods.ToggleButton()
+                ViewmodelMods.ToggleButton() 
+            end
+        end
+    })
+
+    ViewmodelColor = ViewmodelMods.CreateColorSlider({
+        Name = 'Color',
+        Function = function() 
+            if ViewmodelMods.Enabled then
+               viewmodelFunction() 
+            end
+        end
+    })
+
+    ViewmodelTransparency = ViewmodelMods.CreateSlider({
+        Name = 'Transparency',
+        Min = 0, 
+        Max = 85, 
+        Default = 15,
+        Function = function() 
+            if ViewmodelMods.Enabled then
+                viewmodelFunction() 
+             end 
+        end
+    })
+
+    ViewmodelThird = ViewmodelMods.CreateToggle({
+        Name = 'Hand',
+        Default = true,
+        HoverText = 'Also changes the tool in third person.',
+        Function = function() 
+            if ViewmodelMods.Enabled then
+                viewmodelFunction() 
+             end
+        end
+    })
+
+    ViewmodelAttributes = ViewmodelMods.CreateToggle({
+        Name = 'Attributes',
+        HoverText = 'Size & Rotations for viewmodel.',
+        Function = function(calling: boolean)
+            pcall(function() ViewmodelNoBob.Object.Visible = calling end)
+            pcall(function() nobobdepth.Object.Visible = calling end)
+            pcall(function() nobobhorizontal.Object.Visible = calling end)
+            pcall(function() nobobvertical.Object.Visible = calling end)
+            pcall(function() rotationx.Object.Visible = calling end)
+            pcall(function() rotationy.Object.Visible = calling end)
+            pcall(function() rotationz.Object.Visible = calling end)
+            if ViewmodelMods.Enabled then 
+                ViewmodelMods.ToggleButton() 
+                ViewmodelMods.ToggleButton()
+            end
+        end
+    })
+
+    ViewmodelNoBob = ViewmodelMods.CreateToggle({
+        Name = 'No Bobbing',
+        HoverText = 'No ugly bobbing.',
+        Function = function()
+            if ViewmodelMods.Enabled and ViewmodelAttributes.Enabled then 
+                ViewmodelMods.ToggleButton() 
+                ViewmodelMods.ToggleButton()
+            end
+        end
+    })
+
+    nobobdepth = ViewmodelMods.CreateSlider({
+        Name = 'Depth',
+        Min = 0,
+        Max = 24,
+        Default = 8,
+        Function = function(val: number)
+            if ViewmodelMods.Enabled and ViewmodelAttributes.Enabled then
+                lplr.PlayerScripts.TS.controllers.global.viewmodel['viewmodel-controller']:SetAttribute('ConstantManager_DEPTH_OFFSET', -(val / 10))
+            end
+        end
+    })
+
+    nobobhorizontal = ViewmodelMods.CreateSlider({
+        Name = 'Horizontal',
+        Min = 0,
+        Max = 24,
+        Default = 8,
+        Function = function(val: number)
+            if ViewmodelMods.Enabled and ViewmodelAttributes.Enabled then
+                lplr.PlayerScripts.TS.controllers.global.viewmodel['viewmodel-controller']:SetAttribute('ConstantManager_HORIZONTAL_OFFSET', (val / 10))
+            end
+        end
+    })
+
+    nobobvertical = ViewmodelMods.CreateSlider({
+        Name = 'Vertical',
+        Min = 0,
+        Max = 24,
+        Default = -2,
+        Function = function(val: number)
+            if ViewmodelMods.Enabled and ViewmodelAttributes.Enabled then
+                lplr.PlayerScripts.TS.controllers.global.viewmodel['viewmodel-controller']:SetAttribute('ConstantManager_VERTICAL_OFFSET', (val / 10))
+            end
+        end
+    })
+
+    rotationx = ViewmodelMods.CreateSlider({
+        Name = 'RotX',
+        Min = 0,
+        Max = 360,
+        Function = function(val: number)
+            if ViewmodelMods.Enabled and ViewmodelAttributes.Enabled then
+                gameCamera.Viewmodel.RightHand.RightWrist.C1 = oldviewmodelC1 * CFrame.Angles(math.rad(rotationx.Value), math.rad(rotationy.Value), math.rad(rotationz.Value))
+            end
+        end
+    })
+
+    rotationy = ViewmodelMods.CreateSlider({
+        Name = 'RotY',
+        Min = 0,
+        Max = 360,
+        Function = function(val: number)
+            if ViewmodelMods.Enabled and ViewmodelAttributes.Enabled then
+                gameCamera.Viewmodel.RightHand.RightWrist.C1 = oldviewmodelC1 * CFrame.Angles(math.rad(rotationx.Value), math.rad(rotationy.Value), math.rad(rotationz.Value))
+            end
+        end
+    })
+
+    rotationz = ViewmodelMods.CreateSlider({
+        Name = 'RotZ',
+        Min = 0,
+        Max = 360,
+        Function = function(val: number)
+            if ViewmodelMods.Enabled and ViewmodelAttributes.Enabled then
+                gameCamera.Viewmodel.RightHand.RightWrist.C1 = oldviewmodelC1 * CFrame.Angles(math.rad(rotationx.Value), math.rad(rotationy.Value), math.rad(val))
+            end
+        end
+    })
 end)
 run(function() 
     local DiamondTP: vapemodule = {};
