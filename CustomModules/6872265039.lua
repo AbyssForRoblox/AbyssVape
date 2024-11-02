@@ -1323,42 +1323,27 @@ runcode(function()
 		end
 	})
 end)
+local function OpenCrate()
+local args = {
+    [1] = {
+        ["altarId"] = 0,
+        ["crateType"] = "level_up_crate"
+    }
+}
+
+game:GetService("ReplicatedStorage").rbxts_include.node_modules:FindFirstChild("@rbxts").net.out._NetManaged:FindFirstChild("RewardCrate/SpawnRewardCrate"):FireServer(unpack(args))
+end
+
 run(function()
-	local AutoCrate = {Enabled = false}
-	local aut = 0
-	
-	AutoCrate = utility.Api.CreateOptionsButton({
-		Name = "AutoCrate",
-		HovorText = "Automatically open crates if you have any.",
-		Function = function(callback)
-			if callback then
-				RunLoops:BindToStepped("crate",1,function()
-					aut = aut + 1
-					if aut >= 45 then
-						local args = {
-							[1] = {
-								["crateType"] = "level_up_crate",
-								["altarId"] = 0
-							}
-						}
-						
-						game:GetService("ReplicatedStorage"):WaitForChild("rbxts_include"):WaitForChild("node_modules"):WaitForChild("@rbxts"):WaitForChild("net"):WaitForChild("out"):WaitForChild("_NetManaged"):WaitForChild("RewardCrate/SpawnRewardCrate"):FireServer(unpack(args))
-						
-						local args2 = {
-							[1] = {
-								["crateId"] = tostring(game.Workspace.CrateAltar_0:FindFirstChild("RewardCrate"):GetAttribute("crateId"))
-							}
-						}
-						
-						game:GetService("ReplicatedStorage"):WaitForChild("rbxts_include"):WaitForChild("node_modules"):WaitForChild("@rbxts"):WaitForChild("net"):WaitForChild("out"):WaitForChild("_NetManaged"):WaitForChild("RewardCrate/OpenRewardCrate"):FireServer(unpack(args2))
-						aut = 0
-					end
-				end)
-			else
-				RunLoops:UnbindFromStepped("crate")
-			end
-		end
-	})
+local autogamble = utility.Api.CreateOptionsButton({
+    Name = 'AutoGamble',
+    Function = function(callback)
+      if callback then
+      createwarning('AutoGamble', 'Please make sure you have a lucky crate before usage', '8')
+          OpenCrate()
+          end
+     end
+   })
 end)
 run(function()
     local warp = utility.Api.CreateOptionsButton({
