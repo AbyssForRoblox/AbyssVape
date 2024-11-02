@@ -2114,7 +2114,7 @@ run(function()
 	local noclickfunc
 	noclickdelay = GuiLibrary.ObjectsThatCanBeSaved.CombatWindow.Api.CreateOptionsButton({
 		Name = "NoClickDelay",
-		Function = function(callback)
+		Function = function(callback: boolean)
 			if callback then
 				noclickfunc = bedwars.SwordController.isClickingTooFast
 				bedwars.SwordController.isClickingTooFast = function(self)
@@ -2134,7 +2134,7 @@ run(function()
 
 	Reach = combat.Api.CreateOptionsButton({
 		Name = "Reach",
-		Function = function(callback)
+		Function = function(callback: boolean)
 			bedwars.CombatConstant.RAYCAST_SWORD_CHARACTER_DISTANCE = callback and (ReachValue.Value + 2) * 4 or 14.4 
 		end,
 		HoverText = "Extends attack reach"
@@ -2152,11 +2152,11 @@ run(function()
 	})
 end)
 run(function()
-	local Sprint = {Enabled = false}
+	local Sprint: vapemodule = {};
 	local oldSprintFunction
 	Sprint = GuiLibrary.ObjectsThatCanBeSaved.CombatWindow.Api.CreateOptionsButton({
 		Name = "Sprint",
-		Function = function(callback)
+		Function = function(callback: boolean)
 			if callback then
 				if inputService.TouchEnabled then
 					pcall(function() lplr.PlayerGui.MobileUI["4"].Visible = false end)
@@ -2188,13 +2188,13 @@ run(function()
 end)
 
 run(function()
-	local Velocity = {Enabled = false}
-	local VelocityHorizontal = {Value = 100}
-	local VelocityVertical = {Value = 100}
+	local Velocity: vapemodule = {};
+	local VelocityHorizontal: vapeslider = {};
+	local VelocityVertical: vapeslider = {};
 	local applyKnockback
 	Velocity = GuiLibrary.ObjectsThatCanBeSaved.CombatWindow.Api.CreateOptionsButton({
 		Name = "Velocity",
-		Function = function(callback)
+		Function = function(callback: boolean)
 			if callback then
 				applyKnockback = bedwars.KnockbackUtil.applyKnockback
 				bedwars.KnockbackUtil.applyKnockback = function(root, mass, dir, knockback, ...)
@@ -2229,9 +2229,9 @@ run(function()
 end)
 
 run(function()
-    local AutoLeaveDelay = {Value = 1}
-    local AutoPlayAgain = {Enabled = true}
-    local AutoLeaveRandom = {Enabled = false}
+    local AutoLeaveDelay: vapeslider = {};
+    local AutoPlayAgain: vapetoggle = {};
+    local AutoLeaveRandom: vapetoggle = {};
     local leaveAttempted = false
 
     local function isEveryoneDead()
@@ -2250,7 +2250,7 @@ run(function()
 
     AutoLeave = GuiLibrary.ObjectsThatCanBeSaved.UtilityWindow.Api.CreateOptionsButton({
         Name = "AutoQueue",
-        Function = function(callback)
+        Function = function(callback: boolean)
             if callback then
                 table.insert(AutoLeave.Connections, vapeEvents.EntityDeathEvent.Event:Connect(function(deathTable)
                     if (not leaveAttempted) and deathTable.finalKill and deathTable.entityInstance == lplr.Character then
@@ -2407,18 +2407,18 @@ run(function()
 end)
 local autobankballoon = false
 run(function()
-	local Fly = {Enabled = false}
-	local FlyMode = {Value = "CFrame"}
-	local FlySpeed = {Value = 23}
-	local ScytheSpeed = {Value = 30}
-	local FlyVerticalSpeed = {Value = 40}
-	local FlyVertical = {Enabled = true}
-	local FlyAutoPop = {Enabled = true}
-	local FlyAnyway = {Enabled = false}
-	local FlyAnywayProgressBar = {Enabled = false}
-	local FlyDamageAnimation = {Enabled = false}
-	local FlyTP = {Enabled = false}
-	local FlyAnywayProgressBarFrame
+	local Fly: vapemodule = {};
+	local FlyMode: vapedropdown = {};
+	local FlySpeed: vapeslider = {};
+	local ScytheSpeed: vapeslider = {};
+	local FlyVerticalSpeed: vapeslider = {};
+	local FlyVertical: vapetoggle = {};
+	local FlyAutoPop: vapetoggle = {};
+	local FlyAnyway: vapetoggle = {};
+	local FlyAnywayProgressBar: vapetoggle = {};
+	local FlyDamageAnimation: vapetoggle = {};
+	local FlyTP: vapetoggle = {};
+	local FlyAnywayProgressBarFrame: vapegui = {};
 	local olddeflate
 	local FlyUp = false
 	local FlyDown = false
@@ -2442,7 +2442,7 @@ run(function()
 
 	Fly = GuiLibrary.ObjectsThatCanBeSaved.BlatantWindow.Api.CreateOptionsButton({
 		Name = "Fly",
-		Function = function(callback)
+		Function = function(callback: boolean)
 			if callback then
 				olddeflate = bedwars.BalloonController.deflateBalloon
 				bedwars.BalloonController.deflateBalloon = function() end
@@ -2647,9 +2647,9 @@ run(function()
 		HoverText = "Pops balloons when Fly is disabled."
 	})
 	local oldcamupdate
-local camcontrol
-local Flydamagecamera = {Enabled = false}
-FlyDamageAnimation = Fly.CreateToggle({
+   local camcontrol
+   local Flydamagecamera = {Enabled = false}
+   FlyDamageAnimation = Fly.CreateToggle({
     Name = "Damage Animation",
     Function = function(callback)
         if Flydamagecamera.Object then
@@ -2750,7 +2750,7 @@ FlyTP = Fly.CreateToggle({
     Name = "TP Down",
     Function = function() end,
     Default = true
-})
+  })
 end)
 
 
