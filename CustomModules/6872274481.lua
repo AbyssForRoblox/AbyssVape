@@ -11397,7 +11397,7 @@ isAlive = function(plr, nohealth)
 	return alive
 end
 run(function() 
-	local Invisibility = {}
+	local Invisibility: vapemodule = {};
 	local collideparts = {}
 	local invisvisual = {}
 	local visualrootcolor = {Hue = 0, Sat = 0, Sat = 0}
@@ -11406,7 +11406,7 @@ run(function()
 	Invisibility = GuiLibrary.ObjectsThatCanBeSaved.UtilityWindow.Api.CreateOptionsButton({
 		Name = 'Invisibility',
 		HoverText = 'Makes your invisible.',
-		Function = function(calling)
+		Function = function(calling: boolean)
 			if calling then 
 				task.spawn(function()
 				repeat task.wait() until ((isAlive(lplr, true) or not Invisibility.Enabled) and (isEnabled('Lobby Check', 'Toggle') == false or store.matchState ~= 0))
@@ -11940,7 +11940,7 @@ run(function()
     local GodMode: vapemodule = {};
     GodMode = exploit.Api.CreateOptionsButton({
         Name = "AntiHit",
-        Function = function(callback)
+        Function = function(callback: boolean)
             if callback then
 				spawn(function()
 					while task.wait() do
@@ -11970,7 +11970,7 @@ run(function()
 														end
 													end
 
-													lplr.Character.HumanoidRootPart.CFrame = lplr.Character.HumanoidRootPart.CFrame + Vector3.new(0,10000,0)
+													lplr.Character.HumanoidRootPart.CFrame = lplr.Character.HumanoidRootPart.CFrame + Vector3.new(0,100000,0)
 
 													game:GetService("RunService").RenderStepped:Connect(function()
 														if Clone ~= nil and Clone:FindFirstChild("HumanoidRootPart") then
