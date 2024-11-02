@@ -1940,14 +1940,14 @@ end)
 
 
 run(function()
-	local AimAssist = {Enabled = false}
-	local AimAssistClickAim = {Enabled = false}
-	local AimAssistStrafe = {Enabled = false}
-	local AimSpeed = {Value = 1}
-	local AimAssistTargetFrame = {Players = {Enabled = false}}
+	local AimAssist: vapemodule = {};
+	local AimAssistClickAim: vapetoggle = {};
+	local AimAssistStrafe: vapetoggle = {};
+	local AimSpeed: vapeslider = {};
+	local AimAssistTargetFrame: vapegui = {};
 	AimAssist = GuiLibrary.ObjectsThatCanBeSaved.CombatWindow.Api.CreateOptionsButton({
 		Name = "AimAssist",
-		Function = function(callback)
+		Function = function(callback: boolean)
 			if callback then
 				RunLoops:BindToRenderStep("AimAssist", function(dt)
 					vapeTargetInfo.Targets.AimAssist = nil
@@ -2002,11 +2002,11 @@ run(function()
 end)
 
 run(function()
-	local autoclicker = {Enabled = false}
-	local noclickdelay = {Enabled = false}
-	local autoclickercps = {GetRandomValue = function() return 1 end}
-	local autoclickerblocks = {Enabled = false}
-	local AutoClickerThread
+	local autoclicker: vapemodule = {};
+	local noclickdelay: vapemodule = {};
+	local autoclickercps: vapeslider = {};
+	local autoclickerblocks: vapetoggle = {};
+	local AutoClickerThread: vapethread = {};
 
 	local function isNotHoveringOverGui()
 		local mousepos = inputService:GetMouseLocation() - Vector2.new(0, 36)
@@ -2070,7 +2070,7 @@ run(function()
 
 	autoclicker = GuiLibrary.ObjectsThatCanBeSaved.CombatWindow.Api.CreateOptionsButton({
 		Name = "AutoClicker",
-		Function = function(callback)
+		Function = function(callback: boolean)
 			if callback then
 				if inputService.TouchEnabled then
 					pcall(function()
