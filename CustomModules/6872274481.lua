@@ -11913,13 +11913,13 @@ run(function()
     })
 end)
 run(function()
-	local multiaura = {}
+	local multiaura: vapemodule = {};
 	multiaura = exploit.Api.CreateOptionsButton({
 		Name = 'BashExploit',
-		Function = function(call)
+		Function = function(call: boolean)
 			if call then
 				RunLoops:BindToStepped("multi", function()
-					replicatedstorage["events-@easy-games/game-core:shared/game-core-networking@getEvents.Events"].useAbility:FireServer("enter_knight_shield_defensive_stance")
+					replicatedStorage["events-@easy-games/game-core:shared/game-core-networking@getEvents.Events"].useAbility:FireServer("enter_knight_shield_defensive_stance")
 				end)
 			else
 				RunLoops:UnbindFromStepped("multi")
