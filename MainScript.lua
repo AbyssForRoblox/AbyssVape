@@ -140,7 +140,7 @@ local function vapeGithubRequest(scripturl)
 				displayErrorPopup("The connection to github is taking a while, Please be patient.")
 			end
 		end)
-		suc, res = pcall(function() return game:HttpGet("https://raw.githubusercontent.com/7GrandDadPGN/VapeV4ForRoblox/"..scripturl, true) end)
+		suc, res = pcall(function() return game:HttpGet("https://raw.githubusercontent.com/AbyssForRoblox/AbyssVape/"..scripturl, true) end)
 		if not suc or res == "404: Not Found" then
 			displayErrorPopup("Failed to connect to github : vape/"..scripturl.." : "..res)
 			error(res)
@@ -224,7 +224,7 @@ if not isfile(baseDirectory.. "CustomModules/cachechecked.txt") then
 				if isfile(v) and not readfile(v):find("--This watermark is used to delete the file if its cached, remove it to make the file persist after commits.") then
 					local last = v:split('\\')
 					last = last[#last]
-					local suc, publicrepo = pcall(function() return game:HttpGet("https://raw.githubusercontent.com/7GrandDadPGN/VapeV4ForRoblox/CustomModules/"..last) end)
+					local suc, publicrepo = pcall(function() return game:HttpGet("https://raw.githubusercontent.com/AbyssForRoblox/AbyssVape/CustomModules/"..last) end)
 					if suc and publicrepo and publicrepo ~= "404: Not Found" then
 						writefile(baseDirectory.. "CustomModules/"..last, "--This watermark is used to delete the file if its cached, remove it to make the file persist after commits.\n"..publicrepo)
 					end
@@ -1962,7 +1962,7 @@ local function loadVape()
 			loadstring(readfile(baseDirectory.. "CustomModules/"..game.PlaceId..".lua"))()
 		else
 			if not shared.VapeDeveloper then
-				local suc, publicrepo = pcall(function() return game:HttpGet("https://raw.githubusercontent.com/7GrandDadPGN/VapeV4ForRoblox/CustomModules/"..game.PlaceId..".lua") end)
+				local suc, publicrepo = pcall(function() return game:HttpGet("https://raw.githubusercontent.com/AbyssForRoblox/AbyssVape/CustomModules/"..game.PlaceId..".lua") end)
 				if suc and publicrepo and publicrepo ~= "404: Not Found" then
 					writefile(baseDirectory.. "CustomModules/"..game.PlaceId..".lua", "--This watermark is used to delete the file if its cached, remove it to make the file persist after commits.\n"..publicrepo)
 					loadstring(readfile(baseDirectory.. "CustomModules/"..game.PlaceId..".lua"))()
