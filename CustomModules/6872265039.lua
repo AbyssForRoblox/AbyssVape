@@ -1332,7 +1332,7 @@ run(function()
         if model then
             return tostring(model:GetAttribute('crateId'))
         else
-            return nil and createwarning('Abyss', 'Crate not found.', 5)
+            return nil and createwarning('Abyss', 'Crate not found.', '5')
         end
     end
     local spawncrate = repstorage.rbxts_include.node_modules['@rbxts'].net.out._NetManaged['RewardCrate/SpawnRewardCrate']
