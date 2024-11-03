@@ -1323,28 +1323,44 @@ runcode(function()
 		end
 	})
 end)
-local function OpenCrate()
-local args = {
-    [1] = {
-        ["altarId"] = 0,
-        ["crateType"] = "level_up_crate"
-    }
-}
-
-game:GetService("ReplicatedStorage").rbxts_include.node_modules:FindFirstChild("@rbxts").net.out._NetManaged:FindFirstChild("RewardCrate/SpawnRewardCrate"):FireServer(unpack(args))
-end
 
 run(function()
-local autogamble = utility.Api.CreateOptionsButton({
-    Name = 'AutoGamble',
-    Function = function(callback)
-      if callback then
-      createwarning('AutoGamble', 'Please make sure you have a lucky crate before usage', '8')
-          OpenCrate()
-          end
-     end
-   })
+    local autogamble = {}
+    local getattribute = function(id)
+        local altar = workspace:FindFirstChild(`CrateAltar_{id}`)
+        local model = altar:FindFirstChildWhichIsA('Model')
+        if model then
+            return tostring(model:GetAttribute('crateId'))
+        else
+            return nil and createwarning('Abyss', 'Crate not found.', 5)
+        end
+    end
+    local spawncrate = repstorage.rbxts_include.node_modules['@rbxts'].net.out._NetManaged['RewardCrate/SpawnRewardCrate']
+    local opencrate = repstorage.rbxts_include.node_modules['@rbxts'].net.out._NetManaged['RewardCrate/OpenRewardCrate']
+    autogamble = utility.Api.CreateOptionsButton({
+        Name = 'AutoGamble',
+        Function = function(call)
+            if call then
+                repeat
+                    for i = 0,1 do
+                        spawncrate:FireServer({
+                            crateType = 'level_up_crate',
+                            altarId = i
+                        }) 
+                        task.wait(2)
+                        local attribute = getattribute(i)
+                        opencrate:FireServer({
+                            crateId = attribute
+                        })
+                    end
+                    task.wait(1)
+                until (not autogamble.Enabled)
+            end
+        end,
+        HoverText = 'Automatically opens crate for you \n(inspired by vape rewrite)'
+    })
 end)
+
 run(function()
     local warp = utility.Api.CreateOptionsButton({
         Name = "CrateTP",
