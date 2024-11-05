@@ -11391,23 +11391,36 @@ run(function()
 	visualrootcolor.Object.Visible = false
 end)
 run(function() 
-    local ViewmodelMods: vapemodule = {};
-    local ViewmodelHighlight: vapeslider = {};
-    local ViewmodelThird: vapetoggle = {};
-    local ViewmodelTransparency: vapeslider = {};
-    local ViewmodelColor: vapeslider = {};
-    local ViewmodelAttributes: vapetoggle = {};
-    local ViewmodelNoBob: vapetoggle = {};
-    local nobobdepth: vapeslider = {};
-    local nobobhorizontal: vapeslider = {};
-    local nobobvertical: vapeslider = {};
-    local rotationx: vapeslider = {};
-    local rotationy: vapeslider = {};
-    local rotationz: vapeslider = {};
+    local ViewmodelMods = {}
+    local ViewmodelHighlight = {}
+    local ViewmodelThird = {}
+    local ViewmodelTransparency = {}
+    local ViewmodelColor = {}
+    local ViewmodelAttributes = {}
+    local ViewmodelNoBob = {}
+    local nobobdepth = {}
+    local nobobhorizontal = {}
+    local nobobvertical = {}
+    local rotationx = {}
+    local rotationy = {}
+    local rotationz = {}
+    local scythestoswords = {}
 
     local viewmodelstuff = {}
     local oldviewmodelanim
     local oldviewmodelC1
+    
+    local function replace(item1, item2)
+        if item1 == nil or item2 == nil then return end
+        local i1 = replicatedStorage.Items[item1]
+        local i2 = replicatedStorage.Items[item2]
+        i1.Archivable = true
+        local c = i1:Clone()
+        c.Name = i2.Name
+        c.Parent = i2.Parent
+        i2:Remove()
+        print(c, c.Parent)
+    end
 
     local updatefuncs = {
         Normal = function(part, original) 
@@ -11447,7 +11460,7 @@ run(function()
 
     ViewmodelMods = visual.Api.CreateOptionsButton({
         Name = 'ViewModelMods',
-        Function = function(calling: boolean)
+        Function = function(calling)
             if calling then 
                 local viewmodel = gameCamera:WaitForChild('Viewmodel')
                 viewmodelFunction()
@@ -11489,7 +11502,7 @@ run(function()
     ViewmodelHighlight = ViewmodelMods.CreateDropdown({
         Name = 'Mode',
         List = {'Normal', 'Classic'},
-        Function = function(value: string)
+        Function = function(value)
             pcall(function() ViewmodelThird.Object.Visible = (value ~= 'Normal') end)
             pcall(function() ViewmodelTransparency.Visible = (value ~= 'Classic') end)
             if ViewmodelMods.Enabled then 
@@ -11534,7 +11547,7 @@ run(function()
     ViewmodelAttributes = ViewmodelMods.CreateToggle({
         Name = 'Attributes',
         HoverText = 'Size & Rotations for viewmodel.',
-        Function = function(calling: boolean)
+        Function = function(calling)
             pcall(function() ViewmodelNoBob.Object.Visible = calling end)
             pcall(function() nobobdepth.Object.Visible = calling end)
             pcall(function() nobobhorizontal.Object.Visible = calling end)
@@ -11565,7 +11578,7 @@ run(function()
         Min = 0,
         Max = 24,
         Default = 8,
-        Function = function(val: number)
+        Function = function(val)
             if ViewmodelMods.Enabled and ViewmodelAttributes.Enabled then
                 lplr.PlayerScripts.TS.controllers.global.viewmodel['viewmodel-controller']:SetAttribute('ConstantManager_DEPTH_OFFSET', -(val / 10))
             end
@@ -11577,7 +11590,7 @@ run(function()
         Min = 0,
         Max = 24,
         Default = 8,
-        Function = function(val: number)
+        Function = function(val)
             if ViewmodelMods.Enabled and ViewmodelAttributes.Enabled then
                 lplr.PlayerScripts.TS.controllers.global.viewmodel['viewmodel-controller']:SetAttribute('ConstantManager_HORIZONTAL_OFFSET', (val / 10))
             end
@@ -11589,7 +11602,7 @@ run(function()
         Min = 0,
         Max = 24,
         Default = -2,
-        Function = function(val: number)
+        Function = function(val)
             if ViewmodelMods.Enabled and ViewmodelAttributes.Enabled then
                 lplr.PlayerScripts.TS.controllers.global.viewmodel['viewmodel-controller']:SetAttribute('ConstantManager_VERTICAL_OFFSET', (val / 10))
             end
@@ -11600,7 +11613,7 @@ run(function()
         Name = 'RotX',
         Min = 0,
         Max = 360,
-        Function = function(val: number)
+        Function = function(val)
             if ViewmodelMods.Enabled and ViewmodelAttributes.Enabled then
                 gameCamera.Viewmodel.RightHand.RightWrist.C1 = oldviewmodelC1 * CFrame.Angles(math.rad(rotationx.Value), math.rad(rotationy.Value), math.rad(rotationz.Value))
             end
@@ -11611,7 +11624,7 @@ run(function()
         Name = 'RotY',
         Min = 0,
         Max = 360,
-        Function = function(val: number)
+        Function = function(val)
             if ViewmodelMods.Enabled and ViewmodelAttributes.Enabled then
                 gameCamera.Viewmodel.RightHand.RightWrist.C1 = oldviewmodelC1 * CFrame.Angles(math.rad(rotationx.Value), math.rad(rotationy.Value), math.rad(rotationz.Value))
             end
@@ -11622,13 +11635,24 @@ run(function()
         Name = 'RotZ',
         Min = 0,
         Max = 360,
-        Function = function(val: number)
+        Function = function(val)
             if ViewmodelMods.Enabled and ViewmodelAttributes.Enabled then
                 gameCamera.Viewmodel.RightHand.RightWrist.C1 = oldviewmodelC1 * CFrame.Angles(math.rad(rotationx.Value), math.rad(rotationy.Value), math.rad(val))
             end
         end
+     })
+
+     scythestoswords = ViewmodelMods.CreateToggle({
+        Name = 'Scythe to Sword',
+        Function = function()
+            replace("wood_sword", "wood_scythe")
+            replace("stone_sword", "stone_scythe")
+            replace("iron_sword", "iron_scythe")
+            replace("diamond_sword", "diamond_scythe")
+            replace("emerald_sword", "mythic_scythe")
+        end
     })
-end)
+end) 
 run(function() 
     local DiamondTP: vapemodule = {};
     
