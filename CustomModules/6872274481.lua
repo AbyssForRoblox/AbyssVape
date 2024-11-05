@@ -723,95 +723,6 @@ local function EntityNearMouse(distance)
 	return closestEntity
 end
 
---[[local function AllNearPosition(distance, amount, sortfunction, prediction)
-	local returnedplayer = {}
-	local currentamount = 0
-	if entityLibrary.isAlive then
-		local sortedentities = {}
-		for i, v in pairs(entityLibrary.entityList) do
-			if not v.Targetable then continue end
-			if isVulnerable(v) then
-				local playerPosition = v.RootPart.Position
-				local mag = (entityLibrary.character.HumanoidRootPart.Position - playerPosition).magnitude
-				if prediction and mag > distance then
-					mag = (entityLibrary.LocalPosition - playerPosition).magnitude
-				end
-				if mag <= distance then
-					table.insert(sortedentities, v)
-				end
-			end
-		end
-		for i, v in pairs(collectionService:GetTagged("Monster")) do
-			if v.PrimaryPart then
-				local mag = (entityLibrary.character.HumanoidRootPart.Position - v.PrimaryPart.Position).magnitude
-				if prediction and mag > distance then
-					mag = (entityLibrary.LocalPosition - v.PrimaryPart.Position).magnitude
-				end
-				if mag <= distance then
-					if v:GetAttribute("Team") == lplr:GetAttribute("Team") then continue end
-					table.insert(sortedentities, {Player = {Name = v.Name, UserId = (v.Name == "Duck" and 2020831224 or 1443379645), GetAttribute = function() return "none" end}, Character = v, RootPart = v.PrimaryPart, Humanoid = v.Humanoid})
-				end
-			end
-		end
-		for i, v in pairs(collectionService:GetTagged("DiamondGuardian")) do
-			if v.PrimaryPart then
-				local mag = (entityLibrary.character.HumanoidRootPart.Position - v.PrimaryPart.Position).magnitude
-				if prediction and mag > distance then
-					mag = (entityLibrary.LocalPosition - v.PrimaryPart.Position).magnitude
-				end
-				if mag <= distance then
-					table.insert(sortedentities, {Player = {Name = "DiamondGuardian", UserId = 1443379645, GetAttribute = function() return "none" end}, Character = v, RootPart = v.PrimaryPart, Humanoid = v.Humanoid})
-				end
-			end
-		end
-		for i, v in pairs(collectionService:GetTagged("GolemBoss")) do
-			if v.PrimaryPart then
-				local mag = (entityLibrary.character.HumanoidRootPart.Position - v.PrimaryPart.Position).magnitude
-				if prediction and mag > distance then
-					mag = (entityLibrary.LocalPosition - v.PrimaryPart.Position).magnitude
-				end
-				if mag <= distance then
-					table.insert(sortedentities, {Player = {Name = "GolemBoss", UserId = 1443379645, GetAttribute = function() return "none" end}, Character = v, RootPart = v.PrimaryPart, Humanoid = v.Humanoid})
-				end
-			end
-		end
-		for i, v in pairs(collectionService:GetTagged("Drone")) do
-			if v.PrimaryPart then
-				local mag = (entityLibrary.character.HumanoidRootPart.Position - v.PrimaryPart.Position).magnitude
-				if prediction and mag > distance then
-					mag = (entityLibrary.LocalPosition - v.PrimaryPart.Position).magnitude
-				end
-				if mag <= distance then
-					if tonumber(v:GetAttribute("PlayerUserId")) == lplr.UserId then continue end
-					local droneplr = playersService:GetPlayerByUserId(v:GetAttribute("PlayerUserId"))
-					if droneplr and droneplr.Team == lplr.Team then continue end
-					table.insert(sortedentities, {Player = {Name = "Drone", UserId = 1443379645}, GetAttribute = function() return "none" end, Character = v, RootPart = v.PrimaryPart, Humanoid = v.Humanoid})
-				end
-			end
-		end
-		for i, v in pairs(store.pots) do
-			if v.PrimaryPart then
-				local mag = (entityLibrary.character.HumanoidRootPart.Position - v.PrimaryPart.Position).magnitude
-				if prediction and mag > distance then
-					mag = (entityLibrary.LocalPosition - v.PrimaryPart.Position).magnitude
-				end
-				if mag <= distance then
-					table.insert(sortedentities, {Player = {Name = "Pot", UserId = 1443379645, GetAttribute = function() return "none" end}, Character = v, RootPart = v.PrimaryPart, Humanoid = {Health = 100, MaxHealth = 100}})
-				end
-			end
-		end
-		if sortfunction then
-			table.sort(sortedentities, sortfunction)
-		end
-		for i,v in pairs(sortedentities) do
-			table.insert(returnedplayer, v)
-			currentamount = currentamount + 1
-			if currentamount >= amount then break end
-		end
-	end
-	return returnedplayer
-end--]]
-
 local function AllNearPosition(distance, amount, sortfunction, prediction, npcIncluded)
 	local returnedplayer = {}
 	local currentamount = 0
@@ -11933,3 +11844,84 @@ run(function()
 		end
 	})
 end)
+
+run(function()
+	local antihit = {};
+	local antihitboost = {};
+	local oldclone = {};
+	local newclone = {};
+	local bouncedelay = tick();
+	local notificationTick = tick();
+	local bounceskytime = {Value = 4};
+	local createclone = function()
+		repeat task.wait() until isAlive(lplr, true) and store.matchState ~= 0 or antihit.Enabled == false;
+		task.wait(0.1);
+		if not antihit.Enabled then return end;
+		lplr.Character.Parent = game;
+		oldroot = lplr.Character.HumanoidRootPart; 
+		newroot = oldroot:Clone();
+		newroot.Parent = lplr.Character;
+		lplr.Character.PrimaryPart = newroot;
+		oldroot.Parent = workspace;
+		lplr.Character.Parent = workspace;
+		oldroot.Transparency = 1;
+		entityLibrary.character.HumanoidRootPart = newroot;
+	end;
+	local destructclone = function()
+		lplr.Character.Parent = game;
+		oldroot.Parent = lplr.Character;
+		newroot.Parent = workspace;
+		lplr.Character.PrimaryPart = oldroot;
+		lplr.Character.Parent = workspace;
+		entityLibrary.character.HumanoidRootPart = oldroot;
+		newroot:Destroy();
+		newroot = {}; 
+		oldroot = {};
+	end;
+	antihit = blatant.Api.CreateOptionsButton({
+		Name = 'AntiHit',
+		HoverText = 'Makes it harder for your opp to hit you.',
+		Function = function(calling)
+			if calling then 
+				createclone();
+				table.insert(antihit.Connections, lplr.CharacterAdded:Connect(createclone));
+				table.insert(antihit.Connections, runService.RenderStepped:Connect(function()
+					if isAlive(lplr, true) and lplr.Character.PrimaryPart == newroot and tick() >= bouncedelay then 
+						oldroot.Velocity = Vector3.zero;
+						oldroot.CFrame = newroot.CFrame;
+					end
+				end));
+				repeat 
+					if killauraNearPlayer then 
+						if tick() > bouncedelay and isAlive(lplr, true) and lplr.Character.PrimaryPart == newroot then 
+							bouncedelay = tick() + 0.4;
+							for i = 1, 5 do 
+								if not killauraNearPlayer then 
+									bouncedelay = tick();
+									break 
+								end;
+								oldroot.CFrame += Vector3.new(0, 1000, 0);
+								local oldval = bounceskytime.Value;
+								local start = tick() + (0.01 * bounceskytime.Value);
+								repeat task.wait() until (oldval ~= bounceskytime.Value or tick() >= start);
+								pcall(function() oldroot.Velocity = Vector3.new(newroot.Velocity.X, -1, newroot.Velocity.Z) end);
+								oldroot.CFrame = newroot.CFrame;
+							end
+						end
+					end
+					task.wait()
+				until (not antihit.Enabled)
+			else 
+				pcall(destructclone)
+			end
+		end
+	})
+	bounceskytime = antihit.CreateSlider({
+		Name = 'Dodge Delay',
+		Min = 1,
+		Max = 6,
+		Default = 4,
+		Function = void
+	})
+end);
+
