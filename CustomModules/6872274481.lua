@@ -1853,8 +1853,6 @@ pcall(function()
         end)
     end
 end)
-
-
 run(function()
 	local AimAssist = {Enabled = false}
 	local AimAssistClickAim = {Enabled = false}
@@ -2067,6 +2065,7 @@ run(function()
 		Default = 4.5
 	})
 end)
+
 run(function()
 	local Sprint = {Enabled = false}
 	local oldSprintFunction
@@ -2194,7 +2193,7 @@ run(function()
                     end
                 end))
 
-                table.insert(AutoLeave.Connections, vapeEvents.MatchEndEvent.Event:Connect(function()
+                                table.insert(AutoLeave.Connections, vapeEvents.MatchEndEvent.Event:Connect(function()
                     task.wait(AutoLeaveDelay.Value / 10)
                     if not AutoLeave.Enabled or leaveAttempted then return end
                     
@@ -2220,6 +2219,11 @@ run(function()
                         end
                     end
                 end))
+            else
+                for _, connection in ipairs(AutoLeave.Connections) do
+                    connection:Disconnect()
+                end
+                AutoLeave.Connections = {}
             end
         end,
         HoverText = "Automatically queues for a new game after dying or when the match ends."
@@ -2247,7 +2251,6 @@ run(function()
         HoverText = "Chooses a random mode when re-queuing."
     })
 end)
-
 run(function()
 	local oldclickhold
 	local oldclickhold2
