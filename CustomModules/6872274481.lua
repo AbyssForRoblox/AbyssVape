@@ -11844,84 +11844,87 @@ run(function()
 		end
 	})
 end)
-
 run(function()
-	local antihit = {};
-	local antihitboost = {};
-	local oldclone = {};
-	local newclone = {};
-	local bouncedelay = tick();
-	local notificationTick = tick();
-	local bounceskytime = {Value = 4};
-	local createclone = function()
-		repeat task.wait() until isAlive(lplr, true) and store.matchState ~= 0 or antihit.Enabled == false;
-		task.wait(0.1);
-		if not antihit.Enabled then return end;
-		lplr.Character.Parent = game;
-		oldroot = lplr.Character.HumanoidRootPart; 
-		newroot = oldroot:Clone();
-		newroot.Parent = lplr.Character;
-		lplr.Character.PrimaryPart = newroot;
-		oldroot.Parent = workspace;
-		lplr.Character.Parent = workspace;
-		oldroot.Transparency = 1;
-		entityLibrary.character.HumanoidRootPart = newroot;
-	end;
-	local destructclone = function()
-		lplr.Character.Parent = game;
-		oldroot.Parent = lplr.Character;
-		newroot.Parent = workspace;
-		lplr.Character.PrimaryPart = oldroot;
-		lplr.Character.Parent = workspace;
-		entityLibrary.character.HumanoidRootPart = oldroot;
-		newroot:Destroy();
-		newroot = {}; 
-		oldroot = {};
-	end;
+	local antihit = {}
+	local oldroot, newroot = nil, nil
+	local bouncedelay = tick()
+	local bounceskytime = {Value = 4}
+	
+	local function createClone()
+		repeat task.wait() until isAlive(lplr, true) and store.matchState ~= 0 or not antihit.Enabled
+		if not antihit.Enabled then return end
+		
+		task.wait(0.1)
+		
+		lplr.Character.Parent = game
+		oldroot = lplr.Character.HumanoidRootPart
+		newroot = oldroot:Clone()
+		newroot.Parent = lplr.Character
+		lplr.Character.PrimaryPart = newroot
+		oldroot.Parent = workspace
+		lplr.Character.Parent = workspace
+		oldroot.Transparency = 1
+		entityLibrary.character.HumanoidRootPart = newroot
+	end
+	
+	local function destructClone()
+		if oldroot and newroot then
+			lplr.Character.Parent = game
+			oldroot.Parent = lplr.Character
+			lplr.Character.PrimaryPart = oldroot
+			lplr.Character.Parent = workspace
+			entityLibrary.character.HumanoidRootPart = oldroot
+			newroot:Destroy()
+			oldroot, newroot = nil, nil
+		end
+	end
+	
 	antihit = blatant.Api.CreateOptionsButton({
 		Name = 'AntiHit',
-		HoverText = 'Makes it harder for your opp to hit you.',
+		HoverText = 'Makes it harder for your opponent to hit you.',
 		Function = function(calling)
 			if calling then 
-				createclone();
-				table.insert(antihit.Connections, lplr.CharacterAdded:Connect(createclone));
+				createClone()
+				table.insert(antihit.Connections, lplr.CharacterAdded:Connect(createClone))
 				table.insert(antihit.Connections, runService.RenderStepped:Connect(function()
 					if isAlive(lplr, true) and lplr.Character.PrimaryPart == newroot and tick() >= bouncedelay then 
-						oldroot.Velocity = Vector3.zero;
-						oldroot.CFrame = newroot.CFrame;
+						oldroot.Velocity = Vector3.zero
+						oldroot.CFrame = newroot.CFrame
 					end
-				end));
-				repeat 
-					if killauraNearPlayer then 
-						if tick() > bouncedelay and isAlive(lplr, true) and lplr.Character.PrimaryPart == newroot then 
-							bouncedelay = tick() + 0.4;
+				end))
+				
+				task.spawn(function()
+					while antihit.Enabled do
+						if killauraNearPlayer and tick() > bouncedelay and isAlive(lplr, true) and lplr.Character.PrimaryPart == newroot then 
+							bouncedelay = tick() + 0.4
 							for i = 1, 5 do 
 								if not killauraNearPlayer then 
-									bouncedelay = tick();
+									bouncedelay = tick()
 									break 
-								end;
-								oldroot.CFrame += Vector3.new(0, 1000, 0);
-								local oldval = bounceskytime.Value;
-								local start = tick() + (0.01 * bounceskytime.Value);
-								repeat task.wait() until (oldval ~= bounceskytime.Value or tick() >= start);
-								pcall(function() oldroot.Velocity = Vector3.new(newroot.Velocity.X, -1, newroot.Velocity.Z) end);
-								oldroot.CFrame = newroot.CFrame;
+								end
+								oldroot.CFrame += Vector3.new(0, 1000, 0)
+								local start = tick() + (0.01 * bounceskytime.Value)
+								repeat task.wait() until (tick() >= start)
+								oldroot.Velocity = Vector3.new(newroot.Velocity.X, -1, newroot.Velocity.Z)
+								oldroot.CFrame = newroot.CFrame
 							end
 						end
+						task.wait()
 					end
-					task.wait()
-				until (not antihit.Enabled)
+				end)
 			else 
-				pcall(destructclone)
+				pcall(destructClone)
 			end
 		end
 	})
+	
 	bounceskytime = antihit.CreateSlider({
 		Name = 'Dodge Delay',
 		Min = 1,
 		Max = 6,
 		Default = 4,
-		Function = void
+		Function = function(value) 
+			bounceskytime.Value = value 
+		end
 	})
-end);
-
+end)
