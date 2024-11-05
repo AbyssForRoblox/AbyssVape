@@ -472,132 +472,137 @@ local blacklistedblocks = {
 	ceramic = true
 }
 local cachedNormalSides = {}
-for i,v in pairs(Enum.NormalId:GetEnumItems()) do if v.Name ~= "Bottom" then table.insert(cachedNormalSides, v) end end
+for _, v in ipairs(Enum.NormalId:GetEnumItems()) do
+    if v.Name ~= "Bottom" then
+        table.insert(cachedNormalSides, v)
+    end
+end
+
 local updateitem = Instance.new("BindableEvent")
 table.insert(vapeConnections, updateitem.Event:Connect(function(inputObj)
-	if inputService:IsMouseButtonPressed(0) then
-		game:GetService("ContextActionService"):CallFunction("block-break", Enum.UserInputState.Begin, newproxy(true))
-	end
+    if inputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton1) then
+        game:GetService("ContextActionService"):CallFunction("block-break", Enum.UserInputState.Begin, newproxy(true))
+    end
 end))
 
 local function getPlacedBlock(pos)
-	local roundedPosition = bedwars.BlockController:getBlockPosition(pos)
-	return bedwars.BlockController:getStore():getBlockAt(roundedPosition), roundedPosition
+    local roundedPosition = bedwars.BlockController:getBlockPosition(pos)
+    return bedwars.BlockController:getStore():getBlockAt(roundedPosition), roundedPosition
 end
 
 local oldpos = Vector3.zero
 
 local function getScaffold(vec, diagonaltoggle)
-	local realvec = Vector3.new(math.floor((vec.X / 3) + 0.5) * 3, math.floor((vec.Y / 3) + 0.5) * 3, math.floor((vec.Z / 3) + 0.5) * 3)
-	local speedCFrame = (oldpos - realvec)
-	local returedpos = realvec
-	if entityLibrary.isAlive then
-		local angle = math.deg(math.atan2(-entityLibrary.character.Humanoid.MoveDirection.X, -entityLibrary.character.Humanoid.MoveDirection.Z))
-		local goingdiagonal = (angle >= 130 and angle <= 150) or (angle <= -35 and angle >= -50) or (angle >= 35 and angle <= 50) or (angle <= -130 and angle >= -150)
-		if goingdiagonal and ((speedCFrame.X == 0 and speedCFrame.Z ~= 0) or (speedCFrame.X ~= 0 and speedCFrame.Z == 0)) and diagonaltoggle then
-			return oldpos
-		end
-	end
-	return realvec
+    local realvec = Vector3.new(math.floor((vec.X / 3) + 0.5) * 3, math.floor((vec.Y / 3) + 0.5) * 3, math.floor((vec.Z / 3) + 0.5) * 3)
+    local speedCFrame = (oldpos - realvec)
+    local returedpos = realvec
+    if entityLibrary.isAlive then
+        local angle = math.deg(math.atan2(-entityLibrary.character.Humanoid.MoveDirection.X, -entityLibrary.character.Humanoid.MoveDirection.Z))
+        local goingdiagonal = (angle >= 130 and angle <= 150) or (angle <= -35 and angle >= -50) or (angle >= 35 and angle <= 50) or (angle <= -130 and angle >= -150)
+        if goingdiagonal and ((speedCFrame.X == 0 and speedCFrame.Z ~= 0) or (speedCFrame.X ~= 0 and speedCFrame.Z == 0)) and diagonaltoggle then
+            return oldpos
+        end
+    end
+    return realvec
 end
 
 local function getBestTool(block)
-	local tool = nil
-	local blockmeta = bedwars.ItemTable[block]
-	local blockType = blockmeta.block and blockmeta.block.breakType
-	if blockType then
-		local best = 0
-		for i,v in pairs(store.localInventory.inventory.items) do
-			local meta = bedwars.ItemTable[v.itemType]
-			if meta.breakBlock and meta.breakBlock[blockType] and meta.breakBlock[blockType] >= best then
-				best = meta.breakBlock[blockType]
-				tool = v
-			end
-		end
-	end
-	return tool
+    local tool = nil
+    local blockmeta = bedwars.ItemTable[block]
+    local blockType = blockmeta.block and blockmeta.block.breakType
+    if blockType then
+        local best = 0
+        for _, v in pairs(store.localInventory.inventory.items) do
+            local meta = bedwars.ItemTable[v.itemType]
+            if meta.breakBlock and meta.breakBlock[blockType] and meta.breakBlock[blockType] >= best then
+                best = meta.breakBlock[blockType]
+                tool = v
+            end
+        end
+    end
+    return tool
 end
 
 local function switchItem(tool)
-	if lplr.Character.HandInvItem.Value ~= tool then
-		bedwars.Client:Get(bedwars.EquipItemRemote):CallServerAsync({
-			hand = tool
-		})
-		local started = tick()
-		repeat task.wait() until (tick() - started) > 0.3 or lplr.Character.HandInvItem.Value == tool
-	end
+    if lplr.Character.HandInvItem.Value ~= tool then
+        bedwars.Client:Get(bedwars.EquipItemRemote):CallServerAsync({
+            hand = tool
+        })
+        local started = tick()
+        repeat task.wait() until (tick() - started) > 0.3 or lplr.Character.HandInvItem.Value == tool
+    end
 end
 
 local function switchToAndUseTool(block, legit)
-	local tool = getBestTool(block.Name)
-	if tool and (entityLibrary.isAlive and lplr.Character:FindFirstChild("HandInvItem") and lplr.Character.HandInvItem.Value ~= tool.tool) then
-		if legit then
-			if getHotbarSlot(tool.itemType) then
-				bedwars.ClientStoreHandler:dispatch({
-					type = "InventorySelectHotbarSlot",
-					slot = getHotbarSlot(tool.itemType)
-				})
-				vapeEvents.InventoryChanged.Event:Wait()
-				updateitem:Fire(inputobj)
-				return true
-			else
-				return false
-			end
-		end
-		switchItem(tool.tool)
-	end
+    local tool = getBestTool(block.Name)
+    if tool and (entityLibrary.isAlive and lplr.Character:FindFirstChild("HandInvItem") and lplr.Character.HandInvItem.Value ~= tool.tool) then
+        if legit then
+            if getHotbarSlot(tool.itemType) then
+                bedwars.ClientStoreHandler:dispatch({
+                    type = "InventorySelectHotbarSlot",
+                    slot = getHotbarSlot(tool.itemType)
+                })
+                vapeEvents.InventoryChanged.Event:Wait()
+                updateitem:Fire(inputobj)
+                return true
+            else
+                return false
+            end
+        end
+        switchItem(tool.tool)
+    end
 end
 
 local function isBlockCovered(pos)
-	local coveredsides = 0
-	for i, v in pairs(cachedNormalSides) do
-		local blockpos = (pos + (Vector3.FromNormalId(v) * 3))
-		local block = getPlacedBlock(blockpos)
-		if block then
-			coveredsides = coveredsides + 1
-		end
-	end
-	return coveredsides == #cachedNormalSides
+    local coveredsides = 0
+    for _, v in ipairs(cachedNormalSides) do
+        local blockpos = (pos + (Vector3.FromNormalId(v) * 3))
+        local block = getPlacedBlock(blockpos)
+        if block then
+            coveredsides = coveredsides + 1
+        end
+    end
+    return coveredsides == #cachedNormalSides
 end
 
 local function GetPlacedBlocksNear(pos, normal)
-	local blocks = {}
-	local lastfound = nil
-	for i = 1, 20 do
-		local blockpos = (pos + (Vector3.FromNormalId(normal) * (i * 3)))
-		local extrablock = getPlacedBlock(blockpos)
-		local covered = isBlockCovered(blockpos)
-		if extrablock then
-			if bedwars.BlockController:isBlockBreakable({blockPosition = blockpos}, lplr) and (not blacklistedblocks[extrablock.Name]) then
-				table.insert(blocks, extrablock.Name)
-			end
-			lastfound = extrablock
-			if not covered then
-				break
-			end
-		else
-			break
-		end
-	end
-	return blocks
+    local blocks = {}
+    local lastfound = nil
+    for i = 1, 20 do
+        local blockpos = (pos + (Vector3.FromNormalId(normal) * (i * 3)))
+        local extrablock = getPlacedBlock(blockpos)
+        local covered = isBlockCovered(blockpos)
+        if extrablock then
+            if bedwars.BlockController:isBlockBreakable({blockPosition = blockpos}, lplr) and (not blacklistedblocks[extrablock.Name]) then
+                table.insert(blocks, extrablock.Name)
+            end
+            lastfound = extrablock
+            if not covered then
+                break
+            end
+        else
+            break
+        end
+    end
+    return blocks
 end
 
 local function getLastCovered(pos, normal)
-	local lastfound, lastpos = nil, nil
-	for i = 1, 20 do
-		local blockpos = (pos + (Vector3.FromNormalId(normal) * (i * 3)))
-		local extrablock, extrablockpos = getPlacedBlock(blockpos)
-		local covered = isBlockCovered(blockpos)
-		if extrablock then
-			lastfound, lastpos = extrablock, extrablockpos
-			if not covered then
-				break
-			end
-		else
-			break
-		end
-	end
-	return lastfound, lastpos
+    local lastfound, lastpos = nil, nil
+    for i = 1, 20 do
+        local blockpos = (pos + (Vector3.FromNormalId(normal) * (i * 3)))
+        local extrablock, extrablockpos = getPlacedBlock(blockpos)
+        local covered = isBlockCovered(blockpos)
+        if extrablock then
+            lastfound, lastpos = extrablock, extrablockpos
+            if not covered then
+                break
+            end
+        else
+            break
+        end
+    end
+    return lastfound, lastpos
 end
 
 local function getBestBreakSide(pos)
