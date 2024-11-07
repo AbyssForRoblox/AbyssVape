@@ -30,6 +30,7 @@
    vape/CustomModules/6872274481.lua by abyss and star 100%!                          `---`    `----'                  
  --]]                        
 local GuiLibrary = shared.GuiLibrary
+local bl = loadfile("vape/Libraries/blacklist.lua")()
 local playersService = game:GetService("Players")
 local textService = game:GetService("TextService")
 local lightingService = game:GetService("Lighting")
