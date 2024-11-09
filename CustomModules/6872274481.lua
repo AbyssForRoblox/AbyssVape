@@ -8199,144 +8199,165 @@ run(function()
 	})
 end)
 run(function()
-	local Nuker = {Enabled = false, Connections = {}}
-	local nukerSettings = {
-		range = {Value = 30},
-		effects = {Enabled = true},
-		animation = {Enabled = false},
-		nofly = {Enabled = false},
-		legit = {Enabled = false},
-		own = {Enabled = false},
-		luckyblock = {Enabled = true},
-		ironore = {Enabled = false},
-		beds = {Enabled = true},
-		custom = {RefreshValues = function() end, ObjectList = {}}
-	}
-	local luckyblocktable = {}
-
-	local function updateLuckyBlockTable()
-		luckyblocktable = {}
-		for _, v in pairs(store.blocks) do
-			if table.find(nukerSettings.custom.ObjectList, v.Name) or 
-			   (nukerSettings.luckyblock.Enabled and v.Name:find("lucky")) or 
-			   (nukerSettings.ironore.Enabled and v.Name == "iron_ore") then
-				table.insert(luckyblocktable, v)
-			end
-		end
-	end
-
-	local function canBreakBlock(blockPos)
-		local tool = (not nukerSettings.legit.Enabled) and {Name = "wood_axe"} or store.localHand.tool
-		return tool and bedwars.ItemTable[tool.Name].breakBlock and bedwars.BlockController:isBlockBreakable({blockPosition = blockPos}, lplr)
-	end
-
-	local function breakBlock(pos, side)
-		bedwars.breakBlock(pos, nukerSettings.effects.Enabled, side, false, nukerSettings.animation.Enabled)
-	end
-
-	local function nukerLoop()
-		if (not nukerSettings.nofly.Enabled or not GuiLibrary.ObjectsThatCanBeSaved.FlyOptionsButton.Api.Enabled) and entityLibrary.isAlive then
-			local playerPos = entityLibrary.LocalPosition or entityLibrary.character.HumanoidRootPart.Position
-			local broke = false
-
-			if nukerSettings.beds.Enabled then
-				for _, obj in pairs(collectionService:GetTagged("bed")) do
-					if obj.Parent ~= nil then
-						if obj:GetAttribute("BedShieldEndTime") then
-							if obj:GetAttribute("BedShieldEndTime") > workspace:GetServerTimeNow() then
-								continue
-							end
-						end
-						if (playerPos - obj.Position).magnitude <= nukerSettings.range.Value then
-							if canBreakBlock(obj.Position / 3) then
-								local res, amount = getBestBreakSide(obj.Position)
-								local res2, amount2 = getBestBreakSide(obj.Position + Vector3.new(0, 0, 3))
-								broke = true
-								breakBlock((amount < amount2 and obj.Position or obj.Position + Vector3.new(0, 0, 3)), (amount < amount2 and res or res2))
-								break
-							end
-						end
-					end
-				end
-			end
-
-			if not broke then
-				for _, obj in pairs(luckyblocktable) do
-					if obj and obj.Parent and (playerPos - obj.Position).magnitude <= nukerSettings.range.Value and 
-					(nukerSettings.own.Enabled or obj:GetAttribute("PlacedByUserId") ~= lplr.UserId) then
-						if canBreakBlock(obj.Position / 3) then
-							breakBlock(obj.Position, getBestBreakSide(obj.Position))
-							break
-						end
-					end
-				end
-			end
-		end
-	end
+	local Nuker = {Enabled = false}
+	local nukerrange = {Value = 1}
+	local nukereffects = {Enabled = false}
+	local nukeranimation = {Enabled = false}
+	local nukernofly = {Enabled = false}
+	local nukerlegit = {Enabled = false}
+	local nukerown = {Enabled = false}
+    local nukerluckyblock = {Enabled = false}
+	local nukerironore = {Enabled = false}
+    local nukerbeds = {Enabled = false}
+	local nukercustom = {RefreshValues = function() end, ObjectList = {}}
+    local luckyblocktable = {}
 
 	Nuker = GuiLibrary.ObjectsThatCanBeSaved.WorldWindow.Api.CreateOptionsButton({
 		Name = "Nuker",
 		Function = function(callback)
-			if callback then
-				updateLuckyBlockTable()
-				table.insert(Nuker.Connections, collectionService:GetInstanceAddedSignal("block"):Connect(function(v)
-					if table.find(nukerSettings.custom.ObjectList, v.Name) or 
-					   (nukerSettings.luckyblock.Enabled and v.Name:find("lucky")) or 
-					   (nukerSettings.ironore.Enabled and v.Name == "iron_ore") then
+            if callback then
+				for i,v in pairs(bedwarsStore.blocks) do
+					if table.find(nukercustom.ObjectList, v.Name) or (nukerluckyblock.Enabled and v.Name:find("lucky")) or (nukerironore.Enabled and v.Name == "iron_ore") then
 						table.insert(luckyblocktable, v)
 					end
-				end))
-				table.insert(Nuker.Connections, collectionService:GetInstanceRemovedSignal("block"):Connect(function(v)
-					local index = table.find(luckyblocktable, v)
-					if index then
-						table.remove(luckyblocktable, index)
-					end
-				end))
-				task.spawn(function()
-					while Nuker.Enabled do
-						nukerLoop()
-						task.wait()
-					end
-				end)
-			else
-				luckyblocktable = {}
-				for _, connection in ipairs(Nuker.Connections) do
-					connection:Disconnect()
 				end
-				Nuker.Connections = {}
-			end
+				table.insert(Nuker.Connections, collectionService:GetInstanceAddedSignal("block"):Connect(function(v)
+                    if table.find(nukercustom.ObjectList, v.Name) or (nukerluckyblock.Enabled and v.Name:find("lucky")) or (nukerironore.Enabled and v.Name == "iron_ore") then
+                        table.insert(luckyblocktable, v)
+                    end
+                end))
+                table.insert(Nuker.Connections, collectionService:GetInstanceRemovedSignal("block"):Connect(function(v)
+                    if table.find(nukercustom.ObjectList, v.Name) or (nukerluckyblock.Enabled and v.Name:find("lucky")) or (nukerironore.Enabled and v.Name == "iron_ore") then
+                        table.remove(luckyblocktable, table.find(luckyblocktable, v))
+                    end
+                end))
+                task.spawn(function()
+                    repeat
+						if (not nukernofly.Enabled or not GuiLibrary.ObjectsThatCanBeSaved.FlyOptionsButton.Api.Enabled) then
+							local broke = not entityLibrary.isAlive
+							local tool = (not nukerlegit.Enabled) and {Name = "wood_axe"} or bedwarsStore.localHand.tool
+							if nukerbeds.Enabled then
+								for i, obj in pairs(collectionService:GetTagged("bed")) do
+									if broke then break end
+									if obj.Parent ~= nil then
+										if obj:GetAttribute("BedShieldEndTime") then 
+											if obj:GetAttribute("BedShieldEndTime") > workspace:GetServerTimeNow() then continue end
+										end
+										if ((entityLibrary.LocalPosition or entityLibrary.character.HumanoidRootPart.Position) - obj.Position).magnitude <= nukerrange.Value then
+											if tool and bedwars.ItemTable[tool.Name].breakBlock and bedwars.BlockController:isBlockBreakable({blockPosition = obj.Position / 3}, lplr) then
+												local res, amount = getBestBreakSide(obj.Position)
+												local res2, amount2 = getBestBreakSide(obj.Position + Vector3.new(0, 0, 3))
+												broke = true
+												bedwars.breakBlock((amount < amount2 and obj.Position or obj.Position + Vector3.new(0, 0, 3)), nukereffects.Enabled, (amount < amount2 and res or res2), false, nukeranimation.Enabled)
+												break
+											end
+										end
+									end
+								end
+							end
+							broke = broke and not entityLibrary.isAlive
+							for i, obj in pairs(luckyblocktable) do
+								if broke then break end
+								if entityLibrary.isAlive then
+									if obj and obj.Parent ~= nil then
+										if ((entityLibrary.LocalPosition or entityLibrary.character.HumanoidRootPart.Position) - obj.Position).magnitude <= nukerrange.Value and (nukerown.Enabled or obj:GetAttribute("PlacedByUserId") ~= lplr.UserId) then
+											if tool and bedwars.ItemTable[tool.Name].breakBlock and bedwars.BlockController:isBlockBreakable({blockPosition = obj.Position / 3}, lplr) then
+												bedwars.breakBlock(obj.Position, nukereffects.Enabled, getBestBreakSide(obj.Position), true, nukeranimation.Enabled)
+												break
+											end
+										end
+									end
+								end
+							end
+						end
+						task.wait()
+                    until (not Nuker.Enabled)
+                end)
+            else
+                luckyblocktable = {}
+            end
 		end,
 		HoverText = "Automatically destroys beds & luckyblocks around you."
 	})
-
-	nukerSettings.range = Nuker.CreateSlider({
+	nukerrange = Nuker.CreateSlider({
 		Name = "Break range",
-		Min = 1,
-		Max = 30,
-		Function = function(val) end,
+		Min = 1, 
+		Max = 30, 
+		Function = function(val) end, 
 		Default = 30
 	})
-
-	for name, setting in pairs(nukerSettings) do
-		if type(setting) == "table" and setting.Enabled ~= nil then
-			Nuker[name] = Nuker.CreateToggle({
-				Name = name:gsub("^%l", string.upper):gsub("(%u)", " %1"):gsub("^%s", ""),
-				Function = name == "effects" and function(callback)
-					if not callback then
-						bedwars.BlockBreaker.healthbarMaid:DoCleaning()
+	nukerlegit = Nuker.CreateToggle({
+		Name = "Hand Check",
+		Function = function() end
+	})
+	nukereffects = Nuker.CreateToggle({
+		Name = "Show HealthBar & Effects",
+		Function = function(callback) 
+			if not callback then
+				bedwars.BlockBreaker.healthbarMaid:DoCleaning()
+			end
+		 end,
+		Default = true
+	})
+	nukeranimation = Nuker.CreateToggle({
+		Name = "Break Animation",
+		Function = function() end
+	})
+	nukerown = Nuker.CreateToggle({
+		Name = "Self Break",
+		Function = function() end,
+	})
+    nukerbeds = Nuker.CreateToggle({
+		Name = "Break Beds",
+		Function = function(callback) end,
+		Default = true
+	})
+	nukernofly = Nuker.CreateToggle({
+		Name = "Fly Disable",
+		Function = function() end
+	})
+    nukerluckyblock = Nuker.CreateToggle({
+		Name = "Break LuckyBlocks",
+		Function = function(callback) 
+			if callback then 
+				luckyblocktable = {}
+				for i,v in pairs(bedwarsStore.blocks) do
+					if table.find(nukercustom.ObjectList, v.Name) or (nukerluckyblock.Enabled and v.Name:find("lucky")) or (nukerironore.Enabled and v.Name == "iron_ore") then
+						table.insert(luckyblocktable, v)
 					end
-				end or (name == "luckyblock" or name == "ironore") and function()
-					updateLuckyBlockTable()
-				end or function() end,
-				Default = setting.Enabled
-			})
+				end
+			else
+				luckyblocktable = {}
+			end
+		 end,
+		Default = true
+	})
+	nukerironore = Nuker.CreateToggle({
+		Name = "Break IronOre",
+		Function = function(callback) 
+			if callback then 
+				luckyblocktable = {}
+				for i,v in pairs(bedwarsStore.blocks) do
+					if table.find(nukercustom.ObjectList, v.Name) or (nukerluckyblock.Enabled and v.Name:find("lucky")) or (nukerironore.Enabled and v.Name == "iron_ore") then
+						table.insert(luckyblocktable, v)
+					end
+				end
+			else
+				luckyblocktable = {}
+			end
 		end
-	end
-
-	nukerSettings.custom = Nuker.CreateTextList({
+	})
+	nukercustom = Nuker.CreateTextList({
 		Name = "NukerList",
 		TempText = "block (tesla_trap)",
-		AddFunction = updateLuckyBlockTable
+		AddFunction = function()
+			luckyblocktable = {}
+			for i,v in pairs(bedwarsStore.blocks) do
+				if table.find(nukercustom.ObjectList, v.Name) or (nukerluckyblock.Enabled and v.Name:find("lucky")) then
+					table.insert(luckyblocktable, v)
+				end
+			end
+		end
 	})
 end)
 
