@@ -70,9 +70,6 @@ local store = {
 	blockPlace = tick(),
 	blockRaycast = RaycastParams.new(),
 	equippedKit = "none",
-	forgeMasteryPoints = 0,
-	forgeUpgrades = {},
-	grapple = tick(),
 	inventories = {},
 	localInventory = {
 		inventory = {
@@ -1283,8 +1280,6 @@ run(function()
 		EatRemote = dumpRemote(debug.getconstants(debug.getproto(KnitClient.Controllers.ConsumeController.onEnable, 1))),
 		EquipItemRemote = dumpRemote(debug.getconstants(debug.getproto(require(replicatedStorage.TS.entity.entities["inventory-entity"]).InventoryEntity.equipItem, 3))),
 		EmoteMeta = require(replicatedStorage.TS.locker.emote["emote-meta"]).EmoteMeta,
-		ForgeConstants = debug.getupvalue(KnitClient.Controllers.ForgeController.getPurchaseableForgeUpgrades, 2),
-		ForgeUtil = debug.getupvalue(KnitClient.Controllers.ForgeController.getPurchaseableForgeUpgrades, 5),
 		GameAnimationUtil = require(replicatedStorage.TS.animation["animation-util"]).GameAnimationUtil,
 		EntityUtil = require(replicatedStorage.TS.entity["entity-util"]).EntityUtil,
 		getIcon = function(item, showinv)
@@ -1464,8 +1459,6 @@ run(function()
 		if newStore.Game ~= oldStore.Game then
 			store.matchState = newStore.Game.matchState
 			store.queueType = newStore.Game.queueType or "bedwars_test"
-			store.forgeMasteryPoints = newStore.Game.forgeMasteryPoints
-			store.forgeUpgrades = newStore.Game.forgeUpgrades
 		end
 		if newStore.Bedwars ~= oldStore.Bedwars then
 			store.equippedKit = newStore.Bedwars.kit ~= "none" and newStore.Bedwars.kit or ""
@@ -6963,11 +6956,6 @@ run(function()
 		Function = function() end,
 		Default = true
 	})
-   AutoBuyScythe = AutoBuy.CreateToggle({
-    Name = "Buy Scythe",
-    Function = function() end,
-    Default = false
-})
 
 AutoBuyGui = AutoBuy.CreateToggle({
     Name = "Shop GUI Check",
@@ -7600,87 +7588,6 @@ run(function()
 	})
 end)
 	
-run(function()
-	local AutoForge = {Enabled = false}
-	local AutoForgeWeapon = {Value = "Sword"}
-	local AutoForgeBow = {Enabled = false}
-	local AutoForgeArmor = {Enabled = false}
-	local AutoForgeSword = {Enabled = false}
-	local AutoForgeBuyAfter = {Enabled = false}
-	local AutoForgeNotification = {Enabled = true}
-
-	local function buyForge(i)
-		if not store.forgeUpgrades[i] or store.forgeUpgrades[i] < 6 then
-			local cost = bedwars.ForgeUtil:getUpgradeCost(1, store.forgeUpgrades[i] or 0)
-			if store.forgeMasteryPoints >= cost then
-				if AutoForgeNotification.Enabled then
-					local forgeType = "none"
-					for name,v in pairs(bedwars.ForgeConstants) do
-						if v == i then forgeType = name:lower() end
-					end
-					warningNotification("AutoForge", "Purchasing "..forgeType..".", bedwars.ForgeUtil.FORGE_DURATION_SEC)
-				end
-				bedwars.Client:Get("ForgePurchaseUpgrade"):SendToServer(i)
-				task.wait(bedwars.ForgeUtil.FORGE_DURATION_SEC + 0.2)
-			end
-		end
-	end
-
-	AutoForge = GuiLibrary.ObjectsThatCanBeSaved.UtilityWindow.Api.CreateOptionsButton({
-		Name = "AutoForge",
-		Function = function(callback)
-			if callback then
-				task.spawn(function()
-					repeat
-						task.wait()
-						if store.matchState == 1 and entityLibrary.isAlive then
-							if entityLibrary.character.HumanoidRootPart.Velocity.Magnitude > 0.01 then continue end
-							if AutoForgeArmor.Enabled then buyForge(bedwars.ForgeConstants.ARMOR) end
-							if entityLibrary.character.HumanoidRootPart.Velocity.Magnitude > 0.01 then continue end
-							if AutoForgeBow.Enabled then buyForge(bedwars.ForgeConstants.RANGED) end
-							if entityLibrary.character.HumanoidRootPart.Velocity.Magnitude > 0.01 then continue end
-							if AutoForgeSword.Enabled then
-								if AutoForgeBuyAfter.Enabled then
-									if not store.forgeUpgrades[bedwars.ForgeConstants.ARMOR] or store.forgeUpgrades[bedwars.ForgeConstants.ARMOR] < 6 then continue end
-								end
-								local weapon = bedwars.ForgeConstants[AutoForgeWeapon.Value:upper()]
-								if weapon then buyForge(weapon) end
-							end
-						end
-					until (not AutoForge.Enabled)
-				end)
-			end
-		end
-	})
-	AutoForgeWeapon = AutoForge.CreateDropdown({
-		Name = "Weapon",
-		Function = function() end,
-		List = {"Sword", "Dagger", "Scythe", "Great_Hammer", "Gauntlets"}
-	})
-	AutoForgeArmor = AutoForge.CreateToggle({
-		Name = "Armor",
-		Function = function() end,
-		Default = true
-	})
-	AutoForgeSword = AutoForge.CreateToggle({
-		Name = "Weapon",
-		Function = function() end
-	})
-	AutoForgeBow = AutoForge.CreateToggle({
-		Name = "Bow",
-		Function = function() end
-	})
-	AutoForgeBuyAfter = AutoForge.CreateToggle({
-		Name = "Buy After",
-		Function = function() end,
-		HoverText = "buy a weapon after armor is maxed"
-	})
-	AutoForgeNotification = AutoForge.CreateToggle({
-		Name = "Notification",
-		Function = function() end,
-		Default = true
-	})
-end)
 
 run(function()
 	local alreadyreportedlist = {}
