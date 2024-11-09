@@ -2318,7 +2318,6 @@ local autobankballoon = false
 run(function()
 	local Fly = {Enabled = false}
 	local FlyMode = {Value = "CFrame"}
-	local FlySpeed = {Value = 23}
 	local FlyVerticalSpeed = {Value = 40}
 	local FlyVertical = {Enabled = true}
 	local FlyAutoPop = {Enabled = true}
@@ -2484,15 +2483,10 @@ run(function()
 							lastonground = true
 						end
 
-						--local speed = FlySpeed.Value
-						--if getItemNear("scythe") then
-							--speed = ScytheSpeed.Value
-						--end
-
-						local flyVelocity = entityLibrary.character.Humanoid.MoveDirection * (FlyMode.Value == "Normal" and speed or 20)
+						local flyVelocity = entityLibrary.character.Humanoid.MoveDirection * (FlyMode.Value == "Normal" and FlySpeed.Value or 20)
 						entityLibrary.character.HumanoidRootPart.Velocity = flyVelocity + (Vector3.new(0, playerMass + (FlyUp and FlyVerticalSpeed.Value or 0) + (FlyDown and -FlyVerticalSpeed.Value or 0), 0))
 						if FlyMode.Value ~= "Normal" then
-							entityLibrary.character.HumanoidRootPart.CFrame = entityLibrary.character.HumanoidRootPart.CFrame + (entityLibrary.character.Humanoid.MoveDirection * ((speed + getSpeed()) - 20)) * delta
+							entityLibrary.character.HumanoidRootPart.CFrame = entityLibrary.character.HumanoidRootPart.CFrame + (entityLibrary.character.Humanoid.MoveDirection * ((FlySpeed.Value + getSpeed()) - 20)) * delta
 						end
 					end
 				end)
@@ -2548,111 +2542,112 @@ run(function()
 		HoverText = "Pops balloons when Fly is disabled."
 	})
 	local oldcamupdate
-local camcontrol
-local Flydamagecamera = {Enabled = false}
-FlyDamageAnimation = Fly.CreateToggle({
-    Name = "Damage Animation",
-    Function = function(callback)
-        if Flydamagecamera.Object then
-            Flydamagecamera.Object.Visible = callback
-        end
-        if callback then
-            task.spawn(function()
-                repeat
-                    task.wait(0.1)
-                    for i,v in pairs(getconnections(gameCamera:GetPropertyChangedSignal("CameraType"))) do
-                        if v.Function then
-                            camcontrol = debug.getupvalue(v.Function, 1)
-                        end
-                    end
-                until camcontrol
-                local caminput = require(lplr.PlayerScripts.PlayerModule.CameraModule.CameraInput)
-                local num = Instance.new("IntValue")
-                local numanim
-                shared.damageanim = function()
-                    if numanim then numanim:Cancel() end
-                    if Flydamagecamera.Enabled then
-                        num.Value = 1000
-                        numanim = tweenService:Create(num, TweenInfo.new(0.5), {Value = 0})
-                        numanim:Play()
-                    end
-                end
-                oldcamupdate = camcontrol.Update
-                camcontrol.Update = function(self, dt)
-                    if camcontrol.activeCameraController then
-                        camcontrol.activeCameraController:UpdateMouseBehavior()
-                        local newCameraCFrame, newCameraFocus = camcontrol.activeCameraController:Update(dt)
-                        gameCamera.CFrame = newCameraCFrame * CFrame.Angles(0, 0, math.rad(num.Value / 100))
-                        gameCamera.Focus = newCameraFocus
-                        if camcontrol.activeTransparencyController then
-                            camcontrol.activeTransparencyController:Update(dt)
-                        end
-                        if caminput.getInputEnabled() then
-                            caminput.resetInputForFrameEnd()
-                        end
-                    end
-                end
-            end)
-        else
-            shared.damageanim = nil
-            if camcontrol then
-                camcontrol.Update = oldcamupdate
-            end
-        end
-    end
-})
-Flydamagecamera = Fly.CreateToggle({
-    Name = "Camera Animation",
-    Function = function() end,
-    Default = true
-})
-Flydamagecamera.Object.BorderSizePixel = 0
-Flydamagecamera.Object.BackgroundTransparency = 0
-Flydamagecamera.Object.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
-Flydamagecamera.Object.Visible = false
-FlyAnywayProgressBar = Fly.CreateToggle({
-    Name = "Progress Bar",
-    Function = function(callback)
-        if callback then
-            FlyAnywayProgressBarFrame = Instance.new("Frame")
-            FlyAnywayProgressBarFrame.AnchorPoint = Vector2.new(0.5, 0)
-            FlyAnywayProgressBarFrame.Position = UDim2.new(0.5, 0, 1, -200)
-            FlyAnywayProgressBarFrame.Size = UDim2.new(0.2, 0, 0, 20)
-            FlyAnywayProgressBarFrame.BackgroundTransparency = 0.5
-            FlyAnywayProgressBarFrame.BorderSizePixel = 0
-            FlyAnywayProgressBarFrame.BackgroundColor3 = Color3.new(0, 0, 0)
-            FlyAnywayProgressBarFrame.Visible = Fly.Enabled
-            FlyAnywayProgressBarFrame.Parent = GuiLibrary.MainGui
-            local FlyAnywayProgressBarFrame2 = FlyAnywayProgressBarFrame:Clone()
-            FlyAnywayProgressBarFrame2.AnchorPoint = Vector2.new(0, 0)
-            FlyAnywayProgressBarFrame2.Position = UDim2.new(0, 0, 0, 0)
-            FlyAnywayProgressBarFrame2.Size = UDim2.new(1, 0, 0, 20)
-            FlyAnywayProgressBarFrame2.BackgroundTransparency = 0
-            FlyAnywayProgressBarFrame2.Visible = true
-            FlyAnywayProgressBarFrame2.Parent = FlyAnywayProgressBarFrame
-            local FlyAnywayProgressBartext = Instance.new("TextLabel")
-            FlyAnywayProgressBartext.Text = "2s"
-            FlyAnywayProgressBartext.Font = Enum.Font.Gotham
-            FlyAnywayProgressBartext.TextStrokeTransparency = 0
-            FlyAnywayProgressBartext.TextColor3 =  Color3.new(0.9, 0.9, 0.9)
-            FlyAnywayProgressBartext.TextSize = 20
-            FlyAnywayProgressBartext.Size = UDim2.new(1, 0, 1, 0)
-            FlyAnywayProgressBartext.BackgroundTransparency = 1
-            FlyAnywayProgressBartext.Position = UDim2.new(0, 0, -1, 0)
-            FlyAnywayProgressBartext.Parent = FlyAnywayProgressBarFrame
-        else
-            if FlyAnywayProgressBarFrame then FlyAnywayProgressBarFrame:Destroy() FlyAnywayProgressBarFrame = nil end
-        end
-    end,
-    HoverText = "show amount of Fly time",
-    Default = true
-})
-FlyTP = Fly.CreateToggle({
-    Name = "TP Down",
-    Function = function() end,
-    Default = true
-})
+	local camcontrol
+	local Flydamagecamera = {Enabled = false}
+	FlyDamageAnimation = Fly.CreateToggle({
+		Name = "Damage Animation",
+		Function = function(callback)
+			if Flydamagecamera.Object then
+				Flydamagecamera.Object.Visible = callback
+			end
+			if callback then
+				task.spawn(function()
+					repeat
+						task.wait(0.1)
+						for i,v in pairs(getconnections(gameCamera:GetPropertyChangedSignal("CameraType"))) do
+							if v.Function then
+								camcontrol = debug.getupvalue(v.Function, 1)
+							end
+						end
+					until camcontrol
+					local caminput = require(lplr.PlayerScripts.PlayerModule.CameraModule.CameraInput)
+					local num = Instance.new("IntValue")
+					local numanim
+					shared.damageanim = function()
+						if numanim then numanim:Cancel() end
+						if Flydamagecamera.Enabled then
+							num.Value = 1000
+							numanim = tweenService:Create(num, TweenInfo.new(0.5), {Value = 0})
+							numanim:Play()
+						end
+					end
+					oldcamupdate = camcontrol.Update
+					camcontrol.Update = function(self, dt)
+						if camcontrol.activeCameraController then
+							camcontrol.activeCameraController:UpdateMouseBehavior()
+							local newCameraCFrame, newCameraFocus = camcontrol.activeCameraController:Update(dt)
+							gameCamera.CFrame = newCameraCFrame * CFrame.Angles(0, 0, math.rad(num.Value / 100))
+							gameCamera.Focus = newCameraFocus
+							if camcontrol.activeTransparencyController then
+								camcontrol.activeTransparencyController:Update(dt)
+							end
+							if caminput.getInputEnabled() then
+								caminput.resetInputForFrameEnd()
+							end
+						end
+					end
+				end)
+			else
+				shared.damageanim = nil
+				if camcontrol then
+					camcontrol.Update = oldcamupdate
+				end
+			end
+		end
+	})
+	Flydamagecamera = Fly.CreateToggle({
+		Name = "Camera Animation",
+		Function = function() end,
+		Default = true
+	})
+	Flydamagecamera.Object.BorderSizePixel = 0
+	Flydamagecamera.Object.BackgroundTransparency = 0
+	Flydamagecamera.Object.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+	Flydamagecamera.Object.Visible = false
+	FlyAnywayProgressBar = Fly.CreateToggle({
+		Name = "Progress Bar",
+		Function = function(callback)
+			if callback then
+				FlyAnywayProgressBarFrame = Instance.new("Frame")
+				FlyAnywayProgressBarFrame.AnchorPoint = Vector2.new(0.5, 0)
+				FlyAnywayProgressBarFrame.Position = UDim2.new(0.5, 0, 1, -200)
+				FlyAnywayProgressBarFrame.Size = UDim2.new(0.2, 0, 0, 20)
+				FlyAnywayProgressBarFrame.BackgroundTransparency = 0.5
+				FlyAnywayProgressBarFrame.BorderSizePixel = 0
+				FlyAnywayProgressBarFrame.BackgroundColor3 = Color3.new(0, 0, 0)
+				FlyAnywayProgressBarFrame.Visible = Fly.Enabled
+				FlyAnywayProgressBarFrame.Parent = GuiLibrary.MainGui
+				local FlyAnywayProgressBarFrame2 = FlyAnywayProgressBarFrame:Clone()
+				FlyAnywayProgressBarFrame2.AnchorPoint = Vector2.new(0, 0)
+				FlyAnywayProgressBarFrame2.Position = UDim2.new(0, 0, 0, 0)
+				FlyAnywayProgressBarFrame2.Size = UDim2.new(1, 0, 0, 20)
+				FlyAnywayProgressBarFrame2.BackgroundTransparency = 0
+				FlyAnywayProgressBarFrame2.Visible = true
+				FlyAnywayProgressBarFrame2.Parent = FlyAnywayProgressBarFrame
+				local FlyAnywayProgressBartext = Instance.new("TextLabel")
+				FlyAnywayProgressBartext.Text = "2s"
+				FlyAnywayProgressBartext.Font = Enum.Font.Gotham
+				FlyAnywayProgressBartext.TextStrokeTransparency = 0
+				FlyAnywayProgressBartext.TextColor3 =  Color3.new(0.9, 0.9, 0.9)
+				FlyAnywayProgressBartext.TextSize = 20
+				FlyAnywayProgressBartext.Size = UDim2.new(1, 0, 1, 0)
+				FlyAnywayProgressBartext.BackgroundTransparency = 1
+				FlyAnywayProgressBartext.Position = UDim2.new(0, 0, -1, 0)
+				FlyAnywayProgressBartext.Parent = FlyAnywayProgressBarFrame
+			else
+				if FlyAnywayProgressBarFrame then FlyAnywayProgressBarFrame:Destroy() FlyAnywayProgressBarFrame = nil end
+			end
+		end,
+		HoverText = "show amount of Fly time",
+		Default = true
+	})
+	FlyTP = Fly.CreateToggle({
+		Name = "TP Down",
+		Function = function() end,
+		Default = true
+	})
 end)
+
 
 
 run(function()
@@ -4483,7 +4478,7 @@ run(function()
 	})
 end)
 
-
+local antivoidvelo
 run(function()
 	local Speed = {Enabled = false}
 	local SpeedMode = {Value = "CFrame"}
@@ -4508,7 +4503,7 @@ run(function()
 					end
 					if entityLibrary.isAlive then
 						if not (isnetworkowner(entityLibrary.character.HumanoidRootPart) and entityLibrary.character.Humanoid:GetState() ~= Enum.HumanoidStateType.Climbing and (not spiderActive) and (not GuiLibrary.ObjectsThatCanBeSaved.InfiniteFlyOptionsButton.Api.Enabled) and (not GuiLibrary.ObjectsThatCanBeSaved.FlyOptionsButton.Api.Enabled)) then return end
-						--if GuiLibrary.ObjectsThatCanBeSaved.GrappleExploitOptionsButton and GuiLibrary.ObjectsThatCanBeSaved.GrappleExploitOptionsButton.Api.Enabled then return end
+						if GuiLibrary.ObjectsThatCanBeSaved.GrappleExploitOptionsButton and GuiLibrary.ObjectsThatCanBeSaved.GrappleExploitOptionsButton.Api.Enabled then return end
 						if LongJump.Enabled then return end
 						if SpeedAnimation.Enabled then
 							for i, v in pairs(entityLibrary.character.Humanoid:GetPlayingAnimationTracks()) do
@@ -4518,12 +4513,8 @@ run(function()
 							end
 						end
 
-						--local speedValue = SpeedValue.Value + getSpeed()
-						--if getItemNear("scythe") then
-							--speedValue = ScytheSpeedValue.Value + getSpeed()
-						--end
-						
-						local speedVelocity = entityLibrary.character.Humanoid.MoveDirection * (SpeedMode.Value == "Normal" and speedValue or 20)
+						local speedValue = SpeedValue.Value + getSpeed()
+						local speedVelocity = entityLibrary.character.Humanoid.MoveDirection * (SpeedMode.Value == "Normal" and SpeedValue.Value or 20)
 						entityLibrary.character.HumanoidRootPart.Velocity = antivoidvelo or Vector3.new(speedVelocity.X, entityLibrary.character.HumanoidRootPart.Velocity.Y, speedVelocity.Z)
 						if SpeedMode.Value ~= "Normal" then
 							local speedCFrame = entityLibrary.character.Humanoid.MoveDirection * (speedValue - 20) * delta
@@ -4603,11 +4594,10 @@ run(function()
 		Function = function() end
 	})
 	SpeedAnimation = Speed.CreateToggle({
-        Name= "Slowdown Anim",
-        Function = function() end 
-    })
+		Name = "Slowdown Anim",
+		Function = function() end
+	})
 end)
-
 run(function()
 	local function roundpos(dir, pos, size)
 		local suc, res = pcall(function() return Vector3.new(math.clamp(dir.X, pos.X - (size.X / 2), pos.X + (size.X / 2)), math.clamp(dir.Y, pos.Y - (size.Y / 2), pos.Y + (size.Y / 2)), math.clamp(dir.Z, pos.Z - (size.Z / 2), pos.Z + (size.Z / 2))) end)
