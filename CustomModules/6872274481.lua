@@ -8216,7 +8216,7 @@ run(function()
 		Name = "Nuker",
 		Function = function(callback)
             if callback then
-				for i,v in pairs(bedwarsStore.blocks) do
+				for i,v in pairs(store.blocks) do
 					if table.find(nukercustom.ObjectList, v.Name) or (nukerluckyblock.Enabled and v.Name:find("lucky")) or (nukerironore.Enabled and v.Name == "iron_ore") then
 						table.insert(luckyblocktable, v)
 					end
@@ -8235,7 +8235,7 @@ run(function()
                     repeat
 						if (not nukernofly.Enabled or not GuiLibrary.ObjectsThatCanBeSaved.FlyOptionsButton.Api.Enabled) then
 							local broke = not entityLibrary.isAlive
-							local tool = (not nukerlegit.Enabled) and {Name = "wood_axe"} or bedwarsStore.localHand.tool
+							local tool = (not nukerlegit.Enabled) and {Name = "wood_axe"} or store.localHand.tool
 							if nukerbeds.Enabled then
 								for i, obj in pairs(collectionService:GetTagged("bed")) do
 									if broke then break end
@@ -8321,7 +8321,7 @@ run(function()
 		Function = function(callback) 
 			if callback then 
 				luckyblocktable = {}
-				for i,v in pairs(bedwarsStore.blocks) do
+				for i,v in pairs(store.blocks) do
 					if table.find(nukercustom.ObjectList, v.Name) or (nukerluckyblock.Enabled and v.Name:find("lucky")) or (nukerironore.Enabled and v.Name == "iron_ore") then
 						table.insert(luckyblocktable, v)
 					end
@@ -8337,7 +8337,7 @@ run(function()
 		Function = function(callback) 
 			if callback then 
 				luckyblocktable = {}
-				for i,v in pairs(bedwarsStore.blocks) do
+				for i,v in pairs(store.blocks) do
 					if table.find(nukercustom.ObjectList, v.Name) or (nukerluckyblock.Enabled and v.Name:find("lucky")) or (nukerironore.Enabled and v.Name == "iron_ore") then
 						table.insert(luckyblocktable, v)
 					end
@@ -8352,7 +8352,7 @@ run(function()
 		TempText = "block (tesla_trap)",
 		AddFunction = function()
 			luckyblocktable = {}
-			for i,v in pairs(bedwarsStore.blocks) do
+			for i,v in pairs(store.blocks) do
 				if table.find(nukercustom.ObjectList, v.Name) or (nukerluckyblock.Enabled and v.Name:find("lucky")) then
 					table.insert(luckyblocktable, v)
 				end
