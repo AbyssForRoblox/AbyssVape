@@ -8954,42 +8954,6 @@ run(function()
 end)
 
 run(function()
-    local AutoUpgradeStats: vapemodule = {}
-    local replicatedStorage = game:GetService("ReplicatedStorage")
-    local netManaged = replicatedStorage.rbxts_include.node_modules:FindFirstChild("@rbxts").net.out._NetManaged
-
-    AutoUpgradeStats = visual.Api.CreateOptionsButton({
-        Name = "AutoUpgradeStats",
-        Function = function(call: boolean)
-            if call then
-                local promoment = {
-                    {"SPEED", 1}, {"SPEED", 2}, {"SPEED", 3},
-                    {"DAMAGE", 1}, {"DAMAGE", 2}, {"DAMAGE", 3},
-                    {"ARMOR", 1}, {"ARMOR", 2}, {"ARMOR", 3},
-                    {"DESTRUCTION", 1}, {"DESTRUCTION", 2}, {"DESTRUCTION", 3}
-                }
-                local levels = {3, 6, 5, 4, 7, 8, 9, 10, 11, 1, 2, 12, 13, 14, 15, 16, 17, 18, 19, 20}
-                AutoUpgradeStats.Connection = task.spawn(function()
-                    repeat
-                        for _, upgrade in ipairs(promoment) do
-                            netManaged.RequestUpgradeStat:InvokeServer(unpack(upgrade))
-                        end
-                        for _, level in ipairs(levels) do
-                            netManaged.RequestPurchaseTeamLevel:InvokeServer(level)
-                        end
-                        task.wait(0.1)
-                    until not AutoUpgradeStats.Enabled
-                end)
-            else
-                if AutoUpgradeStats.Connection then
-                    task.cancel(AutoUpgradeStats.Connection)
-                end
-            end
-        end,
-        HoverText = "pro moment eeeeajjsjskekssk"
-    })
-end)
-run(function()
     local HotbarMods: vapemodule = {}
     local HotbarRounding: vapetoggle = {}
     local HotbarHighlight: vapetoggle = {}
