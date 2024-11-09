@@ -2317,7 +2317,6 @@ run(function()
 	local Fly = {Enabled = false}
 	local FlyMode = {Value = "CFrame"}
 	local FlySpeed = {Value = 23}
-	local ScytheSpeed = {Value = 30}
 	local FlyVerticalSpeed = {Value = 40}
 	local FlyVertical = {Enabled = true}
 	local FlyAutoPop = {Enabled = true}
@@ -2483,10 +2482,10 @@ run(function()
 							lastonground = true
 						end
 
-						local speed = FlySpeed.Value
-						if getItemNear("scythe") then
-							speed = ScytheSpeed.Value
-						end
+						--local speed = FlySpeed.Value
+						--if getItemNear("scythe") then
+							--speed = ScytheSpeed.Value
+						--end
 
 						local flyVelocity = entityLibrary.character.Humanoid.MoveDirection * (FlyMode.Value == "Normal" and speed or 20)
 						entityLibrary.character.HumanoidRootPart.Velocity = flyVelocity + (Vector3.new(0, playerMass + (FlyUp and FlyVerticalSpeed.Value or 0) + (FlyDown and -FlyVerticalSpeed.Value or 0), 0))
@@ -2528,13 +2527,6 @@ run(function()
 		Max = 23,
 		Function = function(val) end,
 		Default = 23
-	})
-	ScytheSpeed = Fly.CreateSlider({
-		Name = "Scythe Speed",
-		Min = 1,
-		Max = 50,
-		Function = function(val) end,
-		Default = 30
 	})
 	FlyVerticalSpeed = Fly.CreateSlider({
 		Name = "Vertical Speed",
@@ -2661,214 +2653,6 @@ FlyTP = Fly.CreateToggle({
 end)
 
 
-
-run(function()
-	local InfiniteFly = {Enabled = false, Connections = {}}
-	local InfiniteFlyMode = {Value = "CFrame"}
-	local InfiniteFlySpeed = {Value = 23}
-	local InfiniteFlyScytheSpeed = {Value = 30}
-	local InfiniteFlyVerticalSpeed = {Value = 40}
-	local InfiniteFlyVertical = {Enabled = true}
-	local InfiniteFlyUp, InfiniteFlyDown = false, false
-	local alternatelist = {"Normal", "AntiCheat A", "AntiCheat B"}
-	local clonesuccess, disabledproper = false, true
-	local oldcloneroot, cloned, clone, bodyvelo, hip
-	local FlyOverlap = OverlapParams.new()
-	FlyOverlap.MaxParts = 9e9
-	FlyOverlap.FilterDescendantsInstances = {}
-	FlyOverlap.RespectCanCollide = true
-
-	local function disablefunc()
-		if not disabledproper then return end
-		if bodyvelo then bodyvelo:Destroy() end
-		RunLoops:UnbindFromHeartbeat("InfiniteFlyOff")
-		if not oldcloneroot or not oldcloneroot.Parent then 
-			disabledproper = true
-			return 
-		end
-		lplr.Character.Parent = game
-		oldcloneroot.Parent = lplr.Character
-		lplr.Character.PrimaryPart = oldcloneroot
-		lplr.Character.Parent = workspace
-		oldcloneroot.CanCollide = true
-		for _, v in pairs(lplr.Character:GetDescendants()) do
-			if v:IsA("Weld") or v:IsA("Motor6D") then
-				if v.Part0 == clone then v.Part0 = oldcloneroot end
-				if v.Part1 == clone then v.Part1 = oldcloneroot end
-			end
-			if v:IsA("BodyVelocity") then v:Destroy() end
-		end
-		for _, v in pairs(oldcloneroot:GetChildren()) do
-			if v:IsA("BodyVelocity") then v:Destroy() end
-		end
-		local oldclonepos = clone.Position.Y
-		if clone then clone:Destroy() clone = nil end
-		lplr.Character.Humanoid.HipHeight = hip or 2
-		oldcloneroot.CFrame = CFrame.new(oldcloneroot.CFrame.X, oldclonepos, oldcloneroot.CFrame.Z)
-		oldcloneroot = nil
-		warningNotification("InfiniteFly", "Landed!", 3)
-		disabledproper = true
-		clonesuccess = false
-	end
-
-	local function updateFly(delta)
-		if GuiLibrary.ObjectsThatCanBeSaved["Lobby CheckToggle"].Api.Enabled and store.matchState == 0 then return end
-		if entityLibrary.isAlive and isnetworkowner(oldcloneroot) then
-			local playerMass = (entityLibrary.character.HumanoidRootPart:GetMass() - 1.4) * (delta * 100)
-			local speed = InfiniteFlySpeed.Value
-			if getItemNear("scythe") then
-				speed = InfiniteFlyScytheSpeed.Value
-			end
-			local flyVelocity = entityLibrary.character.Humanoid.MoveDirection * (InfiniteFlyMode.Value == "Normal" and speed or 20)
-			local verticalVelocity = Vector3.new(0, playerMass + (InfiniteFlyUp and InfiniteFlyVerticalSpeed.Value or 0) + (InfiniteFlyDown and -InfiniteFlyVerticalSpeed.Value or 0), 0)
-			entityLibrary.character.HumanoidRootPart.Velocity = flyVelocity + verticalVelocity
-			if InfiniteFlyMode.Value ~= "Normal" then
-				entityLibrary.character.HumanoidRootPart.CFrame = entityLibrary.character.HumanoidRootPart.CFrame + (entityLibrary.character.Humanoid.MoveDirection * ((speed + getSpeed()) - 20)) * delta
-			end
-			local speedCFrame = oldcloneroot.CFrame
-			speedCFrame = CFrame.new(clone.CFrame.X, speedCFrame.Y, clone.CFrame.Z)
-			if speedCFrame.Y < 1000 then
-				task.spawn(warningNotification, "InfiniteFly", "Teleported Up", 3)
-				speedCFrame = CFrame.new(speedCFrame.X, 100000, speedCFrame.Z)
-			end
-			oldcloneroot.CFrame = speedCFrame
-			oldcloneroot.Velocity = Vector3.new(clone.Velocity.X, oldcloneroot.Velocity.Y, clone.Velocity.Z)
-		else
-			InfiniteFly.ToggleButton(false)
-		end
-	end
-
-	InfiniteFly = GuiLibrary.ObjectsThatCanBeSaved.BlatantWindow.Api.CreateOptionsButton({
-		Name = "InfiniteFly",
-		Function = function(callback)
-			if callback then
-				if not entityLibrary.isAlive then 
-					disabledproper = true 
-					clonesuccess = false 
-				end
-				if not disabledproper then
-					warningNotification("InfiniteFly", "Wait for the last fly to finish", 3)
-					InfiniteFly.ToggleButton(false)
-					return 
-				end
-
-				local function handleInput(input, began)
-					if InfiniteFlyVertical.Enabled and inputService:GetFocusedTextBox() == nil then
-						if input.KeyCode == Enum.KeyCode.Space or input.KeyCode == Enum.KeyCode.ButtonA then
-							InfiniteFlyUp = began 
-						elseif input.KeyCode == Enum.KeyCode.LeftShift or input.KeyCode == Enum.KeyCode.ButtonL2 then 
-							InfiniteFlyDown = began 
-						end 
-					end 
-				end 
-
-				table.insert(InfiniteFly.Connections, inputService.InputBegan:Connect(function(input) handleInput(input, true) end))
-				table.insert(InfiniteFly.Connections, inputService.InputEnded:Connect(function(input) handleInput(input, false) end))
-				if inputService.TouchEnabled then 
-					pcall(function()
-						local jumpButton = lplr.PlayerGui.TouchGui.TouchControlFrame.JumpButton 
-						table.insert(InfiniteFly.Connections, jumpButton:GetPropertyChangedSignal("ImageRectOffset"):Connect(function()
-							InfiniteFlyUp = jumpButton.ImageRectOffset.X == 146 
-						end))
-						InfiniteFlyUp = jumpButton.ImageRectOffset.X == 146 
-					end) 
-				end 
-
-				clonesuccess = false 
-				if entityLibrary.isAlive and entityLibrary.character.Humanoid.Health > 0 and isnetworkowner(entityLibrary.character.HumanoidRootPart) then 
-					cloned = lplr.Character 
-					oldcloneroot = entityLibrary.character.HumanoidRootPart 
-					if not lplr.Character.Parent then 
-						InfiniteFly.ToggleButton(false) 
-						return 
-					end 
-
-					lplr.Character.Parent = game 
-					clone = oldcloneroot:Clone() 
-					clone.Parent = lplr.Character 
-					oldcloneroot.Parent = gameCamera 
-					bedwars.QueryUtil:setQueryIgnored(oldcloneroot, true) 
-					clone.CFrame = oldcloneroot.CFrame 
-					lplr.Character.PrimaryPart = clone 
-					lplr.Character.Parent = workspace 
-
-					for _, v in pairs(lplr.Character:GetDescendants()) do 
-						if v:IsA("Weld") or v:IsA("Motor6D") then 
-							if v.Part0 == oldcloneroot then v.Part0 = clone end 
-							if v.Part1 == oldcloneroot then v.Part1 = clone end 
-						end 
-
-						if v:IsA("BodyVelocity") then v:Destroy() end 
-					end 
-
-					for _, v in pairs(oldcloneroot:GetChildren()) do 
-						if v:IsA("BodyVelocity") then v:Destroy() end 
-					end 
-
-					hip = lplr.Character.Humanoid.HipHeight 
-					lplr.Character.Humanoid.HipHeight = hip 
-					clonesuccess = true 
-				end 
-
-				if not clonesuccess then 
-					warningNotification("InfiniteFly", "Character missing", 3) 
-					InfiniteFly.ToggleButton(false) 
-					return 
-				end 
-
-				RunLoops:BindToHeartbeat("InfiniteFly", updateFly)
-			else
-				RunLoops:UnbindFromHeartbeat("InfiniteFly")
-				if clonesuccess and oldcloneroot and clone and lplr.Character.Parent == workspace and oldcloneroot.Parent ~= nil and disabledproper and cloned == lplr.Character then
-					disablefunc()
-				else
-					disabledproper = true 
-					clonesuccess = false 
-				end 
-
-				InfiniteFlyUp, InfiniteFlyDown = false, false 
-
-				for _, connection in pairs(InfiniteFly.Connections) do 
-					connection:Disconnect() 
-				end 
-
-				InfiniteFly.Connections = {}
-			end
-		end,
-		HoverText = "Makes you go zoom",
-        ExtraText = function() return "Heatseeker" end,
-    })
-
-    InfiniteFlySpeed= InfiniteFly.CreateSlider({
-        Name = "Speed",
-        Min = 1,
-        Max = 23,
-        Function = function() end,
-        Default = 23,
-    })
-
-    InfiniteFlyScytheSpeed= InfiniteFly.CreateSlider({
-        Name = "Scythe Speed",
-        Min = 1,
-        Max = 50,
-        Function= function() end,
-        Default = 30,
-    })
-
-    InfiniteFlyVerticalSpeed= InfiniteFly.CreateSlider({
-        Name = "Vertical Speed",
-        Min = 1,
-        Max = 100,
-        Function = function() end,
-        Default= 44,
-    })
-
-    InfiniteFlyVertical= InfiniteFly.CreateToggle({
-        Name= "Y Level",
-        Function = function() end,
-        Default = true,
-    })
-end)
 					
 
 local killauraNearPlayer
@@ -4459,7 +4243,6 @@ run(function()
 	local SpeedMode = {Value = "CFrame"}
 	local SpeedValue = {Value = 1}
 	local SpeedValueLarge = {Value = 1}
-	local ScytheSpeedValue = {Value = 1}
 	local SpeedJump = {Enabled = false}
 	local SpeedJumpHeight = {Value = 20}
 	local SpeedJumpAlways = {Enabled = false}
@@ -4489,10 +4272,10 @@ run(function()
 							end
 						end
 
-						local speedValue = SpeedValue.Value + getSpeed()
-						if getItemNear("scythe") then
-							speedValue = ScytheSpeedValue.Value + getSpeed()
-						end
+						--local speedValue = SpeedValue.Value + getSpeed()
+						--if getItemNear("scythe") then
+							--speedValue = ScytheSpeedValue.Value + getSpeed()
+						--end
 						
 						local speedVelocity = entityLibrary.character.Humanoid.MoveDirection * (SpeedMode.Value == "Normal" and speedValue or 20)
 						entityLibrary.character.HumanoidRootPart.Velocity = antivoidvelo or Vector3.new(speedVelocity.X, entityLibrary.character.HumanoidRootPart.Velocity.Y, speedVelocity.Z)
@@ -4540,13 +4323,6 @@ run(function()
 		Max = 23,
 		Function = function(val) end,
 		Default = 23
-	})
-	ScytheSpeedValue = Speed.CreateSlider({
-		Name = "Scythe Speed",
-		Min = 1,
-		Max = 50,
-		Function = function(val) end,
-		Default = 30
 	})
 	SpeedJump = Speed.CreateToggle({
 		Name = "AutoJump",
